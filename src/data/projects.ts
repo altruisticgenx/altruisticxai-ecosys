@@ -7,6 +7,11 @@ export interface Project {
   origin: "labs" | "client" | "internal"
   slug: string
   status: "active" | "archived" | "pilot"
+  client?: string
+  metrics?: {
+    label: string
+    value: string
+  }[]
 }
 
 export const projects: Project[] = [
@@ -18,7 +23,12 @@ export const projects: Project[] = [
     techStack: ["React", "D3.js", "TypeScript", "Python", "TimescaleDB"],
     origin: "labs",
     slug: "campus-energy-dashboard",
-    status: "pilot"
+    status: "pilot",
+    metrics: [
+      { label: "Campuses", value: "3" },
+      { label: "Buildings", value: "20" },
+      { label: "Avg. Energy Reduction", value: "15%" }
+    ]
   },
   {
     id: "2",
@@ -49,5 +59,69 @@ export const projects: Project[] = [
     origin: "labs",
     slug: "federated-learning-privacy",
     status: "active"
+  },
+  {
+    id: "5",
+    title: "Healthcare AI Compliance Suite - NYU Langone",
+    description: "Custom implementation of our Local-First AI Audit Toolkit for NYU Langone Health's diagnostic AI systems. Enabled continuous compliance monitoring across 8 AI models while maintaining HIPAA requirements and reducing audit costs by 65%.",
+    sector: "Healthcare & AI Ethics",
+    techStack: ["Electron", "TensorFlow.js", "PostgreSQL", "React", "Docker"],
+    origin: "client",
+    slug: "nyu-healthcare-ai",
+    status: "active",
+    client: "NYU Langone Health",
+    metrics: [
+      { label: "Models Monitored", value: "8" },
+      { label: "Cost Reduction", value: "65%" },
+      { label: "Audit Time Saved", value: "120 hrs/mo" }
+    ]
+  },
+  {
+    id: "6",
+    title: "Federal Energy Optimization - GSA",
+    description: "Adapted our Campus Energy Dashboard for the General Services Administration to monitor and optimize energy usage across 12 federal buildings in the DC metro area. Achieved 18% energy reduction in first year through behavioral insights and predictive analytics.",
+    sector: "Government & Sustainability",
+    techStack: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
+    origin: "client",
+    slug: "gsa-energy-optimization",
+    status: "active",
+    client: "U.S. General Services Administration",
+    metrics: [
+      { label: "Buildings", value: "12" },
+      { label: "Energy Reduction", value: "18%" },
+      { label: "Annual Savings", value: "$450K" }
+    ]
+  },
+  {
+    id: "7",
+    title: "Multi-Hospital Federated ML Platform - Northeast Consortium",
+    description: "Deployed production federated learning infrastructure enabling 7 hospitals to collaboratively train diagnostic AI models without sharing patient data. First cross-institutional ML collaboration to meet both HIPAA and state-level privacy requirements.",
+    sector: "Healthcare & Privacy",
+    techStack: ["PyTorch", "Kubernetes", "PostgreSQL", "FastAPI", "Azure"],
+    origin: "client",
+    slug: "northeast-federated-ml",
+    status: "pilot",
+    client: "Northeast Healthcare Consortium",
+    metrics: [
+      { label: "Hospitals", value: "7" },
+      { label: "Patients Protected", value: "1.2M" },
+      { label: "Model Accuracy Gain", value: "+12%" }
+    ]
+  },
+  {
+    id: "8",
+    title: "University Research Data Commons - California System",
+    description: "Established standardized data sharing framework across 9 UC campuses based on our Open Campus Data Licensing Model. Created unified API and governance structure enabling collaborative research while protecting institutional data.",
+    sector: "Education & Open Data",
+    techStack: ["FastAPI", "PostgreSQL", "Elasticsearch", "React", "Kubernetes"],
+    origin: "client",
+    slug: "uc-research-data-commons",
+    status: "active",
+    client: "University of California System",
+    metrics: [
+      { label: "Campuses", value: "9" },
+      { label: "Datasets", value: "247" },
+      { label: "Research Teams", value: "83" }
+    ]
   }
 ]

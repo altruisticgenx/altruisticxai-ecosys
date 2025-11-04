@@ -1,18 +1,24 @@
+import LayoutShell from "@/components/LayoutShell"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, GitBranch, Lightbulb, Code, Rocket, GitMerge } from "@phosphor-icons/react"
+import { ArrowRight, GitBranch, Lightbulb, Code, Rocket, GitMerge, Flask } from "@phosphor-icons/react"
 import { projects } from "@/data/projects"
 
 export default function LabsPage() {
   const labsProjects = projects.filter(p => p.origin === "labs")
 
   return (
-    <div className="min-h-screen bg-background">
+    <LayoutShell>
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-16 text-center">
+          <div className="mb-4 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+              <Flask size={32} weight="duotone" className="text-primary" />
+            </div>
+          </div>
           <h1 className="mb-4 text-5xl font-bold tracking-tight text-foreground">
-            AltruisticXAI Labs
+            Open Source Labs
           </h1>
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
             Experimental projects pushing the boundaries of explainable AI, energy transparency, and ethical technology.
@@ -164,6 +170,6 @@ export default function LabsPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </LayoutShell>
   )
 }
