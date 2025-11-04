@@ -119,7 +119,7 @@ export default function DataIntegrationPage() {
   const grantCategories: { value: GrantCategory; label: string }[] = [
     { value: 'energy-ai', label: 'Energy & AI' },
     { value: 'education-ai', label: 'Education & AI' },
-    { value: 'local-government', label: 'Local Government' },
+          <div className="mx-auto mt-6 max-w-3xl space-y-3">
     { value: 'university-research', label: 'University Research' }
   ]
 
@@ -128,15 +128,15 @@ export default function DataIntegrationPage() {
     'campus sustainability',
     'explainable AI',
     'renewable energy analytics',
-    'edge computing'
-  ]
-
-  const starredGrants = (grants || []).filter(g => g.starred)
-  const highScoringGrants = (grants || []).filter(g => (g.analysis?.alignmentScore || 0) >= 70)
-  const readyToApply = (grants || []).filter(g => g.starred && (g.analysis?.alignmentScore || 0) >= 70)
-
-  return (
-    <LayoutShell>
+            
+            <Alert className="border-accent/30 bg-accent/5">
+              <CheckCircle size={20} weight="duotone" className="text-accent" />
+              <AlertDescription className="text-sm">
+                <span className="font-semibold text-foreground">2025+ Data Only:</span>{" "}
+                All federal data sources (USAspending, NSF Awards, Grants.gov) are filtered to include <span className="font-semibold">only records from 2025 onwards</span>. 
+                Multi-layer validation ensures data freshness and accuracy.
+              </AlertDescription>
+            </Alert>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="mb-12 text-center sm:mb-16">
           <div className="mb-4 flex justify-center">
