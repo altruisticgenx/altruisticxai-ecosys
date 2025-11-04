@@ -1,32 +1,46 @@
 import { GrantOpportunity, Provenance } from "../../data/schema"
 
-const API_BASE = "https://apply07.grants.gov/grantsws/rest/opportunities/search"
+const API_BASE = "https://api.grants.gov/v2/opportunities/search"
 
 interface GrantsGovOpportunity {
-  id?: string
-  number?: string
-  title?: string
+  opportunityID?: string
+  opportunityNumber?: string
+  opportunityTitle?: string
   description?: string
+  synopsis?: string
   agencyName?: string
   agencyCode?: string
-  cfda?: {
-    number?: string
-  }
+  cfdaNumbers?: string
+  cfdaNumber?: string
   closeDate?: string
-  awardCeiling?: number
-  estimatedTotalProgramFunding?: number
-  eligibility?: {
-    code?: string
-    description?: string
-  }[]
+  closeDateTimeStamp?: string
+  awardCeiling?: string | number
+  awardFloor?: string | number
+  estimatedTotalProgramFunding?: string | number
+  opportunityCategory?: string
+  categoryOfFundingActivity?: string
+  fundingInstrumentType?: string
+  fundingActivityCategory?: string
+  eligibleApplicants?: string[] | string
+  applicantEligibility?: string
+  opportunityStatus?: string
+  additionalInformation?: string
+  additionalInformationOnEligibility?: string
+}
+
+interface GrantsGovResponse {
+  opportunities?: GrantsGovOpportunity[]
+  totalRecords?: number
+  total?: number
 }
 
 const CATEGORIES = [
-  "energy",
-  "artificial intelligence",
-  "education technology",
+  "energy artificial intelligence",
+  "education technology AI",
   "grid modernization",
-  "renewable energy",
+  "renewable energy campus",
+  "local government energy",
+  "university research AI",
 ]
 
 const TARGET_AGENCIES = [
@@ -35,71 +49,101 @@ const TARGET_AGENCIES = [
   "ED",
   "ARPA-E",
   "EDA",
+  "EERE",
+  "NETL",
 ]
 
 export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
-  console.log("[grants.gov] Starting ingest...")
+  console.log("[grants.gov] Starting ingest with real API v2...")
 
   const allGrants: GrantOpportunity[] = []
   const capturedAt = new Date().toISOString()
+  const seenIds = new Set<string>()
 
-  for (const category of CATEGORIES.slice(0, 2)) {
+  for (const category of CATEGORIES) {
     try {
-      const params = new URLSearchParams({
+      const requestBody = {
         keyword: category,
-        oppStatuses: "forecasted|posted",
-        sortBy: "openDate|desc",
-        rows: "25",
-      })
+        oppStatuses: ['forecasted', 'posted'],
+        sortBy: 'openDate',
+        sortOrder: 'desc',
+        from: 0,
+        size: 20
+      }
 
-      const res = await fetch(`${API_BASE}?${params}`, {
-        method: "GET",
+      console.log(`[grants.gov] Fetching category: "${category}"`)
+
+      const res = await fetch(API_BASE, {
+        method: "POST",
         headers: {
           "Accept": "application/json",
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(requestBody),
       })
 
       if (!res.ok) {
-        console.warn(`[grants.gov] API error for category "${category}": ${res.status}`)
+        console.warn(`[grants.gov] API error for category "${category}": ${res.status} ${res.statusText}`)
         continue
       }
 
-      const json = await res.json()
-      const opportunities: GrantsGovOpportunity[] = json.opportunitiesList ?? []
+      const json: GrantsGovResponse = await res.json()
+      const opportunities: GrantsGovOpportunity[] = json.opportunities ?? []
 
       console.log(`[grants.gov] Found ${opportunities.length} results for "${category}"`)
 
       for (const opp of opportunities) {
-        const oppId = opp.id || opp.number || `unknown-${Math.random()}`
+        const oppId = opp.opportunityID || opp.opportunityNumber || `unknown-${Math.random().toString(36).substr(2, 9)}`
+        
+        if (seenIds.has(oppId)) {
+          continue
+        }
+        seenIds.add(oppId)
 
         const provenance: Provenance = {
           source: "grants_gov",
           externalId: oppId,
-          sourceUrl: `https://www.grants.gov/search-results-detail/${oppId}`,
+          sourceUrl: `https://www.grants.gov/search-results-detail/${opp.opportunityNumber || oppId}`,
           capturedAt,
         }
 
-        const agency = opp.agencyName || "Federal Agency"
+        const agency = opp.agencyName || opp.agencyCode || "Federal Agency"
         const isPriorityAgency = TARGET_AGENCIES.some(a => 
           agency.toUpperCase().includes(a)
         )
 
+        const cfdaNumber = opp.cfdaNumbers || opp.cfdaNumber
+
         const topics: string[] = [
-          category,
-          ...(opp.cfda?.number ? [`CFDA-${opp.cfda.number}`] : []),
+          category.split(' ')[0],
+          ...(cfdaNumber ? [`CFDA-${cfdaNumber}`] : []),
           ...(isPriorityAgency ? ["priority-agency"] : []),
-        ]
+          opp.opportunityCategory || opp.categoryOfFundingActivity || '',
+        ].filter(Boolean)
+
+        const parseAmount = (val?: string | number): number | undefined => {
+          if (typeof val === 'number') return val
+          if (typeof val === 'string') {
+            const parsed = parseFloat(val.replace(/[^0-9.-]/g, ''))
+            return isNaN(parsed) ? undefined : parsed
+          }
+          return undefined
+        }
 
         const grant: GrantOpportunity = {
           id: `grants-gov-${oppId}`,
-          title: opp.title || "Federal Grant Opportunity",
-          description: opp.description || "No description available.",
+          title: opp.opportunityTitle || "Federal Grant Opportunity",
+          description: opp.description || opp.synopsis || opp.opportunityTitle || "No description available.",
           agency,
-          cfdaNumber: opp.cfda?.number,
-          opportunityNumber: opp.number,
-          closeDate: opp.closeDate,
-          totalFundingEstimate: opp.estimatedTotalProgramFunding || opp.awardCeiling,
-          eligibility: opp.eligibility?.map(e => e.description || e.code).join(", "),
+          cfdaNumber,
+          opportunityNumber: opp.opportunityNumber,
+          closeDate: opp.closeDate || opp.closeDateTimeStamp,
+          totalFundingEstimate: parseAmount(opp.estimatedTotalProgramFunding) || parseAmount(opp.awardCeiling),
+          eligibility: Array.isArray(opp.eligibleApplicants)
+            ? opp.eligibleApplicants.join(", ")
+            : typeof opp.eligibleApplicants === 'string'
+            ? opp.eligibleApplicants
+            : opp.applicantEligibility || undefined,
           topics,
           location: {
             country: "US",
@@ -110,13 +154,13 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
         allGrants.push(grant)
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 1200))
 
     } catch (error) {
       console.error(`[grants.gov] Error processing category "${category}":`, error)
     }
   }
 
-  console.log(`[grants.gov] Completed. Total grants: ${allGrants.length}`)
+  console.log(`[grants.gov] Completed. Total unique grants: ${allGrants.length}`)
   return allGrants
 }

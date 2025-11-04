@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Database, Money, Sparkle, Download, ArrowSquareOut, FileText, Calendar, Buildings, GitBranch, Lightning } from "@phosphor-icons/react"
+import { Database, Money, Sparkle, Download, ArrowSquareOut, FileText, Calendar, Buildings, GitBranch, Lightning, CheckCircle } from "@phosphor-icons/react"
 import { useGrantDiscovery, GrantCategory } from "@/hooks/use-grant-discovery"
 import { useDiscoveredProjects } from "@/hooks/use-discovered-projects"
 import { useDataCrawler } from "@/hooks/use-data-crawler"
@@ -12,6 +12,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { motion } from "framer-motion"
+import GrantsAPITest from "@/components/GrantsAPITest"
 
 export default function DataIntegrationPage() {
   const {
@@ -117,6 +118,17 @@ export default function DataIntegrationPage() {
               AI-powered analysis ensures relevance to Labs → Consulting → Policy flywheel.
             </span>
           </p>
+          
+          <div className="mx-auto mt-6 max-w-3xl">
+            <Alert className="border-primary/30 bg-primary/5">
+              <Lightning size={20} weight="duotone" className="text-primary" />
+              <AlertDescription className="text-sm">
+                <span className="font-semibold text-foreground">Live Integration:</span>{" "}
+                Connected to <span className="font-mono text-primary">api.grants.gov/v2</span> for real-time federal grant opportunities. 
+                All data is pulled directly from Grants.gov's official API with AI-powered relevance scoring.
+              </AlertDescription>
+            </Alert>
+          </div>
         </div>
 
         <div className="mb-8 grid gap-4 sm:mb-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -162,7 +174,7 @@ export default function DataIntegrationPage() {
         </div>
 
         <Tabs defaultValue="grants" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="grants">
               <Money size={18} weight="duotone" className="mr-2" />
               Grants
@@ -173,19 +185,28 @@ export default function DataIntegrationPage() {
             </TabsTrigger>
             <TabsTrigger value="crawler">
               <Lightning size={18} weight="duotone" className="mr-2" />
-              Multi-Source Crawler
+              Crawler
+            </TabsTrigger>
+            <TabsTrigger value="api-test">
+              <CheckCircle size={18} weight="duotone" className="mr-2" />
+              API Test
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="api-test" className="mt-6">
+            <GrantsAPITest />
+          </TabsContent>
 
           <TabsContent value="grants" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkle size={20} weight="duotone" className="text-primary" />
-                  Discover Grants
+                  Discover Federal Grants (Live API)
                 </CardTitle>
                 <CardDescription>
-                  Automated search of Grants.gov with AI-powered relevance analysis
+                  Real-time search of <span className="font-mono text-xs">api.grants.gov/v2/opportunities/search</span> with AI-powered relevance analysis. 
+                  Pulls actual federal grant opportunities from DOE, NSF, ED, ARPA-E, and more.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

@@ -24,58 +24,68 @@ export interface GrantsSearchResponse {
   opportunities: GrantOpportunity[]
 }
 
-const GRANTS_GOV_API_BASE = 'https://api.grants.gov/v1/api'
+const GRANTS_GOV_API_BASE = 'https://api.grants.gov/v2/opportunities/search'
 
 export async function searchGrantOpportunities(
   keywords: string,
   limit: number = 20
 ): Promise<GrantsSearchResponse> {
-  const params = new URLSearchParams({
+  const requestBody = {
     keyword: keywords,
-    oppStatuses: 'forecasted|posted',
-    sortBy: 'openDate|desc',
-    rows: limit.toString()
-  })
+    oppStatuses: ['forecasted', 'posted'],
+    sortBy: 'openDate',
+    sortOrder: 'desc',
+    from: 0,
+    size: limit
+  }
 
   try {
-    const response = await fetch(`${GRANTS_GOV_API_BASE}/search2?${params}`, {
-      method: 'GET',
+    const response = await fetch(GRANTS_GOV_API_BASE, {
+      method: 'POST',
       headers: {
-        'Accept': 'application/json'
-      }
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
     })
 
     if (!response.ok) {
-      throw new Error(`Grants.gov API error: ${response.statusText}`)
+      throw new Error(`Grants.gov API error: ${response.status} ${response.statusText}`)
     }
 
     const data = await response.json()
     
-    const opportunities: GrantOpportunity[] = (data.opportunitiesView || []).map((opp: any) => ({
-      id: opp.opportunityId || opp.opportunityNumber,
-      opportunityNumber: opp.opportunityNumber,
-      opportunityTitle: opp.opportunityTitle,
-      agencyName: opp.agencyName,
-      description: opp.description || opp.synopsis || '',
-      closeDate: opp.closeDate,
-      awardCeiling: opp.awardCeiling,
-      awardFloor: opp.awardFloor,
-      estimatedTotalProgramFunding: opp.estimatedTotalProgramFunding,
-      opportunityCategory: opp.opportunityCategory || opp.oppCategory || 'Unknown',
-      fundingInstrumentType: opp.fundingInstrumentType || 'Unknown',
-      eligibleApplicants: Array.isArray(opp.eligibleApplicants) 
-        ? opp.eligibleApplicants 
-        : typeof opp.eligibleApplicants === 'string'
-        ? [opp.eligibleApplicants]
-        : [],
-      additionalInfo: opp.additionalInfo,
-      cfda: opp.cfdaNumber,
-      opportunityStatus: opp.opportunityStatus,
-      url: `https://www.grants.gov/search-results-detail/${opp.opportunityNumber}`
-    }))
+    const opportunities: GrantOpportunity[] = (data.opportunities || []).map((opp: any) => {
+      const oppNumber = opp.opportunityNumber || opp.opportunityID || `UNK-${Math.random().toString(36).substr(2, 9)}`
+      
+      return {
+        id: opp.opportunityID || oppNumber,
+        opportunityNumber: oppNumber,
+        opportunityTitle: opp.opportunityTitle || 'Untitled Grant Opportunity',
+        agencyName: opp.agencyName || opp.agencyCode || 'Federal Agency',
+        description: opp.description || opp.synopsis || opp.opportunityTitle || '',
+        closeDate: opp.closeDate || opp.closeDateTimeStamp || '',
+        awardCeiling: opp.awardCeiling ? parseFloat(opp.awardCeiling) : undefined,
+        awardFloor: opp.awardFloor ? parseFloat(opp.awardFloor) : undefined,
+        estimatedTotalProgramFunding: opp.estimatedTotalProgramFunding ? parseFloat(opp.estimatedTotalProgramFunding) : undefined,
+        opportunityCategory: opp.opportunityCategory || opp.categoryOfFundingActivity || 'Discretionary',
+        fundingInstrumentType: opp.fundingInstrumentType || opp.fundingActivityCategory || 'Grant',
+        eligibleApplicants: Array.isArray(opp.eligibleApplicants) 
+          ? opp.eligibleApplicants 
+          : typeof opp.eligibleApplicants === 'string'
+          ? [opp.eligibleApplicants]
+          : opp.applicantEligibility
+          ? [opp.applicantEligibility]
+          : ['See opportunity details'],
+        additionalInfo: opp.additionalInformationOnEligibility || opp.additionalInformation,
+        cfda: opp.cfdaNumbers || opp.cfdaNumber,
+        opportunityStatus: opp.opportunityStatus || 'posted',
+        url: `https://www.grants.gov/search-results-detail/${oppNumber}`
+      }
+    })
 
     return {
-      totalRecords: data.totalRecords || opportunities.length,
+      totalRecords: data.totalRecords || data.total || opportunities.length,
       opportunities
     }
   } catch (error) {

@@ -7,8 +7,9 @@ A comprehensive platform showcasing the three-arm approach to ethical AI: Open S
 ### Core Platform
 - **Multi-page Application**: Home, Labs, Consulting, Policy, and Impact Ledger
 - **Responsive Design**: Mobile-first approach with progressive enhancement
-- **Real-time Data**: Integration with GitHub API for discovering ethical AI projects
-- **AI-Powered Analysis**: Automatic relevance scoring and categorization of discovered projects
+- **Real-time Data**: Integration with GitHub API and Grants.gov API
+- **AI-Powered Analysis**: Automatic relevance scoring and categorization of discovered projects and grants
+- **Live Federal Grant Discovery**: Connected to official Grants.gov API v2 for real-time federal funding opportunities
 
 ### Open Source Labs
 - Showcase of internal open-source projects
@@ -21,16 +22,24 @@ A comprehensive platform showcasing the three-arm approach to ethical AI: Open S
 - Service tier breakdown (Discovery, Pilot, Scale)
 - Client case studies with measurable impact metrics
 - Integration with Labs projects
+- **Grant Opportunity Alignment**: Match consulting capabilities with federal funding
 
 ### Policy Alliance
 - Policy memos and initiatives
 - Evidence-based recommendations
 - Status tracking (Concept, In Discussion, Enacted)
+- **Federal Grant Intelligence**: Track policy-relevant funding opportunities
 
 ### Impact Ledger
 - Comprehensive tracking of milestones across all three arms
-- Filterable events by type (Pilot, Policy, Publication, Partnership)
+- Filterable events by type (Pilot, Policy, Publication, Partnership, Grant Award)
 - Quantified metrics for each impact event
+
+### Data Integration Hub
+- **Real Grants.gov API**: Live federal grant opportunity search via `api.grants.gov/v2`
+- **AI Analysis**: Automated alignment scoring for discovered grants
+- **Multi-Source Crawler**: Unified ingestion from Grants.gov, GitHub, Data.gov, and more
+- **Persistent Storage**: Save and track promising opportunities across sessions
 
 ## Tech Stack
 
@@ -41,9 +50,34 @@ A comprehensive platform showcasing the three-arm approach to ethical AI: Open S
 - **Icons**: Phosphor Icons
 - **State Management**: React hooks + Spark KV persistence
 - **AI Integration**: Spark LLM API (GPT-4o-mini)
-- **API Integration**: GitHub REST API
+- **API Integrations**: 
+  - GitHub REST API (open-source project discovery)
+  - **Grants.gov API v2** (federal grant opportunities)
+  - Data.gov CKAN API (federal datasets)
+  - NSF Awards API (research funding)
+  - USAspending.gov API (federal contracts & awards)
 
 ## AI Features
+
+### Grant Discovery & Analysis
+The platform integrates with the official **Grants.gov API v2** to:
+
+1. **Search Federal Grants** in real-time across categories:
+   - Energy & AI
+   - Education Technology
+   - Local Government
+   - University Research
+2. **Analyze each grant** using AI (GPT-4o) to determine:
+   - Alignment score (0-100) with AltruisticXAI mission
+   - Recommended pillar (Labs/Consulting/Policy)
+   - Key strengths and challenges
+   - Actionable insights and next steps
+3. **Filter by priority agencies**: DOE, NSF, ED, ARPA-E, EDA, EERE, NETL
+4. **Track opportunities** with starring, notes, and persistent storage
+
+**API Endpoint**: `POST https://api.grants.gov/v2/opportunities/search`
+
+See [GRANTS_GOV_INTEGRATION.md](./GRANTS_GOV_INTEGRATION.md) for full documentation.
 
 ### Project Discovery
 The platform includes an intelligent project discovery system that:
@@ -84,20 +118,33 @@ src/
 ├── data/
 │   ├── impactEvents.ts
 │   ├── policyMemos.ts
-│   └── projects.ts
+│   ├── projects.ts
+│   └── schema.ts        # TypeScript interfaces for all data
+├── data-ingest/
+│   ├── apis/
+│   │   ├── grantsGov.ts    # Real Grants.gov API integration
+│   │   ├── usaspending.ts  # USAspending.gov API
+│   │   ├── nsfAwards.ts    # NSF Awards API
+│   │   └── dataGov.ts      # Data.gov CKAN API
+│   ├── transform/
+│   └── store/
 ├── hooks/
+│   ├── use-grant-discovery.ts    # Grant discovery hook with AI
 │   ├── use-discovered-projects.ts
 │   └── use-mobile.ts
 ├── lib/
-│   ├── ai-analyzer.ts    # AI-powered project analysis
-│   ├── github-api.ts     # GitHub API integration
+│   ├── ai-analyzer.ts        # AI-powered project analysis
+│   ├── grant-analyzer.ts     # AI-powered grant analysis
+│   ├── grants-api.ts         # Grants.gov API client
+│   ├── github-api.ts         # GitHub API integration
 │   └── utils.ts
 ├── pages/
 │   ├── HomePage.tsx
 │   ├── LabsPage.tsx
 │   ├── ConsultingPage.tsx
 │   ├── PolicyPage.tsx
-│   └── ImpactLedgerPage.tsx
+│   ├── ImpactLedgerPage.tsx
+│   └── DataIntegrationPage.tsx  # Grant & project discovery
 ├── App.tsx
 └── index.css
 ```
