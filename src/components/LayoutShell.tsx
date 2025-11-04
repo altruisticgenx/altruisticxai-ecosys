@@ -1,8 +1,8 @@
 import { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { cn } from "@/lib/utils"
 import { Flask, Briefcase, Scroll, ChartLineUp } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 interface LayoutShellProps {
   children: ReactNode
@@ -16,93 +16,85 @@ export default function LayoutShell({ children }: LayoutShellProps) {
     { href: "/labs", label: "Labs", icon: Flask },
     { href: "/consulting", label: "Consulting", icon: Briefcase },
     { href: "/policy", label: "Policy", icon: Scroll },
-    { href: "/impact-ledger", label: "Impact", icon: ChartLineUp }
+    { href: "/impact-ledger", label: "Impact Ledger", icon: ChartLineUp },
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50"
-        style={{ perspective: "1000px" }}
-      >
-        <div className="mx-auto max-w-6xl px-3 sm:px-4">
-          <div className="flex h-12 sm:h-14 items-center justify-between gap-2">
-            <Link to="/" className="flex items-center gap-1.5 sm:gap-2">
-              <motion.div 
-                whileHover={{ rotateY: 180 }}
-                transition={{ duration: 0.6 }}
-                className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <span className="text-sm sm:text-base font-bold text-primary-foreground">AX</span>
-              </motion.div>
-              <div className="hidden xs:block">
-                <h1 className="text-xs sm:text-sm font-bold text-foreground">AltruisticXAI</h1>
-              </div>
-            </Link>
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <span className="text-xl font-bold text-primary">A</span>
+            </div>
+            <span className="text-lg font-semibold tracking-tight text-foreground">
+              AltruisticXAI
+            </span>
+          </Link>
 
-            <nav className="flex items-center gap-0.5 sm:gap-1">
+          <nav className="flex items-center gap-1">
+            <motion.div 
+              className="flex items-center gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              style={{ transformStyle: "preserve-3d" }}
+            >
               {navItems.map((item, index) => {
-                const isActive = item.href === "/" 
+                const isActive = item.href === "/"
                   ? location.pathname === "/" 
                   : location.pathname.startsWith(item.href)
                 const Icon = item.icon
-
                 return (
                   <motion.div
                     key={item.href}
-                    initial={{ opacity: 0, rotateX: -90 }}
+                    initial={{ opacity: 0, rotateX: -10 }}
                     animate={{ opacity: 1, rotateX: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.4 }}
-                    whileHover={{ 
-                      scale: 1.05,
+                    transition={{ 
+                      delay: index * 0.1,
+                      duration: 0.5,
                       rotateX: 10,
-                      z: 20
                     }}
-                    whileTap={{ scale: 0.95 }}
                     style={{ transformStyle: "preserve-3d" }}
                   >
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex items-center gap-1 rounded-md px-1.5 py-1.5 sm:px-2.5 sm:py-2 text-xs sm:text-sm font-medium transition-all",
-                        "shadow-sm",
+                        "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all duration-300",
                         isActive
-                          ? "bg-primary text-primary-foreground shadow-primary/20"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground hover:shadow-md"
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                       )}
                       style={{
                         transform: isActive ? "translateZ(10px)" : "translateZ(0px)",
-                        boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.15)" : undefined
                       }}
                     >
-                      {Icon && <Icon size={14} weight={isActive ? "fill" : "regular"} className="sm:w-4 sm:h-4" />}
-                      <span className="hidden xs:inline text-[10px] sm:text-xs">{item.label}</span>
+                      {Icon && <Icon size={14} weight={isActive ? "fill" : "regular"} />}
+                      <span className="hidden sm:inline">{item.label}</span>
                     </Link>
                   </motion.div>
                 )
               })}
-            </nav>
-          </div>
+            </motion.div>
+          </nav>
         </div>
-      </motion.header>
+      </header>
 
-      <main>{children}</main>
+      <main className="flex-1">
+        {children}
+      </main>
 
-      <footer className="border-t border-border bg-muted/30 mt-20">
+      <footer className="border-t border-border bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-foreground">AltruisticXAI</h3>
               <p className="text-sm text-muted-foreground">
-                Building ethical AI systems that serve the public interest through open-source innovation, 
+                Building trust in AI through open-source innovation, 
                 strategic consulting, and policy advocacy.
               </p>
             </div>
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-foreground">Three-Arm Approach</h3>
+              <h3 className="mb-3 text-sm font-semibold text-foreground">Our Work</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Open Source Labs (Trust Engine)</li>
                 <li>Consulting Studio (Revenue Engine)</li>
@@ -112,13 +104,12 @@ export default function LayoutShell({ children }: LayoutShellProps) {
             <div>
               <h3 className="mb-3 text-sm font-semibold text-foreground">Connect</h3>
               <p className="text-sm text-muted-foreground">
-                Interested in collaborating? Reach out to discuss partnerships, pilot opportunities, 
-                or policy initiatives.
+                Interested in collaboration or consultation?
               </p>
             </div>
           </div>
           <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-            © 2024 AltruisticXAI. Open Source · Public Interest · Ethical AI.
+            © 2024 AltruisticXAI. Building ethical AI for the public good.
           </div>
         </div>
       </footer>

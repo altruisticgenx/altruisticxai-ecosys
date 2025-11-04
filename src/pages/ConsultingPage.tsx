@@ -138,7 +138,7 @@ export default function ConsultingPage() {
                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
                       <ChartBar size={24} weight="duotone" className="text-accent" />
                     </div>
-                    <CardTitle className="text-xl">{project.clientName || project.client}</CardTitle>
+                    <CardTitle className="text-xl">{project.clientName}</CardTitle>
                     <Badge variant="outline" className="w-fit font-normal">
                       {project.sector}
                     </Badge>
@@ -237,8 +237,8 @@ export default function ConsultingPage() {
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <CardTitle className="text-2xl">{project.title}</CardTitle>
-                      {project.client && (
-                        <p className="mt-1 text-sm font-medium text-secondary">{project.client}</p>
+                      {project.clientName && (
+                        <p className="mt-1 text-sm font-medium text-secondary">{project.clientName}</p>
                       )}
                     </div>
                     <Badge 
