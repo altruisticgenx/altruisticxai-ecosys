@@ -12,7 +12,6 @@ import { useDataCrawler } from "@/hooks/use-data-crawler"
 import { toast } from "sonner"
 import { validateData } from "@/data-ingest/validate"
 
-function getLastUpdated(crawlerData: any) {
   if (!crawlerData?.lastIngestTimestamp) return null
   return new Date(crawlerData.lastIngestTimestamp).toISOString().slice(0, 10)
 }
