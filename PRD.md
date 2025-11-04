@@ -141,11 +141,17 @@ Typography should convey **modern professionalism with warmth and approachabilit
   - Component gaps: gap-2 (tight), gap-4 (standard), gap-8 (sections)
 
 - **Mobile**: 
-  - Navigation collapses to icon-only on small screens, labels visible sm+
+  - **Mobile-First Approach**: All components designed for mobile first, then enhanced for larger screens
+  - Navigation: Hamburger menu with slide-out Sheet on mobile, full horizontal nav on desktop
   - Grid layouts: 1 column mobile, 2 columns md+, 3 columns for feature showcases on lg+
   - Tab lists: Full width on mobile with equal distribution, compact on desktop
   - Cards: Full width mobile with adequate padding, 2-column grid md+
-  - Tables: Hide non-essential columns on mobile (metrics), show on lg+
-  - Font sizes: Slightly reduced on mobile (H1: 40px → 48px at sm+)
-  - Touch targets: Minimum 44x44px for all interactive elements
+  - Tables: Card-based layout on mobile (vertical stack), traditional table on md+
+  - Impact events: Individual cards with left border accent on mobile, table rows on desktop
+  - Font sizes: Fluid typography that scales (base 15px mobile → 16px desktop)
+  - Touch targets: Minimum 44x44px for all interactive elements, touch-manipulation CSS
   - Discovery filters: Stack vertically on mobile, horizontal on sm+
+  - Hero section: Gradient text, responsive badge, staggered animations
+  - Smooth page transitions: AnimatePresence with fade/slide effects between routes
+  - Safe area insets: Support for notched devices with env(safe-area-inset-*)
+  - Reduced motion: Respects prefers-reduced-motion for accessibility
