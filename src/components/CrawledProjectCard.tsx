@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Buildings, TrendUp, Database, Star } from "@phosphor-icons/react"
 
-interface DiscoveredProjectCardProps {
+interface CrawledProjectCardProps {
   project: Project
 }
 
-export default function DiscoveredProjectCard({ project }: DiscoveredProjectCardProps) {
+export default function CrawledProjectCard({ project }: CrawledProjectCardProps) {
   const isPriority = (project.priorityScore ?? 0) >= 80
 
   const getSourceBadgeColor = (source: string) => {

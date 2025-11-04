@@ -1,16 +1,34 @@
 import LayoutShell from "@/components/LayoutShell"
 import ImpactTable from "@/components/ImpactTable"
+import CrawledProjectCard from "@/components/CrawledProjectCard"
 import { impactEvents, ImpactEvent } from "@/data/impactEvents"
-import { ChartLineUp, Rocket, Scroll, BookOpen, Handshake } from "@phosphor-icons/react"
+import { ChartLineUp, Rocket, Scroll, BookOpen, Handshake, Database, CloudArrowDown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useDataCrawler } from "@/hooks/use-data-crawler"
+import { toast } from "sonner"
 
 export default function ImpactLedgerPage() {
+  const { crawlerData, isIngesting, runIngest, getPriorityProjects } = useDataCrawler()
+  
   const allEvents = impactEvents as ImpactEvent[]
   const pilotEvents = allEvents.filter(e => e.type === "pilot")
   const policyEvents = allEvents.filter(e => e.type === "policy")
   const publicationEvents = allEvents.filter(e => e.type === "publication")
   const partnershipEvents = allEvents.filter(e => e.type === "partnership")
+  
+  const priorityProjects = getPriorityProjects()
+  
+  const handleRunCrawler = async () => {
+    try {
+      await runIngest()
+      toast.success("Data crawler completed successfully!")
+    } catch (error) {
+      toast.error("Crawler failed: " + (error instanceof Error ? error.message : "Unknown error"))
+    }
+  }
 
   const stats = [
     { 
@@ -32,9 +50,9 @@ export default function ImpactLedgerPage() {
       color: "text-accent"
     },
     { 
-      label: "Partnerships", 
-      value: partnershipEvents.length.toString(), 
-      icon: Handshake,
+      label: "Crawled Projects", 
+      value: (crawlerData?.projects?.length ?? 0).toString(), 
+      icon: Database,
       color: "text-muted-foreground"
     }
   ]
@@ -56,7 +74,30 @@ export default function ImpactLedgerPage() {
             <span className="font-medium text-foreground"> This ledger demonstrates how open-source innovation, client deployments, and policy 
             advocacy reinforce each other to create systemic change.</span>
           </p>
+          
+          <div className="mt-6">
+            <Button
+              onClick={handleRunCrawler}
+              disabled={isIngesting}
+              className="shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5"
+            >
+              <CloudArrowDown size={18} weight="bold" className="mr-2" />
+              {isIngesting ? "Crawling..." : "Run Federal Data Crawler"}
+            </Button>
+          </div>
+          
+          {crawlerData?.lastIngestTimestamp && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Last crawled: {new Date(crawlerData.lastIngestTimestamp).toLocaleString()}
+            </p>
+          )}
         </div>
+
+        {crawlerData?.error && (
+          <Alert variant="destructive" className="mb-8">
+            <AlertDescription>{crawlerData.error}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => {
@@ -82,8 +123,9 @@ export default function ImpactLedgerPage() {
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="mb-8 grid w-full grid-cols-2 gap-2 sm:grid-cols-5 sm:gap-0">
+          <TabsList className="mb-8 grid w-full grid-cols-2 gap-2 sm:grid-cols-6 sm:gap-0">
             <TabsTrigger value="all" className="text-sm">All Events</TabsTrigger>
+            <TabsTrigger value="discovered" className="text-sm">Discovered Projects</TabsTrigger>
             <TabsTrigger value="pilot" className="text-sm">Pilots</TabsTrigger>
             <TabsTrigger value="policy" className="text-sm">Policy</TabsTrigger>
             <TabsTrigger value="publication" className="text-sm">Publications</TabsTrigger>
@@ -92,6 +134,33 @@ export default function ImpactLedgerPage() {
 
           <TabsContent value="all">
             <ImpactTable events={allEvents} />
+          </TabsContent>
+          
+          <TabsContent value="discovered">
+            {priorityProjects.length > 0 ? (
+              <div className="space-y-6">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-bold text-foreground">{priorityProjects.length} high-priority projects</span> discovered from federal APIs (USAspending, NSF Awards).
+                    These are automatically scored based on geographic relevance (Maine, New England, PA) and sector alignment (energy, AI, education).
+                  </p>
+                </div>
+                
+                <div className="grid gap-6 md:grid-cols-2">
+                  {priorityProjects.map((project) => (
+                    <CrawledProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex min-h-[400px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/50 p-12 text-center">
+                <Database size={48} weight="duotone" className="mb-4 text-muted-foreground" />
+                <h3 className="mb-2 text-lg font-bold">No Projects Discovered Yet</h3>
+                <p className="mb-6 max-w-sm text-sm text-muted-foreground">
+                  Click "Run Federal Data Crawler" above to automatically discover relevant energy and AI projects from federal databases.
+                </p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="pilot">
