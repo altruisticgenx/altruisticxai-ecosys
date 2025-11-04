@@ -1,94 +1,94 @@
 import { useState, useCallback } from "react"
-import { useKV } from "@github/spark/hooks"
-import { runFullIngest, IngestResult } from "../data-ingest/run-ingest"
-import { Project, GrantOpportunity, OpenDataset } from "../data/schema"
+import { runFullIngest, IngestResult } from
 
-export interface CrawlerState {
   projects: Project[]
-  grants: GrantOpportunity[]
-  datasets: OpenDataset[]
-  lastIngestTimestamp?: string
-  sources?: IngestResult["sources"]
-  isLoading: boolean
+
+  sources?: IngestResult["sourc
   error?: string
-}
 
-export function useDataCrawler() {
-  const [crawlerData, setCrawlerData] = useKV<CrawlerState>("crawler-data", {
-    projects: [],
+  const [crawlerData, set
     grants: [],
-    datasets: [],
     isLoading: false,
-  })
 
-  const [isIngesting, setIsIngesting] = useState(false)
 
-  const runIngest = useCallback(async () => {
-    setIsIngesting(true)
-    setCrawlerData((current) => {
-      const base = current || { projects: [], grants: [], datasets: [], isLoading: false }
-      return {
+ 
+
         ...base,
-        isLoading: true,
         error: undefined,
-      }
     })
-
     try {
-      const result = await runFullIngest()
 
-      setCrawlerData({
-        projects: result.projects,
-        grants: result.grants,
-        datasets: result.datasets,
-        lastIngestTimestamp: result.timestamp,
-        sources: result.sources,
-        isLoading: false,
+        projects: res
+    
+
       })
-      return result
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Ingest failed"
+
       setCrawlerData((current) => {
-        const base = current || { projects: [], grants: [], datasets: [], isLoading: false }
         return {
-          ...base,
           isLoading: false,
-          error: errorMessage,
         }
-      })
-      throw error
-    } finally {
-      setIsIngesting(false)
-    }
+      throw er
+      setIsInges
   }, [setCrawlerData])
+  const getHighPriorityPr
+    ret
+      
 
-  const getHighPriorityProjects = useCallback(() => {
-    if (!crawlerData) return []
-    return crawlerData.projects
-      .filter(p => (p.priorityScore ?? 0) >= 80)
-      .sort((a, b) => (b.priorityScore ?? 0) - (a.priorityScore ?? 0))
-  }, [crawlerData])
+    if (!
+      .filter(g => (g.alignmentScore ?? 0)
 
-  const getHighAlignmentGrants = useCallback(() => {
-    if (!crawlerData) return []
-    return crawlerData.grants
-      .filter(g => (g.alignmentScore ?? 0) >= 70)
-      .sort((a, b) => (b.alignmentScore ?? 0) - (a.alignmentScore ?? 0))
-  }, [crawlerData])
-
-  const getRelevantDatasets = useCallback(() => {
-    if (!crawlerData) return []
+  const getRelevantDat
     return crawlerData.datasets
-      .filter(d => (d.relevanceScore ?? 0) >= 60)
-      .sort((a, b) => (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0))
-  }, [crawlerData])
+      .sort((a, b) => (b.relev
 
-  return {
     crawlerData,
-    isIngesting,
     runIngest,
-    getHighPriorityProjects,
-    getHighAlignmentGrants,
-    getRelevantDatasets,
+    getHighAlignmentGrant
   }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
