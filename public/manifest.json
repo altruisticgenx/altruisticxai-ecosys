@@ -1,24 +1,17 @@
 {
-  "name": "AltruisticXAI - Ethical AI Platform",
+  "name": "AltruisticXAI Ecosystem - Open AI Labs, Consulting & Policy",
   "short_name": "AltruisticXAI",
-  "description": "Building trust in AI through open-source innovation, strategic consulting, and evidence-based policy advocacy",
+  "description": "Turn open tools into policy-backed pilots. From GitHub, to campus, to statehouse.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#faf8fc",
   "theme_color": "#c77bb5",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+  "orientation": "any",
+  "categories": ["business", "education", "productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [],
+  "screenshots": [],
+  "prefer_related_applications": false
 }

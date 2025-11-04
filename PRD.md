@@ -141,17 +141,21 @@ Typography should convey **modern professionalism with warmth and approachabilit
   - Component gaps: gap-2 (tight), gap-4 (standard), gap-8 (sections)
 
 - **Mobile**: 
-  - **Mobile-First Approach**: All components designed for mobile first, then enhanced for larger screens
-  - Navigation: Hamburger menu with slide-out Sheet on mobile, full horizontal nav on desktop
-  - Grid layouts: 1 column mobile, 2 columns md+, 3 columns for feature showcases on lg+
+  - **Mobile-First Approach**: All components designed for mobile first with touch-optimized interactions
+  - **PWA Features**: Full Progressive Web App support with service worker caching, offline capability, and install prompts
+  - Navigation: Compact header on mobile with icon-based shortcuts, full horizontal nav on desktop
+  - Grid layouts: 1 column mobile (gap-3), 2 columns md+ (gap-4), 3 columns for feature showcases on lg+ (gap-4)
   - Tab lists: Full width on mobile with equal distribution, compact on desktop
-  - Cards: Full width mobile with adequate padding, 2-column grid md+
+  - Cards: Full width mobile with optimized padding (p-4), responsive grid with consistent gaps
   - Tables: Card-based layout on mobile (vertical stack), traditional table on md+
   - Impact events: Individual cards with left border accent on mobile, table rows on desktop
-  - Font sizes: Fluid typography that scales (base 15px mobile → 16px desktop)
-  - Touch targets: Minimum 44x44px for all interactive elements, touch-manipulation CSS
+  - Font sizes: Fluid typography (15px mobile → 15.5px tablet → 16px desktop)
+  - Touch targets: Minimum 44x44px for all interactive elements, touch-manipulation CSS on all buttons/links
   - Discovery filters: Stack vertically on mobile, horizontal on sm+
-  - Hero section: Gradient text, responsive badge, staggered animations
-  - Smooth page transitions: AnimatePresence with fade/slide effects between routes
-  - Safe area insets: Support for notched devices with env(safe-area-inset-*)
-  - Reduced motion: Respects prefers-reduced-motion for accessibility
+  - Hero section: Responsive gradient text (3xl → 4xl → 5xl), animated badge, smooth scroll-triggered animations
+  - Smooth transitions: Framer Motion with staggered children, reduced motion support
+  - Safe area insets: Full support for notched devices with viewport-fit=cover
+  - Reduced motion: Respects prefers-reduced-motion with instant transitions
+  - Active states: Scale transforms (0.95-0.98) on tap for tactile feedback
+  - Backdrop blur: Used sparingly for depth on cards and overlays
+  - Responsive spacing: Adjusts padding and gaps at breakpoints (sm: 640px, md: 768px, lg: 1024px)
