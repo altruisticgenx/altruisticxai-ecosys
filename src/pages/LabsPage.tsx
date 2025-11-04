@@ -55,7 +55,7 @@ export default function LabsPage() {
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Open Source Labs
           </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
             Experimental projects pushing the boundaries of explainable AI, energy transparency, and ethical technology. 
             <span className="font-medium text-foreground"> All code is public, reproducible, and ready to deploy.</span>
           </p>
@@ -126,9 +126,9 @@ export default function LabsPage() {
 
         <Tabs defaultValue="our-projects" className="w-full">
           <TabsList className="mb-6 grid w-full grid-cols-2 sm:mb-8">
-            <TabsTrigger value="our-projects" className="text-sm sm:text-base">Our Projects</TabsTrigger>
-            <TabsTrigger value="discover" className="text-sm sm:text-base">
-              <Sparkle size={14} className="mr-1.5 sm:mr-2 sm:h-4 sm:w-4" weight="fill" />
+            <TabsTrigger value="our-projects" className="text-sm">Our Projects</TabsTrigger>
+            <TabsTrigger value="discover" className="text-sm">
+              <Sparkle size={14} className="mr-1.5 sm:mr-2" weight="fill" />
               AI Discovery
             </TabsTrigger>
           </TabsList>
@@ -138,7 +138,7 @@ export default function LabsPage() {
               <h2 className="mb-2 text-2xl font-semibold text-foreground sm:text-3xl">
                 Active Projects
               </h2>
-              <p className="text-sm text-muted-foreground sm:text-base">
+              <p className="text-sm text-muted-foreground">
                 Open-source initiatives advancing transparency, privacy, and ethical AI.
               </p>
             </div>
@@ -161,21 +161,21 @@ export default function LabsPage() {
                         {project.status}
                       </Badge>
                     </div>
-                    <CardDescription className="text-sm leading-relaxed sm:text-base">
+                    <CardDescription className="text-sm leading-relaxed">
                       {project.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <div className="space-y-3 sm:space-y-4">
                       <div>
-                        <h4 className="mb-1.5 text-xs font-semibold text-foreground sm:mb-2 sm:text-sm">Sector</h4>
+                        <h4 className="mb-1.5 text-sm font-semibold text-foreground sm:mb-2">Sector</h4>
                         <Badge variant="outline" className="text-xs font-normal">
                           {project.sector}
                         </Badge>
                       </div>
                       {project.tags && project.tags.length > 0 && (
                         <div>
-                          <h4 className="mb-1.5 text-xs font-semibold text-foreground sm:mb-2 sm:text-sm">Tags</h4>
+                          <h4 className="mb-1.5 text-sm font-semibold text-foreground sm:mb-2">Tags</h4>
                           <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             {project.tags.map((tag) => (
                               <Badge key={tag} variant="secondary" className="text-xs font-normal">
@@ -186,7 +186,7 @@ export default function LabsPage() {
                         </div>
                       )}
                       <div>
-                        <h4 className="mb-1.5 text-xs font-semibold text-foreground sm:mb-2 sm:text-sm">Tech Stack</h4>
+                        <h4 className="mb-1.5 text-sm font-semibold text-foreground sm:mb-2">Tech Stack</h4>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {project.techStack.map((tech) => (
                             <Badge key={tech} variant="secondary" className="text-xs font-normal">
@@ -209,9 +209,9 @@ export default function LabsPage() {
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2"
                       >
-                        <GitBranch size={18} weight="bold" className="sm:h-5 sm:w-5" />
-                        <span className="text-sm sm:text-base">View Repository</span>
-                        <ArrowRight size={18} weight="bold" className="sm:h-5 sm:w-5" />
+                        <GitBranch size={18} weight="bold" />
+                        <span className="text-sm">View Repository</span>
+                        <ArrowRight size={18} weight="bold" />
                       </a>
                     </Button>
                   </CardFooter>
@@ -225,18 +225,18 @@ export default function LabsPage() {
               <h2 className="mb-2 text-2xl font-semibold text-foreground sm:text-3xl">
                 Discover Aligned Open-Source Projects
               </h2>
-              <p className="text-sm text-muted-foreground sm:text-base">
+              <p className="text-sm text-muted-foreground">
                 Use AI to discover and analyze open-source projects that align with our ethical AI mission.
               </p>
             </div>
 
             <Card className="mb-6 border-2 border-primary/20 bg-primary/5 sm:mb-8">
               <CardHeader className="pb-3 sm:pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                  <MagnifyingGlass size={20} weight="duotone" className="text-primary sm:h-6 sm:w-6" />
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <MagnifyingGlass size={20} weight="duotone" className="text-primary" />
                   Search for Projects
                 </CardTitle>
-                <CardDescription className="text-sm sm:text-base">
+                <CardDescription className="text-sm">
                   Select a topic and let AI analyze GitHub repositories for relevance to ethical AI principles.
                 </CardDescription>
               </CardHeader>
@@ -259,17 +259,17 @@ export default function LabsPage() {
                   <Button 
                     onClick={handleDiscover} 
                     disabled={isLoading}
-                    className="h-10 gap-2 touch-manipulation sm:h-11"
+                    className="h-10 gap-2 touch-manipulation"
                   >
                     {isLoading ? (
                       <>
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        <span className="text-sm sm:text-base">Analyzing...</span>
+                        <span className="text-sm">Analyzing...</span>
                       </>
                     ) : (
                       <>
-                        <Sparkle size={18} weight="fill" className="sm:h-5 sm:w-5" />
-                        <span className="text-sm sm:text-base">Discover Projects</span>
+                        <Sparkle size={18} weight="fill" />
+                        <span className="text-sm">Discover Projects</span>
                       </>
                     )}
                   </Button>
@@ -283,10 +283,10 @@ export default function LabsPage() {
 
                 {(discoveredProjects || []).length > 0 && (
                   <div className="flex items-center justify-between border-t border-border pt-3 sm:pt-4">
-                    <p className="text-xs text-muted-foreground sm:text-sm">
+                    <p className="text-sm text-muted-foreground">
                       {(discoveredProjects || []).length} project{(discoveredProjects || []).length !== 1 ? 's' : ''} discovered
                     </p>
-                    <Button variant="outline" size="sm" onClick={clearAll} className="h-8 touch-manipulation text-xs sm:h-9 sm:text-sm">
+                    <Button variant="outline" size="sm" onClick={clearAll} className="h-8 touch-manipulation text-sm">
                       Clear All
                     </Button>
                   </div>
@@ -307,8 +307,8 @@ export default function LabsPage() {
             ) : (
               <Card className="border-2 border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center sm:py-16">
-                  <MagnifyingGlass size={48} weight="duotone" className="mb-3 text-muted-foreground sm:mb-4 sm:h-16 sm:w-16" />
-                  <h3 className="mb-2 text-lg font-semibold text-foreground sm:text-xl">
+                  <MagnifyingGlass size={48} weight="duotone" className="mb-3 text-muted-foreground sm:mb-4" />
+                  <h3 className="mb-2 text-xl font-semibold text-foreground">
                     No Projects Discovered Yet
                   </h3>
                   <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -321,11 +321,11 @@ export default function LabsPage() {
         </Tabs>
 
         <div className="mt-12 rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 text-center sm:mt-16 sm:p-10">
-          <Rocket size={48} weight="duotone" className="mx-auto mb-4 text-primary sm:h-14 sm:w-14" />
+          <Rocket size={48} weight="duotone" className="mx-auto mb-4 text-primary" />
           <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
             Have an idea for a Labs project?
           </h3>
-          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             We're always looking for new challenges in AI transparency, privacy-preserving ML, and sustainable technology. 
             <span className="font-medium text-foreground"> Partner with us to turn research into reality.</span>
           </p>

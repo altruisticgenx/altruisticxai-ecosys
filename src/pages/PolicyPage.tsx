@@ -35,7 +35,7 @@ export default function PolicyPage() {
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Policy Alliance
           </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
             We transform real-world implementation results into evidence-based policy recommendations. 
             <span className="font-medium text-foreground"> By documenting measurable outcomes from our Labs projects and consulting engagements, 
             we advocate for structural changes that scale ethical AI beyond individual organizations.</span>
@@ -43,7 +43,7 @@ export default function PolicyPage() {
         </div>
 
         <div className="mb-20">
-          <h2 className="mb-8 text-center text-3xl font-semibold text-foreground">
+          <h2 className="mb-8 text-center text-2xl font-semibold text-foreground sm:text-3xl">
             Our Policy Framework
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
@@ -52,7 +52,7 @@ export default function PolicyPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
                   <Scroll className="text-accent" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Evidence-Based</CardTitle>
+                <CardTitle className="text-base">Evidence-Based</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -67,7 +67,7 @@ export default function PolicyPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
                   <CheckCircle className="text-accent" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Implementable</CardTitle>
+                <CardTitle className="text-base">Implementable</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -82,7 +82,7 @@ export default function PolicyPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
                   <Rocket className="text-accent" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Demand-Creating</CardTitle>
+                <CardTitle className="text-base">Demand-Creating</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -95,10 +95,10 @@ export default function PolicyPage() {
         </div>
 
         <div className="mb-8">
-          <h2 className="mb-2 text-3xl font-semibold text-foreground">
+          <h2 className="mb-2 text-2xl font-semibold text-foreground sm:text-3xl">
             Policy Memos & Initiatives
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Current policy recommendations derived from our project outcomes and research findings.
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function PolicyPage() {
                               </Badge>
                               <Badge variant="outline">{memo.jurisdiction}</Badge>
                             </div>
-                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            <CardTitle className="text-xl">{memo.title}</CardTitle>
                             {memo.datePublished && (
                               <p className="mt-1 text-sm text-muted-foreground">
                                 Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
@@ -138,7 +138,7 @@ export default function PolicyPage() {
                             )}
                           </div>
                         </div>
-                        <CardDescription className="text-base">
+                        <CardDescription className="text-sm">
                           {memo.summary}
                         </CardDescription>
                       </CardHeader>
@@ -193,7 +193,7 @@ export default function PolicyPage() {
                               </Badge>
                               <Badge variant="outline">{memo.jurisdiction}</Badge>
                             </div>
-                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            <CardTitle className="text-xl">{memo.title}</CardTitle>
                             {memo.datePublished && (
                               <p className="mt-1 text-sm text-muted-foreground">
                                 Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
@@ -204,7 +204,7 @@ export default function PolicyPage() {
                             )}
                           </div>
                         </div>
-                        <CardDescription className="text-base">
+                        <CardDescription className="text-sm">
                           {memo.summary}
                         </CardDescription>
                       </CardHeader>
@@ -259,7 +259,7 @@ export default function PolicyPage() {
                               </Badge>
                               <Badge variant="outline">{memo.jurisdiction}</Badge>
                             </div>
-                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            <CardTitle className="text-xl">{memo.title}</CardTitle>
                             {memo.datePublished && (
                               <p className="mt-1 text-sm text-muted-foreground">
                                 Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
@@ -270,7 +270,7 @@ export default function PolicyPage() {
                             )}
                           </div>
                         </div>
-                        <CardDescription className="text-base">
+                        <CardDescription className="text-sm">
                           {memo.summary}
                         </CardDescription>
                       </CardHeader>
@@ -304,11 +304,11 @@ export default function PolicyPage() {
         </div>
 
         <div className="mt-16 rounded-2xl border-2 border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent p-8 text-center sm:p-10">
-          <Scroll size={56} weight="duotone" className="mx-auto mb-4 text-accent" />
+          <Scroll size={48} weight="duotone" className="mx-auto mb-4 text-accent" />
           <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
             Partner on Policy Research
           </h3>
-          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Are you working on AI governance, transparency standards, or privacy regulations? 
             <span className="font-medium text-foreground"> We can provide technical expertise and real-world case studies to support evidence-based 
             policy development. Let's collaborate to create implementable standards.</span>

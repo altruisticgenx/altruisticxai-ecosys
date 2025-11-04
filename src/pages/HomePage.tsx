@@ -143,7 +143,7 @@ export default function HomePage() {
               that actually ship.
             </h1>
             
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
               AltruisticXAI is a connected ecosystem: we ship{" "}
               <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
               <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
@@ -199,10 +199,10 @@ export default function HomePage() {
         >
           <motion.div variants={itemVariants}>
             <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-              <h2 className="text-lg font-semibold sm:text-xl lg:text-2xl">
+              <h2 className="text-2xl font-semibold sm:text-3xl">
                 Three engines. One ecosystem.
               </h2>
-              <p className="max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
                 Everything is designed as a flywheel:{" "}
                 <span className="text-foreground">Open Source Labs → Consulting Studio → Policy Alliance → back to Labs.</span>
               </p>
@@ -254,10 +254,10 @@ export default function HomePage() {
           variants={fadeIn}
         >
           <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 p-4 sm:p-6">
-            <h2 className="mb-2 text-base font-semibold sm:mb-3 sm:text-lg lg:text-xl">
+            <h2 className="mb-2 text-2xl font-semibold sm:mb-3 sm:text-3xl">
               The flywheel: from GitHub to budget line
             </h2>
-            <p className="mb-4 text-xs leading-relaxed text-muted-foreground sm:mb-5 sm:text-sm">
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground sm:mb-5">
               This isn't "slide deck → shrug." It's a simple, repeatable loop:
             </p>
             <div className="grid gap-2.5 sm:gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -276,7 +276,7 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-50px" }}
           variants={containerVariants}
         >
-          <motion.h2 className="text-lg font-semibold sm:text-xl lg:text-2xl" variants={itemVariants}>
+          <motion.h2 className="text-2xl font-semibold sm:text-3xl" variants={itemVariants}>
             Who plugs into this?
           </motion.h2>
           <motion.div 
@@ -314,12 +314,12 @@ export default function HomePage() {
             variants={itemVariants}
           >
             <div>
-              <h2 className="text-lg font-semibold sm:text-xl lg:text-2xl">Recent pilots & signals</h2>
-              <p className="text-xs text-muted-foreground sm:text-sm">Latest from the Impact Ledger</p>
+              <h2 className="text-2xl font-semibold sm:text-3xl">Recent pilots & signals</h2>
+              <p className="text-sm text-muted-foreground">Latest from the Impact Ledger</p>
             </div>
             <Link
               to="/impact-ledger"
-              className="group inline-flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:text-secondary sm:text-sm"
+              className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-secondary"
             >
               Open the full Impact Ledger
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
@@ -366,8 +366,8 @@ export default function HomePage() {
 function FlywheelStep({ label, detail }: { label: string; detail: string }) {
   return (
     <div className="flex-1 rounded-xl border border-border bg-background/60 p-3 backdrop-blur-sm transition-all hover:bg-background/80 sm:p-3.5">
-      <div className="mb-1 text-[11px] font-semibold text-primary sm:text-xs">{label}</div>
-      <div className="text-[11px] leading-relaxed text-muted-foreground sm:text-xs">{detail}</div>
+      <div className="mb-1 text-sm font-semibold text-primary">{label}</div>
+      <div className="text-sm leading-relaxed text-muted-foreground">{detail}</div>
     </div>
   )
 }

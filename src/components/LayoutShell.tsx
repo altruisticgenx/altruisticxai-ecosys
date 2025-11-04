@@ -73,7 +73,7 @@ export default function LayoutShell({ children }: LayoutShellProps) {
                       <Link
                         key={item.href}
                         to={item.href}
-                        className={`flex items-center gap-3 rounded-lg px-4 py-3.5 text-base font-medium transition-all ${
+                        className={`flex items-center gap-3 rounded-lg px-4 py-3.5 text-sm font-medium transition-all ${
                           active
                             ? "bg-primary/10 text-primary shadow-sm"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -106,7 +106,7 @@ export default function LayoutShell({ children }: LayoutShellProps) {
                   >
                     <Link
                       to={item.href}
-                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all lg:text-base ${
+                      className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
                         active
                           ? "bg-primary/10 text-primary shadow-sm"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -147,22 +147,22 @@ export default function LayoutShell({ children }: LayoutShellProps) {
                 </div>
                 <span className="text-lg font-bold text-foreground">AltruisticXAI</span>
               </div>
-              <p className="mb-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+              <p className="mb-4 max-w-md text-base leading-relaxed text-muted-foreground">
                 Building trust in AI through open-source innovation, strategic consulting, 
                 and evidence-based policy advocacy. Join us in creating ethical AI solutions that scale.
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button asChild size="sm" variant="default" className="rounded-full">
+                <Button asChild size="default" variant="default" className="rounded-full">
                   <Link to="/consulting">Get Started</Link>
                 </Button>
-                <Button asChild size="sm" variant="outline" className="rounded-full">
+                <Button asChild size="default" variant="outline" className="rounded-full">
                   <Link to="/impact-ledger">View Impact</Link>
                 </Button>
               </div>
             </div>
             <div>
-              <h3 className="mb-4 text-sm font-semibold text-foreground">Ecosystem</h3>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <h3 className="mb-4 text-base font-semibold text-foreground">Ecosystem</h3>
+              <ul className="space-y-2.5 text-base text-muted-foreground">
                 <li><Link to="/labs" className="transition-colors hover:text-foreground hover:underline">Open Source Labs</Link></li>
                 <li><Link to="/consulting" className="transition-colors hover:text-foreground hover:underline">Consulting Studio</Link></li>
                 <li><Link to="/policy" className="transition-colors hover:text-foreground hover:underline">Policy Alliance</Link></li>
@@ -170,8 +170,8 @@ export default function LayoutShell({ children }: LayoutShellProps) {
               </ul>
             </div>
             <div>
-              <h3 className="mb-4 text-sm font-semibold text-foreground">Connect</h3>
-              <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <h3 className="mb-4 text-base font-semibold text-foreground">Connect</h3>
+              <ul className="space-y-2.5 text-base text-muted-foreground">
                 <li>
                   <a 
                     href="mailto:consulting@altruisticxai.org" 
@@ -194,7 +194,7 @@ export default function LayoutShell({ children }: LayoutShellProps) {
             </div>
           </div>
           <div className="mt-8 border-t border-border/40 pt-8 text-center">
-            <p className="text-xs text-muted-foreground sm:text-sm">
+            <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} AltruisticXAI. Building ethical AI for the public good.
             </p>
           </div>

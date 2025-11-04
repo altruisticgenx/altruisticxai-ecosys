@@ -70,17 +70,17 @@ export default function ConsultingPage() {
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Consulting Studio
           </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
             We adapt our proven open-source tools for institutions that need ethical AI solutions. 
             <span className="font-medium text-foreground"> Our clients benefit from battle-tested technology while funding new Labs research and generating evidence for policy advocacy.</span>
           </p>
         </div>
 
         <div className="mb-20">
-          <h2 className="mb-8 text-center text-3xl font-semibold text-foreground">
+          <h2 className="mb-8 text-center text-2xl font-semibold text-foreground sm:text-3xl">
             Service Tiers
           </h2>
-          <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
+          <p className="mx-auto mb-12 max-w-2xl text-center text-sm text-muted-foreground">
             Flexible engagement models designed to meet you where you are - from initial assessment to full-scale deployment.
           </p>
           <div className="grid gap-8 md:grid-cols-3">
@@ -92,14 +92,14 @@ export default function ConsultingPage() {
                     <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10">
                       <Icon size={28} weight="duotone" className="text-secondary" />
                     </div>
-                    <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                    <CardTitle className="text-xl">{tier.name}</CardTitle>
                     <div className="flex items-center gap-2 pt-2">
-                      <Badge variant="secondary" className="text-base font-semibold">
+                      <Badge variant="secondary" className="text-sm font-semibold">
                         {tier.priceRange}
                       </Badge>
-                      <Badge variant="outline">{tier.duration}</Badge>
+                      <Badge variant="outline" className="text-sm">{tier.duration}</Badge>
                     </div>
-                    <CardDescription className="pt-3 text-base">
+                    <CardDescription className="pt-3 text-sm">
                       {tier.description}
                     </CardDescription>
                   </CardHeader>
@@ -123,10 +123,10 @@ export default function ConsultingPage() {
         {recentWins.length > 0 && (
           <div className="mb-20">
             <div className="mb-8 text-center">
-              <h2 className="mb-2 text-3xl font-semibold text-foreground">
+              <h2 className="mb-2 text-2xl font-semibold text-foreground sm:text-3xl">
                 Recent Wins
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Quantifiable impact from our latest consulting engagements
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function ConsultingPage() {
         )}
 
         <div className="mb-20">
-          <h2 className="mb-8 text-center text-3xl font-semibold text-foreground">
+          <h2 className="mb-8 text-center text-2xl font-semibold text-foreground sm:text-3xl">
             Our Approach
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
@@ -177,7 +177,7 @@ export default function ConsultingPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
                   <CheckCircle className="text-secondary" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Proven Technology</CardTitle>
+                <CardTitle className="text-base">Proven Technology</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -192,7 +192,7 @@ export default function ConsultingPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
                   <TrendUp className="text-secondary" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Measurable Impact</CardTitle>
+                <CardTitle className="text-base">Measurable Impact</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -207,7 +207,7 @@ export default function ConsultingPage() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
                   <ArrowRight className="text-secondary" size={24} weight="duotone" />
                 </div>
-                <CardTitle className="text-lg">Aligned Incentives</CardTitle>
+                <CardTitle className="text-base">Aligned Incentives</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
@@ -221,10 +221,10 @@ export default function ConsultingPage() {
 
         <div className="mb-20">
           <div className="mb-8">
-            <h2 className="mb-2 text-3xl font-semibold text-foreground">
+            <h2 className="mb-2 text-2xl font-semibold text-foreground sm:text-3xl">
               Client Case Studies
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Real-world deployments with measurable impact across healthcare, government, and education sectors.
             </p>
           </div>
@@ -235,7 +235,7 @@ export default function ConsultingPage() {
                 <CardHeader>
                   <div className="mb-3 flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <CardTitle className="text-2xl">{project.title}</CardTitle>
+                      <CardTitle className="text-xl">{project.title}</CardTitle>
                       {project.clientName && (
                         <p className="mt-1 text-sm font-medium text-secondary">{project.clientName}</p>
                       )}
@@ -247,7 +247,7 @@ export default function ConsultingPage() {
                       {project.status}
                     </Badge>
                   </div>
-                  <CardDescription className="text-base">
+                  <CardDescription className="text-sm">
                     {project.description}
                   </CardDescription>
                 </CardHeader>
@@ -291,11 +291,11 @@ export default function ConsultingPage() {
 
         <div className="rounded-2xl border-2 border-secondary/20 bg-gradient-to-br from-secondary/10 via-secondary/5 to-transparent p-8 md:p-12">
           <div className="mx-auto max-w-3xl text-center">
-            <Briefcase size={56} weight="duotone" className="mx-auto mb-6 text-secondary" />
-            <h3 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
+            <Briefcase size={48} weight="duotone" className="mx-auto mb-6 text-secondary" />
+            <h3 className="mb-4 text-2xl font-bold text-foreground sm:text-3xl">
               Ready to Deploy Ethical AI?
             </h3>
-            <p className="mb-8 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
               We work with universities, healthcare systems, and government agencies to implement 
               privacy-preserving AI, energy transparency tools, and compliance frameworks. 
               <span className="font-medium text-foreground"> Let's discuss how our proven solutions can address your specific challenges.</span>

@@ -51,7 +51,7 @@ export default function ImpactLedgerPage() {
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Impact Ledger
           </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
             A transparent, chronological record of every milestone across our three arms. 
             <span className="font-medium text-foreground"> This ledger demonstrates how open-source innovation, client deployments, and policy 
             advocacy reinforce each other to create systemic change.</span>
@@ -83,11 +83,11 @@ export default function ImpactLedgerPage() {
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="mb-8 grid w-full grid-cols-2 gap-2 sm:grid-cols-5 sm:gap-0">
-            <TabsTrigger value="all" className="text-xs sm:text-sm">All Events</TabsTrigger>
-            <TabsTrigger value="pilot" className="text-xs sm:text-sm">Pilots</TabsTrigger>
-            <TabsTrigger value="policy" className="text-xs sm:text-sm">Policy</TabsTrigger>
-            <TabsTrigger value="publication" className="text-xs sm:text-sm">Publications</TabsTrigger>
-            <TabsTrigger value="partnership" className="col-span-2 text-xs sm:col-span-1 sm:text-sm">Partnerships</TabsTrigger>
+            <TabsTrigger value="all" className="text-sm">All Events</TabsTrigger>
+            <TabsTrigger value="pilot" className="text-sm">Pilots</TabsTrigger>
+            <TabsTrigger value="policy" className="text-sm">Policy</TabsTrigger>
+            <TabsTrigger value="publication" className="text-sm">Publications</TabsTrigger>
+            <TabsTrigger value="partnership" className="col-span-2 text-sm sm:col-span-1">Partnerships</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">
@@ -115,7 +115,7 @@ export default function ImpactLedgerPage() {
           <h3 className="mb-3 text-center text-2xl font-bold text-foreground sm:text-3xl">
             The Flywheel in Action
           </h3>
-          <p className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-muted-foreground">
             Each event in this ledger contributes to our self-reinforcing cycle: 
             <span className="font-medium text-foreground"> open-source projects establish trust and technical feasibility → consulting deployments generate revenue and 
             measurable outcomes → policy initiatives use those outcomes as evidence to create structural 
