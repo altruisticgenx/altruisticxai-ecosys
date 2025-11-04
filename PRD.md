@@ -47,6 +47,21 @@ Turn high-leverage federal grants and open datasets into strategic pipeline fuel
 - **Progression**: Calculate totals from KV store → Display in stat cards → Update in real-time
 - **Success criteria**: Metrics are accurate and update smoothly; users can quickly assess pipeline status
 
+### 2025+ Data Validation & Quality Assurance
+- **Functionality**: Three-layer validation system ensures all ingested data is 2025 or newer, properly validated, and fresh
+- **Purpose**: Provide credible, up-to-date data for policymakers and stakeholders; avoid stale or irrelevant opportunities
+- **Trigger**: Layer 1 (API filters at ingest) → Layer 2 (validation script after ingest) → Layer 3 (daily GitHub Action + UI indicators)
+- **Progression**: 
+  - **Ingest**: APIs filtered to 2025+ (time_period, postedDateFrom, dateStart) → Client-side double-check on effectiveDate/postedDate/closeDate → Skip pre-2025 records
+  - **Validation**: Check all IDs unique → Verify all dates >= 2025-01-01 → Validate date formats → Check cross-references → Return validation report
+  - **Automation**: Daily GitHub Action (06:00 UTC) → Run ingest with 2025+ filters → Run validation script → Generate report → Create issue with results
+  - **UI**: Display "Last Updated" date → Show "Data Coverage" (min to max effectiveDate) → Badge showing "2025+ Validated" if validation passed
+- **Success criteria**: 
+  - Zero pre-2025 data in production
+  - Validation runs automatically daily without manual intervention
+  - UI clearly shows freshness and coverage to build user trust
+  - Policymakers can confidently cite "This data is validated 2025+"
+
 ## Edge Case Handling
 
 - **API Rate Limits**: Graceful error messages when Grants.gov or Data.gov rate limits are hit; suggest retry timing

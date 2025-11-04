@@ -50,6 +50,7 @@ export interface Project {
   tags?: string[];
   metrics?: ProjectMetric[];
   priorityScore?: number;
+  effectiveDate?: string;
   provenance: Provenance;
 }
 
@@ -60,6 +61,7 @@ export interface GrantOpportunity {
   agency: string;
   cfdaNumber?: string;
   opportunityNumber?: string;
+  postedDate?: string;
   closeDate?: string;
   totalFundingEstimate?: number;
   eligibility?: string;

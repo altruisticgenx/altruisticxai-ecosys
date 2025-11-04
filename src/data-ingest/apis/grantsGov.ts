@@ -1,6 +1,7 @@
 import { GrantOpportunity, Provenance } from "../../data/schema"
 
 const API_BASE = "https://api.grants.gov/v2/opportunities/search"
+const MIN_DATE = new Date("2025-01-01T00:00:00Z")
 
 interface GrantsGovOpportunity {
   opportunityID?: string
@@ -12,6 +13,7 @@ interface GrantsGovOpportunity {
   agencyCode?: string
   cfdaNumbers?: string
   cfdaNumber?: string
+  postedDate?: string
   closeDate?: string
   closeDateTimeStamp?: string
   awardCeiling?: string | number
@@ -65,6 +67,7 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
       const requestBody = {
         keyword: category,
         oppStatuses: ['forecasted', 'posted'],
+        postedDateFrom: "2025-01-01",
         sortBy: 'openDate',
         sortOrder: 'desc',
         from: 0,
@@ -98,6 +101,22 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
         if (seenIds.has(oppId)) {
           continue
         }
+
+        const postedDate = opp.postedDate || null
+        const closeDate = opp.closeDate || opp.closeDateTimeStamp || null
+
+        if (postedDate) {
+          const d = new Date(postedDate)
+          if (d < MIN_DATE) {
+            continue
+          }
+        } else if (closeDate) {
+          const d = new Date(closeDate)
+          if (d < MIN_DATE) {
+            continue
+          }
+        }
+
         seenIds.add(oppId)
 
         const provenance: Provenance = {
@@ -137,7 +156,8 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
           agency,
           cfdaNumber,
           opportunityNumber: opp.opportunityNumber,
-          closeDate: opp.closeDate || opp.closeDateTimeStamp,
+          postedDate: postedDate ?? undefined,
+          closeDate: closeDate ?? undefined,
           totalFundingEstimate: parseAmount(opp.estimatedTotalProgramFunding) || parseAmount(opp.awardCeiling),
           eligibility: Array.isArray(opp.eligibleApplicants)
             ? opp.eligibleApplicants.join(", ")

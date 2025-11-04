@@ -2,16 +2,46 @@ import LayoutShell from "@/components/LayoutShell"
 import ImpactTable from "@/components/ImpactTable"
 import CrawledProjectCard from "@/components/CrawledProjectCard"
 import { impactEvents, ImpactEvent } from "@/data/impactEvents"
-import { ChartLineUp, Rocket, Scroll, BookOpen, Handshake, Database, CloudArrowDown } from "@phosphor-icons/react"
+import { ChartLineUp, Rocket, Scroll, BookOpen, Handshake, Database, CloudArrowDown, CheckCircle, CalendarBlank } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useDataCrawler } from "@/hooks/use-data-crawler"
 import { toast } from "sonner"
+import { validateData } from "@/data-ingest/validate"
+import { useState } from "react"
+
+function getLastUpdated(crawlerData: any) {
+  if (!crawlerData?.lastIngestTimestamp) return null
+  return new Date(crawlerData.lastIngestTimestamp).toISOString().slice(0, 10)
+}
+
+function getCoverage(projects: any[]) {
+  const dates: Date[] = []
+
+  projects.forEach((p) => {
+    if (p.effectiveDate) {
+      const d = new Date(p.effectiveDate)
+      if (!Number.isNaN(d.getTime())) dates.push(d)
+    }
+  })
+
+  if (dates.length === 0) return null
+
+  const min = new Date(Math.min(...dates.map((d) => d.getTime())))
+  const max = new Date(Math.max(...dates.map((d) => d.getTime())))
+
+  return {
+    from: min.toISOString().slice(0, 10),
+    to: max.toISOString().slice(0, 10),
+  }
+}
 
 export default function ImpactLedgerPage() {
   const { crawlerData, isIngesting, runIngest, getHighPriorityProjects } = useDataCrawler()
+  const [isValidating, setIsValidating] = useState(false)
+  const [validationResult, setValidationResult] = useState<any>(null)
   
   const allEvents = impactEvents as ImpactEvent[]
   const pilotEvents = allEvents.filter(e => e.type === "pilot")
@@ -21,11 +51,26 @@ export default function ImpactLedgerPage() {
   
   const priorityProjects = getHighPriorityProjects()
   
+  const lastUpdated = getLastUpdated(crawlerData)
+  const coverage = getCoverage(priorityProjects)
+  
   const handleRunCrawler = async () => {
     try {
       await runIngest()
       toast.success("Data crawler completed successfully!")
+      
+      setIsValidating(true)
+      const result = await validateData()
+      setValidationResult(result)
+      setIsValidating(false)
+      
+      if (result.valid) {
+        toast.success("Data validation passed! All data is 2025+ compliant.")
+      } else {
+        toast.error(`Validation found ${result.errors.length} error(s)`)
+      }
     } catch (error) {
+      setIsValidating(false)
       toast.error("Crawler failed: " + (error instanceof Error ? error.message : "Unknown error"))
     }
   }
@@ -75,27 +120,62 @@ export default function ImpactLedgerPage() {
             advocacy reinforce each other to create systemic change.</span>
           </p>
           
+          {(lastUpdated || coverage) && (
+            <div className="mx-auto mt-6 flex max-w-xl flex-col gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-left sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-2">
+                <CalendarBlank size={20} weight="duotone" className="mt-0.5 shrink-0 text-primary" />
+                <div>
+                  {lastUpdated && (
+                    <p className="text-xs text-muted-foreground">
+                      Last updated: <span className="font-semibold text-foreground">{lastUpdated}</span>
+                    </p>
+                  )}
+                  {coverage && (
+                    <p className="text-xs text-muted-foreground">
+                      Data coverage: <span className="font-semibold text-foreground">{coverage.from} → {coverage.to}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+              {validationResult?.valid && (
+                <div className="flex items-center gap-1.5 text-xs font-medium text-accent">
+                  <CheckCircle size={16} weight="fill" />
+                  <span>2025+ Validated</span>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="mt-6">
             <Button
               onClick={handleRunCrawler}
-              disabled={isIngesting}
+              disabled={isIngesting || isValidating}
               className="shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5"
             >
               <CloudArrowDown size={18} weight="bold" className="mr-2" />
-              {isIngesting ? "Crawling..." : "Run Federal Data Crawler"}
+              {isIngesting ? "Crawling..." : isValidating ? "Validating..." : "Run Federal Data Crawler"}
             </Button>
           </div>
-          
-          {crawlerData?.lastIngestTimestamp && (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Last crawled: {new Date(crawlerData.lastIngestTimestamp).toLocaleString()}
-            </p>
-          )}
         </div>
 
-        {crawlerData?.error && (
+        {(crawlerData?.error || (validationResult && !validationResult.valid)) && (
           <Alert variant="destructive" className="mb-8">
-            <AlertDescription>{crawlerData.error}</AlertDescription>
+            <AlertDescription>
+              {crawlerData?.error}
+              {validationResult && !validationResult.valid && (
+                <div className="mt-2">
+                  <p className="font-semibold">Validation Errors ({validationResult.errors.length}):</p>
+                  <ul className="ml-4 mt-1 list-disc text-xs">
+                    {validationResult.errors.slice(0, 5).map((err: string, idx: number) => (
+                      <li key={idx}>{err}</li>
+                    ))}
+                    {validationResult.errors.length > 5 && (
+                      <li>...and {validationResult.errors.length - 5} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </AlertDescription>
           </Alert>
         )}
 

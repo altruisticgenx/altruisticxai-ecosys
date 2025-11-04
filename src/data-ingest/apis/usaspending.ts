@@ -1,6 +1,7 @@
 import { Project, Provenance } from "../../data/schema"
 
 const API_BASE = "https://api.usaspending.gov/api/v2"
+const MIN_DATE = new Date("2025-01-01T00:00:00Z")
 
 interface UsaSpendingAwardRecord {
   Award?: {
@@ -32,6 +33,8 @@ interface UsaSpendingAwardRecord {
   } | null
   total_obligation?: number | null
   Award_Amount?: number
+  action_date?: string | null
+  period_of_performance_start_date?: string | null
 }
 
 const KEYWORDS = [
@@ -60,6 +63,12 @@ export async function runUsaspendingIngest(): Promise<Project[]> {
         filters: {
           keywords: [keyword],
           award_type_codes: ["02", "03", "04", "05"],
+          time_period: [
+            {
+              start_date: "2025-01-01",
+              end_date: new Date().toISOString().split('T')[0],
+            }
+          ],
         },
         fields: [
           "Award",
@@ -75,6 +84,8 @@ export async function runUsaspendingIngest(): Promise<Project[]> {
           "place_of_performance",
           "total_obligation",
           "Award_Amount",
+          "action_date",
+          "period_of_performance_start_date",
         ],
         page: 1,
         limit: 25,
@@ -135,6 +146,16 @@ export async function runUsaspendingIngest(): Promise<Project[]> {
           record.Award_Amount || 
           0
 
+        const actionDate = record.action_date || record.period_of_performance_start_date || null
+        const effectiveDate = actionDate || null
+
+        if (effectiveDate) {
+          const d = new Date(effectiveDate)
+          if (d < MIN_DATE) {
+            continue
+          }
+        }
+
         const priorityScore = TARGET_STATES.includes(state || "") ? 85 : 65
 
         const provenance: Provenance = {
@@ -163,6 +184,7 @@ export async function runUsaspendingIngest(): Promise<Project[]> {
             state: state || undefined,
             city: city || undefined,
           },
+          effectiveDate: effectiveDate ?? undefined,
           annual_savings_usd: undefined,
           short_kpi_summary: amount 
             ? `Federal award: $${Math.round(amount).toLocaleString()} from ${agency}`

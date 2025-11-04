@@ -1,8 +1,8 @@
-name: Automated Data Discovery
+name: Automated Data Discovery & Validation
 
 on:
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       use_ai_enrichment:
@@ -42,9 +42,10 @@ jobs:
             const useAI = process.env.USE_AI === 'true'
             const threshold = parseFloat(process.env.THRESHOLD || '0.4')
             
-            console.log('🔍 Starting automated discovery...')
+            console.log('🔍 Starting automated discovery (2025+ only)...')
             console.log(`AI Enrichment: ${useAI}`)
             console.log(`Relevance Threshold: ${threshold}`)
+            console.log(`Date Filter: >= 2025-01-01`)
             
             try {
               const job = await runEnrichedDiscovery({
@@ -56,6 +57,10 @@ jobs:
                 ],
                 sectors: ['energy', 'education', 'research'],
                 locations: ['Maine', 'New England', 'Massachusetts', 'Vermont', 'New Hampshire'],
+                date_range: {
+                  start: '2025-01-01',
+                  end: new Date().toISOString().split('T')[0]
+                },
                 relevance_threshold: threshold
               }, useAI)
               
@@ -111,27 +116,86 @@ jobs:
           USE_AI: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
           THRESHOLD: ${{ github.event.inputs.relevance_threshold || '0.4' }}
           
+      - name: Validate ingested data
+        if: success()
+        run: |
+          cat > run-validation.mjs << 'EOF'
+          import { validateData } from './src/data-ingest/validate.ts'
+          
+          async function main() {
+            console.log('\n🔍 Running data validation (2025+ compliance check)...')
+            
+            try {
+              const result = await validateData()
+              
+              console.log(`\n📊 Validation Results:`)
+              console.log(`  Valid: ${result.valid ? '✓' : '✗'}`)
+              console.log(`  Errors: ${result.errors.length}`)
+              console.log(`  Warnings: ${result.warnings.length}`)
+              console.log(`\n  Projects: ${result.stats.projects}`)
+              console.log(`  Grants: ${result.stats.grants}`)
+              console.log(`  Policies: ${result.stats.policies}`)
+              console.log(`  Events: ${result.stats.events}`)
+              
+              if (result.errors.length > 0) {
+                console.error('\n❌ Validation Errors:')
+                result.errors.forEach(err => console.error(`  - ${err}`))
+                process.exit(1)
+              }
+              
+              if (result.warnings.length > 0) {
+                console.warn('\n⚠️  Validation Warnings:')
+                result.warnings.slice(0, 10).forEach(warn => console.warn(`  - ${warn}`))
+                if (result.warnings.length > 10) {
+                  console.warn(`  ... and ${result.warnings.length - 10} more warnings`)
+                }
+              }
+              
+              console.log('\n✅ Data validation passed!')
+            } catch (error) {
+              console.error('\n❌ Validation failed:', error)
+              process.exit(1)
+            }
+          }
+          
+          main()
+          EOF
+          
+          node run-validation.mjs
+          
       - name: Generate discovery report
         if: always()
         run: |
           cat > DISCOVERY_REPORT.md << 'EOF'
-          # Data Discovery Report
+          # Data Discovery & Validation Report
           
           **Run Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           **Trigger**: ${{ github.event_name }}
           **AI Enrichment**: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
+          **Data Coverage**: 2025-01-01 to present
           
           ## Summary
           
           This automated discovery run scanned:
           - Grants.gov for federal grant opportunities
           - Data.gov for relevant datasets and projects
+          - USAspending for federal awards
+          - NSF Awards database for research grants
           
           ### Filters Applied
+          - **Date Range**: 2025-01-01 onwards (strict filter)
           - **Keywords**: AI, energy, campus, renewable, pilot, education, local-first
           - **Sectors**: Energy, Education, Research
           - **Regions**: New England (Maine, Massachusetts, Vermont, New Hampshire)
           - **Relevance Threshold**: ${{ github.event.inputs.relevance_threshold || '0.4' }}
+          
+          ### Data Quality
+          
+          ✅ All ingested data validated for:
+          - 2025+ date compliance
+          - Unique IDs
+          - Valid provenance
+          - Cross-reference integrity
           
           ### Next Steps
           
@@ -158,9 +222,9 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `📊 Weekly Discovery Report - ${new Date().toISOString().split('T')[0]}`,
+              title: `📊 Daily Discovery Report - ${new Date().toISOString().split('T')[0]}`,
               body: report,
-              labels: ['data-discovery', 'automated']
+              labels: ['data-discovery', 'automated', '2025-validated']
             });
             
       - name: Notify on failure

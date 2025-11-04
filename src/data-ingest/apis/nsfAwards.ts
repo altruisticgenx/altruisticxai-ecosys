@@ -1,6 +1,7 @@
 import { Project, Provenance } from "../../data/schema"
 
 const API_BASE = "https://api.nsf.gov/services/v1/awards.json"
+const MIN_DATE = new Date("2025-01-01T00:00:00Z")
 
 interface NSFAward {
   id?: string
@@ -12,6 +13,8 @@ interface NSFAward {
   awardeeStateCode?: string
   fundsObligatedAmt?: string
   date?: string
+  startDate?: string
+  expDate?: string
   piFirstName?: string
   piLastName?: string
   primaryProgram?: string
@@ -35,7 +38,8 @@ export async function runNsfAwardsIngest(): Promise<Project[]> {
     try {
       const params = new URLSearchParams({
         keyword: term,
-        printFields: "id,title,abstractText,agency,awardee,awardeeCity,awardeeStateCode,fundsObligatedAmt,date,piFirstName,piLastName,primaryProgram",
+        dateStart: "01/01/2025",
+        printFields: "id,title,abstractText,agency,awardee,awardeeCity,awardeeStateCode,fundsObligatedAmt,date,startDate,expDate,piFirstName,piLastName,primaryProgram",
         offset: "1",
         limit: "25",
       })
@@ -59,6 +63,15 @@ export async function runNsfAwardsIngest(): Promise<Project[]> {
 
       for (const award of awards) {
         const awardId = award.id || `unknown-${Math.random()}`
+
+        const effectiveDate = award.startDate || award.date || null
+
+        if (effectiveDate) {
+          const d = new Date(effectiveDate)
+          if (d < MIN_DATE) {
+            continue
+          }
+        }
 
         const provenance: Provenance = {
           source: "nsf_awards",
@@ -98,6 +111,7 @@ export async function runNsfAwardsIngest(): Promise<Project[]> {
             state: state || undefined,
             city: award.awardeeCity || undefined,
           },
+          effectiveDate: effectiveDate ?? undefined,
           short_kpi_summary: fundingAmount 
             ? `NSF Award: $${Math.round(fundingAmount).toLocaleString()}${pi ? ` (PI: ${pi})` : ""}`
             : undefined,
