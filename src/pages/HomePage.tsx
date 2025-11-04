@@ -91,31 +91,51 @@ export default function HomePage() {
   return (
     <LayoutShell>
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <motion.div 
-          className="absolute -top-24 left-[-8%] h-56 w-56 rounded-full bg-primary/8 blur-3xl sm:-top-32 sm:h-64 sm:w-64"
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.08, 0.12, 0.08]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-[-4%] right-[-4%] h-64 w-64 rounded-full bg-accent/10 blur-3xl sm:h-72 sm:w-72"
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.1, 0.15, 0.1]
-          }}
-          transition={{ 
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
+        <div className="absolute inset-0 opacity-30">
+          <div className="relative h-full w-full overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/80 z-10" />
+            <div className="absolute inset-0" style={{ filter: 'blur(100px) saturate(150%) hue-rotate(-10deg)' }}>
+              <motion.div 
+                className="absolute -top-24 left-[-8%] h-96 w-96 rounded-full bg-primary/20 blur-3xl"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.15, 0.25, 0.15]
+                }}
+                transition={{ 
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+              <motion.div 
+                className="absolute top-1/4 right-[-10%] h-80 w-80 rounded-full bg-accent/25 blur-3xl"
+                animate={{ 
+                  scale: [1, 1.15, 1],
+                  opacity: [0.2, 0.3, 0.2]
+                }}
+                transition={{ 
+                  duration: 10,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1
+                }}
+              />
+              <motion.div 
+                className="absolute bottom-[-10%] left-[10%] h-96 w-96 rounded-full bg-secondary/20 blur-3xl"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.15, 0.25, 0.15]
+                }}
+                transition={{ 
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-12 pt-8 sm:gap-12 sm:px-6 sm:pb-16 sm:pt-12 lg:gap-16 lg:px-8 lg:pb-20 lg:pt-16">
@@ -132,7 +152,7 @@ export default function HomePage() {
               <span>Local-first AI · Energy · Education · Governance</span>
             </Badge>
 
-            <h1 className="mb-3 text-balance text-4xl font-bold leading-tight tracking-tight sm:mb-4 sm:text-5xl lg:text-6xl">
+            <h1 className="mb-3 text-balance text-4xl font-extrabold leading-[1.1] sm:mb-4 sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-[1.1]">
               Turn{" "}
               <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
                 open tools
@@ -144,7 +164,7 @@ export default function HomePage() {
               that actually ship.
             </h1>
             
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
+            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
               AltruisticXAI is a connected ecosystem: we ship{" "}
               <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
               <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
@@ -209,12 +229,12 @@ export default function HomePage() {
         >
           <motion.div variants={itemVariants}>
             <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-              <h2 className="text-2xl font-semibold sm:text-3xl">
+              <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
                 Three engines. One ecosystem.
               </h2>
-              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 Everything is designed as a flywheel:{" "}
-                <span className="text-foreground">Open Source Labs → Consulting Studio → Policy Alliance → back to Labs.</span>
+                <span className="font-medium text-foreground">Open Source Labs → Consulting Studio → Policy Alliance → back to Labs.</span>
               </p>
             </div>
           </motion.div>
@@ -264,7 +284,7 @@ export default function HomePage() {
           variants={fadeIn}
         >
           <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 p-4 sm:p-6">
-            <h2 className="mb-2 text-2xl font-semibold sm:mb-3 sm:text-3xl">
+            <h2 className="mb-2 text-2xl font-bold sm:mb-3 sm:text-3xl lg:text-4xl">
               The flywheel: from GitHub to budget line
             </h2>
             <p className="mb-4 text-sm leading-relaxed text-muted-foreground sm:mb-5">
@@ -286,7 +306,7 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-50px" }}
           variants={containerVariants}
         >
-          <motion.h2 className="text-2xl font-semibold sm:text-3xl" variants={itemVariants}>
+          <motion.h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl" variants={itemVariants}>
             Who plugs into this?
           </motion.h2>
           <motion.div 
@@ -324,8 +344,8 @@ export default function HomePage() {
             variants={itemVariants}
           >
             <div>
-              <h2 className="text-2xl font-semibold sm:text-3xl">Recent pilots & signals</h2>
-              <p className="text-sm text-muted-foreground">Latest from the Impact Ledger</p>
+              <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">Recent pilots & signals</h2>
+              <p className="text-sm text-muted-foreground sm:text-base">Latest from the Impact Ledger</p>
             </div>
             <Link
               to="/impact-ledger"
@@ -377,7 +397,7 @@ export default function HomePage() {
           variants={fadeIn}
         >
           <Database size={48} weight="duotone" className="mx-auto mb-4 text-accent" />
-          <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
+          <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl">
             Fuel Your Ecosystem with Real Data
           </h3>
           <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
