@@ -40,20 +40,30 @@ export async function searchGrantOpportunities(
   }
 
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
+
     const response = await fetch(GRANTS_GOV_API_BASE, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
-    })
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    }).catch(err => {
+      console.error('Grants.gov fetch failed:', err.message)
+      return null
+    }).finally(() => clearTimeout(timeoutId))
 
-    if (!response.ok) {
-      throw new Error(`Grants.gov API error: ${response.status} ${response.statusText}`)
+    if (!response || !response.ok) {
+      throw new Error(`Grants.gov API error: ${response?.status || 'network error'} ${response?.statusText || ''}`)
     }
 
-    const data = await response.json()
+    const data = await response.json().catch(err => {
+      console.error('Grants.gov JSON parse error:', err)
+      return { opportunities: [], totalRecords: 0 }
+    })
     
     const opportunities: GrantOpportunity[] = (data.opportunities || []).map((opp: any) => {
       const oppNumber = opp.opportunityNumber || opp.opportunityID || `UNK-${Math.random().toString(36).substr(2, 9)}`

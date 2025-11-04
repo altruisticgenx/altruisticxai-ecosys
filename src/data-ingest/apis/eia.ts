@@ -53,19 +53,30 @@ export async function runEiaIngest(): Promise<Project[]> {
       ]
 
       for (const endpoint of endpoints.slice(0, 1)) {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+
         const res = await fetch(`${API_BASE}/${endpoint.path}/data/?${params}`, {
           method: "GET",
           headers: {
             "Accept": "application/json",
-          }
-        })
+          },
+          signal: controller.signal
+        }).catch(err => {
+          console.warn(`[eia] Fetch failed for ${stateCode} ${endpoint.metric}:`, err.message)
+          return null
+        }).finally(() => clearTimeout(timeoutId))
 
-        if (!res.ok) {
-          console.warn(`[eia] API error for ${stateCode} ${endpoint.metric}: ${res.status}`)
+        if (!res || !res.ok) {
+          console.warn(`[eia] API error for ${stateCode} ${endpoint.metric}: ${res?.status || 'network error'}`)
           continue
         }
 
-        const json = await res.json()
+        const json = await res.json().catch(err => {
+          console.warn(`[eia] JSON parse error for ${stateCode} ${endpoint.metric}:`, err)
+          return { response: { data: [] } }
+        })
+        
         const data = json.response?.data ?? []
 
         if (data.length === 0) {

@@ -76,6 +76,9 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
 
       console.log(`[grants.gov] Fetching category: "${category}"`)
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 12000)
+
       const res = await fetch(API_BASE, {
         method: "POST",
         headers: {
@@ -83,14 +86,22 @@ export async function runGrantsGovIngest(): Promise<GrantOpportunity[]> {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      })
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[grants.gov] Fetch failed for category "${category}":`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[grants.gov] API error for category "${category}": ${res.status} ${res.statusText}`)
+      if (!res || !res.ok) {
+        console.warn(`[grants.gov] API error for category "${category}": ${res?.status || 'network error'} ${res?.statusText || ''}`)
         continue
       }
 
-      const json: GrantsGovResponse = await res.json()
+      const json: GrantsGovResponse = await res.json().catch(err => {
+        console.warn(`[grants.gov] JSON parse error for category "${category}":`, err)
+        return { opportunities: [] }
+      })
+      
       const opportunities: GrantsGovOpportunity[] = json.opportunities ?? []
 
       console.log(`[grants.gov] Found ${opportunities.length} results for "${category}"`)

@@ -41,18 +41,28 @@ export async function searchDataGovDatasets(
   })
 
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
+
     const response = await fetch(`${DATA_GOV_API_BASE}/package_search?${params}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
-      }
-    })
+      },
+      signal: controller.signal
+    }).catch(err => {
+      console.error('Data.gov fetch failed:', err.message)
+      return null
+    }).finally(() => clearTimeout(timeoutId))
 
-    if (!response.ok) {
-      throw new Error(`Data.gov API error: ${response.statusText}`)
+    if (!response || !response.ok) {
+      throw new Error(`Data.gov API error: ${response?.statusText || 'network error'}`)
     }
 
-    const data = await response.json()
+    const data = await response.json().catch(err => {
+      console.error('Data.gov JSON parse error:', err)
+      return { success: false, result: { results: [], count: 0 } }
+    })
     
     if (!data.success) {
       throw new Error('Data.gov API request was not successful')

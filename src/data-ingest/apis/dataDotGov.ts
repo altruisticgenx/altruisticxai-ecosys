@@ -56,19 +56,29 @@ export async function runDataDotGovIngest(): Promise<Project[]> {
         sort: "metadata_modified desc"
       })
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 12000)
+
       const res = await fetch(`${API_BASE}/package_search?${params}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
-        }
-      })
+        },
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[data.gov] Fetch failed for query "${query}":`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[data.gov] API error for query "${query}": ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[data.gov] API error for query "${query}": ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[data.gov] JSON parse error for query "${query}":`, err)
+        return { success: false, result: { results: [] } }
+      })
       
       if (!json.success) {
         console.warn(`[data.gov] API returned success=false for "${query}"`)

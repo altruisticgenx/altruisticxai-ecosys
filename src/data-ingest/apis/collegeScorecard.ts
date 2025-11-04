@@ -47,19 +47,30 @@ export async function runCollegeScorecardIngest(): Promise<Project[]> {
         page: "0"
       })
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       const res = await fetch(`${API_BASE}/schools.json?${params}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
-        }
-      })
+        },
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[college-scorecard] Fetch failed for ${state}:`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[college-scorecard] API error for ${state}: ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[college-scorecard] API error for ${state}: ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[college-scorecard] JSON parse error for ${state}:`, err)
+        return { results: [] }
+      })
+      
       const schools: CollegeData[] = json.results ?? []
 
       console.log(`[college-scorecard] Found ${schools.length} schools in ${state}`)

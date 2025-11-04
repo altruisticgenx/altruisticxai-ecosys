@@ -93,20 +93,31 @@ export async function runUsaspendingIngest(): Promise<Project[]> {
         order: "desc",
       }
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15000)
+
       const res = await fetch(`${API_BASE}/search/spending_by_award/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      })
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[usaspending] Fetch failed for keyword "${keyword}":`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[usaspending] API error for keyword "${keyword}": ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[usaspending] API error for keyword "${keyword}": ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[usaspending] JSON parse error for keyword "${keyword}":`, err)
+        return { results: [] }
+      })
+      
       const results: UsaSpendingAwardRecord[] = json.results ?? []
 
       console.log(`[usaspending] Found ${results.length} results for "${keyword}"`)

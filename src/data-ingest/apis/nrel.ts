@@ -27,19 +27,30 @@ export async function runNrelIngest(): Promise<Project[]> {
         limit: "5"
       })
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       const res = await fetch(`${API_BASE}/utility_rates/v3.json?${params}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
-        }
-      })
+        },
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[nrel] Utility rates fetch failed for ${state}:`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[nrel] API error for ${state}: ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[nrel] API error for ${state}: ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[nrel] JSON parse error for ${state}:`, err)
+        return { outputs: null }
+      })
+      
       const outputs = json.outputs
 
       if (!outputs) {
@@ -108,19 +119,30 @@ export async function runNrelIngest(): Promise<Project[]> {
         lon: location.lon.toString(),
       })
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       const res = await fetch(`${API_BASE}/solar/solar_resource/v1.json?${params}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
-        }
-      })
+        },
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[nrel] Solar resource fetch failed for ${location.name}:`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[nrel] Solar resource API error for ${location.name}: ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[nrel] Solar resource API error for ${location.name}: ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[nrel] Solar resource JSON parse error for ${location.name}:`, err)
+        return { outputs: null }
+      })
+      
       const outputs = json.outputs
 
       if (!outputs || !outputs.avg_dni) {

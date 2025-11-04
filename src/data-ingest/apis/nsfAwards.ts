@@ -44,19 +44,30 @@ export async function runNsfAwardsIngest(): Promise<Project[]> {
         limit: "25",
       })
 
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       const res = await fetch(`${API_BASE}?${params}`, {
         method: "GET",
         headers: {
           "Accept": "application/json",
         },
-      })
+        signal: controller.signal
+      }).catch(err => {
+        console.warn(`[nsf] Fetch failed for term "${term}":`, err.message)
+        return null
+      }).finally(() => clearTimeout(timeoutId))
 
-      if (!res.ok) {
-        console.warn(`[nsf] API error for term "${term}": ${res.status}`)
+      if (!res || !res.ok) {
+        console.warn(`[nsf] API error for term "${term}": ${res?.status || 'network error'}`)
         continue
       }
 
-      const json = await res.json()
+      const json = await res.json().catch(err => {
+        console.warn(`[nsf] JSON parse error for term "${term}":`, err)
+        return { response: { award: [] } }
+      })
+      
       const awards: NSFAward[] = json.response?.award ?? []
 
       console.log(`[nsf] Found ${awards.length} results for "${term}"`)
