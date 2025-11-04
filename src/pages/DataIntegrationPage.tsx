@@ -3,9 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Database, Money, Sparkle, Download, Star, Trash, ArrowSquareOut, FileText, Calendar, Buildings } from "@phosphor-icons/react"
+import { Database, Money, Sparkle, Download, ArrowSquareOut, FileText, Calendar, Buildings, GitBranch } from "@phosphor-icons/react"
 import { useGrantDiscovery, GrantCategory } from "@/hooks/use-grant-discovery"
-import { useDatasetDiscovery, DatasetCategory } from "@/hooks/use-dataset-discovery"
+import { useDiscoveredProjects } from "@/hooks/use-discovered-projects"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -19,24 +19,23 @@ export default function DataIntegrationPage() {
     loadingStage: grantsStage,
     error: grantsError,
     discoverGrants,
-    toggleStar: toggleGrantStar,
+    toggleStar,
     removeGrant,
     clearAll: clearGrants
   } = useGrantDiscovery()
 
   const {
-    datasets,
-    isLoading: datasetsLoading,
-    loadingStage: datasetsStage,
-    error: datasetsError,
-    discoverDatasets,
-    toggleStar: toggleDatasetStar,
-    removeDataset,
-    clearAll: clearDatasets
-  } = useDatasetDiscovery()
+    projects,
+    isLoading: projectsLoading,
+    loadingStage: projectsStage,
+    error: projectsError,
+    discoverNewProjects,
+    removeProject,
+    clearAll: clearProjects
+  } = useDiscoveredProjects()
 
   const [selectedGrantCategory, setSelectedGrantCategory] = useState<GrantCategory>('energy-ai')
-  const [selectedDatasetCategory, setSelectedDatasetCategory] = useState<DatasetCategory>('energy')
+  const [selectedProjectTopic, setSelectedProjectTopic] = useState<string>('local-first AI energy')
 
   const handleDiscoverGrants = async () => {
     const result = await discoverGrants(selectedGrantCategory, true)
@@ -51,15 +50,15 @@ export default function DataIntegrationPage() {
     }
   }
 
-  const handleDiscoverDatasets = async () => {
-    const result = await discoverDatasets(selectedDatasetCategory)
+  const handleDiscoverProjects = async () => {
+    const result = await discoverNewProjects(selectedProjectTopic, 15)
     if (result && result.length > 0) {
-      toast.success(`Discovered ${result.length} datasets!`, {
+      toast.success(`Discovered ${result.length} GitHub projects!`, {
         description: 'Ready for integration into your ecosystem'
       })
-    } else if (!datasetsError) {
-      toast.info('No new datasets found', {
-        description: 'Try a different category or check back later'
+    } else if (!projectsError) {
+      toast.info('No new projects found', {
+        description: 'Try a different topic or check back later'
       })
     }
   }
@@ -71,16 +70,17 @@ export default function DataIntegrationPage() {
     { value: 'university-research', label: 'University Research' }
   ]
 
-  const datasetCategories: { value: DatasetCategory; label: string }[] = [
-    { value: 'energy', label: 'Energy & Grid' },
-    { value: 'ai-research', label: 'AI Research' },
-    { value: 'education', label: 'Education' },
-    { value: 'municipal', label: 'Municipal Data' },
-    { value: 'climate', label: 'Climate & Sustainability' }
+  const projectTopics = [
+    'local-first AI energy',
+    'campus sustainability',
+    'explainable AI',
+    'renewable energy analytics',
+    'edge computing'
   ]
 
   const starredGrants = (grants || []).filter(g => g.starred)
-  const starredDatasets = (datasets || []).filter(d => d.starred)
+  const highScoringGrants = (grants || []).filter(g => (g.analysis?.alignmentScore || 0) >= 70)
+  const readyToApply = (grants || []).filter(g => g.starred && (g.analysis?.alignmentScore || 0) >= 70)
 
   return (
     <LayoutShell>
@@ -95,9 +95,9 @@ export default function DataIntegrationPage() {
             Data Integration Hub
           </h1>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground lg:text-lg">
-            High-leverage data sources and automation flows to fuel the Labs → Consulting → Policy ecosystem.{" "}
+            Automated discovery of federal grants and open-source projects aligned with the AltruisticXAI ecosystem.{" "}
             <span className="font-medium text-foreground">
-              Connect federal grants, open datasets, and real-world projects to your strategic pipeline.
+              AI-powered analysis ensures relevance to Labs → Consulting → Policy flywheel.
             </span>
           </p>
         </div>
@@ -115,11 +115,11 @@ export default function DataIntegrationPage() {
 
           <Card className="border border-border/50 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Datasets</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Open Source Projects</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-foreground">{(datasets || []).length}</div>
-              <p className="mt-1 text-xs text-muted-foreground">{starredDatasets.length} starred</p>
+              <div className="text-3xl font-bold text-foreground">{(projects || []).length}</div>
+              <p className="mt-1 text-xs text-muted-foreground">GitHub discoveries</p>
             </CardContent>
           </Card>
 
@@ -128,9 +128,7 @@ export default function DataIntegrationPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">High Alignment</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-foreground">
-                {(grants || []).filter(g => (g.analysis?.alignmentScore || 0) >= 70).length}
-              </div>
+              <div className="text-3xl font-bold text-foreground">{highScoringGrants.length}</div>
               <p className="mt-1 text-xs text-muted-foreground">Grants scored 70+</p>
             </CardContent>
           </Card>
@@ -140,43 +138,47 @@ export default function DataIntegrationPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Ready to Apply</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-foreground">
-                {(grants || []).filter(g => g.starred && (g.analysis?.alignmentScore || 0) >= 70).length}
-              </div>
+              <div className="text-3xl font-bold text-foreground">{readyToApply.length}</div>
               <p className="mt-1 text-xs text-muted-foreground">Starred & high-scoring</p>
             </CardContent>
           </Card>
         </div>
 
         <Tabs defaultValue="grants" className="w-full">
-          <TabsList className="mb-6 grid w-full grid-cols-2 sm:mb-8">
-            <TabsTrigger value="grants" className="text-sm">
-              <Money size={16} className="mr-2" weight="duotone" />
-              Federal Grants
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="grants">
+              <Money size={18} weight="duotone" className="mr-2" />
+              Grant Opportunities
             </TabsTrigger>
-            <TabsTrigger value="datasets" className="text-sm">
-              <Database size={16} className="mr-2" weight="duotone" />
-              Open Datasets
+            <TabsTrigger value="projects">
+              <GitBranch size={18} weight="duotone" className="mr-2" />
+              Open Source Projects
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="grants">
-            <Card className="mb-6 border-2 border-primary/20 bg-primary/5 sm:mb-8">
-              <CardHeader className="pb-3 sm:pb-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
+          <TabsContent value="grants" className="mt-6 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
                   <Sparkle size={20} weight="duotone" className="text-primary" />
-                  Grants.gov Discovery
+                  Discover Grants
                 </CardTitle>
-                <CardDescription className="text-sm">
-                  Search federal grant opportunities with AI-powered alignment analysis for your ecosystem pillars.
+                <CardDescription>
+                  Automated search of Grants.gov with AI-powered relevance analysis
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 sm:space-y-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <CardContent className="space-y-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                   <div className="flex-1">
-                    <Select value={selectedGrantCategory} onValueChange={(v) => setSelectedGrantCategory(v as GrantCategory)}>
-                      <SelectTrigger className="h-10 sm:h-11">
-                        <SelectValue placeholder="Select category" />
+                    <label className="mb-2 block text-sm font-medium text-foreground">
+                      Category
+                    </label>
+                    <Select
+                      value={selectedGrantCategory}
+                      onValueChange={(val) => setSelectedGrantCategory(val as GrantCategory)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         {grantCategories.map((cat) => (
@@ -187,16 +189,20 @@ export default function DataIntegrationPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={handleDiscoverGrants} disabled={grantsLoading} className="h-10 gap-2">
+                  <Button
+                    onClick={handleDiscoverGrants}
+                    disabled={grantsLoading}
+                    className="w-full sm:w-auto"
+                  >
                     {grantsLoading ? (
                       <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        <span className="text-sm">{grantsStage || 'Searching...'}</span>
+                        <Sparkle size={18} className="mr-2 animate-spin" />
+                        {grantsStage || 'Discovering...'}
                       </>
                     ) : (
                       <>
-                        <Sparkle size={18} weight="fill" />
-                        <span className="text-sm">Discover Grants</span>
+                        <Download size={18} className="mr-2" />
+                        Discover Grants
                       </>
                     )}
                   </Button>
@@ -204,16 +210,16 @@ export default function DataIntegrationPage() {
 
                 {grantsError && (
                   <Alert variant="destructive">
-                    <AlertDescription className="text-sm">{grantsError}</AlertDescription>
+                    <AlertDescription>{grantsError}</AlertDescription>
                   </Alert>
                 )}
 
                 {(grants || []).length > 0 && (
-                  <div className="flex items-center justify-between border-t border-border pt-3 sm:pt-4">
-                    <p className="text-sm text-muted-foreground">
-                      {(grants || []).length} grant{(grants || []).length !== 1 ? 's' : ''} discovered
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
+                    <p className="text-sm text-foreground">
+                      <span className="font-semibold">{(grants || []).length}</span> grants discovered
                     </p>
-                    <Button variant="outline" size="sm" onClick={clearGrants} className="h-8 text-sm">
+                    <Button variant="ghost" size="sm" onClick={clearGrants}>
                       Clear All
                     </Button>
                   </div>
@@ -223,83 +229,178 @@ export default function DataIntegrationPage() {
 
             <div className="space-y-4">
               {(grants || []).length === 0 ? (
-                <Card className="border-2 border-dashed">
-                  <CardContent className="flex flex-col items-center justify-center py-12 text-center sm:py-16">
-                    <Money size={48} weight="duotone" className="mb-3 text-muted-foreground sm:mb-4" />
-                    <h3 className="mb-2 text-xl font-semibold text-foreground">No Grants Discovered Yet</h3>
-                    <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Select a category and click "Discover Grants" to find federal funding opportunities. AI will analyze each for alignment with your ecosystem.
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                    <Money size={48} weight="duotone" className="mb-4 text-muted-foreground/50" />
+                    <h3 className="mb-2 text-lg font-semibold text-foreground">No grants discovered yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Select a category and click Discover to start finding opportunities
                     </p>
                   </CardContent>
                 </Card>
               ) : (
-                (grants || []).map((discoveredGrant, idx) => (
-                  <GrantCard
-                    key={discoveredGrant.grant.id}
-                    grant={discoveredGrant}
-                    onToggleStar={() => toggleGrantStar(discoveredGrant.grant.id)}
-                    onRemove={() => removeGrant(discoveredGrant.grant.id)}
-                    index={idx}
-                  />
+                (grants || []).map((grant, index) => (
+                  <motion.div
+                    key={grant.grant.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className="overflow-hidden border border-border/50 transition-all hover:border-primary/50 hover:shadow-md">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              {grant.analysis && grant.analysis.alignmentScore >= 70 && (
+                                <Badge variant="default" className="bg-primary">
+                                  {grant.analysis.alignmentScore}% Match
+                                </Badge>
+                              )}
+                              {grant.analysis && grant.analysis.recommendedPillar && (
+                                <Badge variant="secondary">
+                                  {grant.analysis.recommendedPillar}
+                                </Badge>
+                              )}
+                              <Badge variant="outline">{grant.grant.agencyName}</Badge>
+                            </div>
+                            <CardTitle className="text-lg leading-tight">
+                              {grant.grant.opportunityTitle}
+                            </CardTitle>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="line-clamp-3 text-sm text-muted-foreground">
+                          {grant.grant.description}
+                        </p>
+
+                        {grant.analysis && grant.analysis.keyStrengths && grant.analysis.keyStrengths.length > 0 && (
+                          <div className="rounded-lg bg-muted/50 p-3">
+                            <p className="mb-1 text-xs font-semibold text-foreground">Key Strengths:</p>
+                            <ul className="list-inside list-disc space-y-1 text-xs text-muted-foreground">
+                              {grant.analysis.keyStrengths.map((strength, i) => (
+                                <li key={i}>{strength}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
+                          {grant.grant.awardCeiling && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">Award Ceiling</p>
+                              <p className="font-semibold text-foreground">
+                                ${(grant.grant.awardCeiling / 1000).toFixed(0)}K
+                              </p>
+                            </div>
+                          )}
+                          {grant.grant.closeDate && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">Close Date</p>
+                              <p className="font-semibold text-foreground">
+                                {new Date(grant.grant.closeDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          )}
+                          {grant.grant.eligibleApplicants && grant.grant.eligibleApplicants.length > 0 && (
+                            <div className="col-span-2 lg:col-span-1">
+                              <p className="text-xs text-muted-foreground">Eligible</p>
+                              <p className="line-clamp-1 font-semibold text-foreground">
+                                {grant.grant.eligibleApplicants.join(', ')}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(`https://www.grants.gov/search-results-detail/${grant.grant.opportunityNumber}`, '_blank')}
+                          >
+                            <ArrowSquareOut size={16} className="mr-2" />
+                            View on Grants.gov
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeGrant(grant.grant.id)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))
               )}
             </div>
           </TabsContent>
 
-          <TabsContent value="datasets">
-            <Card className="mb-6 border-2 border-secondary/20 bg-secondary/5 sm:mb-8">
-              <CardHeader className="pb-3 sm:pb-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Database size={20} weight="duotone" className="text-secondary" />
-                  Data.gov Catalog Search
+          <TabsContent value="projects" className="mt-6 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkle size={20} weight="duotone" className="text-primary" />
+                  Discover Projects
                 </CardTitle>
-                <CardDescription className="text-sm">
-                  Explore federal open datasets for integration into Labs prototypes, Consulting pilots, and Policy evidence.
+                <CardDescription>
+                  Find relevant open-source projects on GitHub with AI relevance scoring
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 sm:space-y-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <CardContent className="space-y-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                   <div className="flex-1">
-                    <Select value={selectedDatasetCategory} onValueChange={(v) => setSelectedDatasetCategory(v as DatasetCategory)}>
-                      <SelectTrigger className="h-10 sm:h-11">
-                        <SelectValue placeholder="Select category" />
+                    <label className="mb-2 block text-sm font-medium text-foreground">
+                      Topic
+                    </label>
+                    <Select
+                      value={selectedProjectTopic}
+                      onValueChange={setSelectedProjectTopic}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {datasetCategories.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            {cat.label}
+                        {projectTopics.map((topic) => (
+                          <SelectItem key={topic} value={topic}>
+                            {topic}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={handleDiscoverDatasets} disabled={datasetsLoading} className="h-10 gap-2">
-                    {datasetsLoading ? (
+                  <Button
+                    onClick={handleDiscoverProjects}
+                    disabled={projectsLoading}
+                    className="w-full sm:w-auto"
+                  >
+                    {projectsLoading ? (
                       <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        <span className="text-sm">{datasetsStage || 'Searching...'}</span>
+                        <Sparkle size={18} className="mr-2 animate-spin" />
+                        {projectsStage || 'Discovering...'}
                       </>
                     ) : (
                       <>
-                        <Database size={18} weight="fill" />
-                        <span className="text-sm">Discover Datasets</span>
+                        <Download size={18} className="mr-2" />
+                        Discover Projects
                       </>
                     )}
                   </Button>
                 </div>
 
-                {datasetsError && (
+                {projectsError && (
                   <Alert variant="destructive">
-                    <AlertDescription className="text-sm">{datasetsError}</AlertDescription>
+                    <AlertDescription>{projectsError}</AlertDescription>
                   </Alert>
                 )}
 
-                {(datasets || []).length > 0 && (
-                  <div className="flex items-center justify-between border-t border-border pt-3 sm:pt-4">
-                    <p className="text-sm text-muted-foreground">
-                      {(datasets || []).length} dataset{(datasets || []).length !== 1 ? 's' : ''} discovered
+                {(projects || []).length > 0 && (
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
+                    <p className="text-sm text-foreground">
+                      <span className="font-semibold">{(projects || []).length}</span> projects discovered
                     </p>
-                    <Button variant="outline" size="sm" onClick={clearDatasets} className="h-8 text-sm">
+                    <Button variant="ghost" size="sm" onClick={clearProjects}>
                       Clear All
                     </Button>
                   </div>
@@ -308,25 +409,98 @@ export default function DataIntegrationPage() {
             </Card>
 
             <div className="space-y-4">
-              {(datasets || []).length === 0 ? (
-                <Card className="border-2 border-dashed">
-                  <CardContent className="flex flex-col items-center justify-center py-12 text-center sm:py-16">
-                    <Database size={48} weight="duotone" className="mb-3 text-muted-foreground sm:mb-4" />
-                    <h3 className="mb-2 text-xl font-semibold text-foreground">No Datasets Discovered Yet</h3>
-                    <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Select a category and click "Discover Datasets" to find open government data that can fuel your Labs research, Consulting pilots, and Policy advocacy.
+              {(projects || []).length === 0 ? (
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                    <GitBranch size={48} weight="duotone" className="mb-4 text-muted-foreground/50" />
+                    <h3 className="mb-2 text-lg font-semibold text-foreground">No projects discovered yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Select a topic and click Discover to start finding relevant open-source projects
                     </p>
                   </CardContent>
                 </Card>
               ) : (
-                (datasets || []).map((savedDataset, idx) => (
-                  <DatasetCard
-                    key={savedDataset.dataset.id}
-                    dataset={savedDataset}
-                    onToggleStar={() => toggleDatasetStar(savedDataset.dataset.id)}
-                    onRemove={() => removeDataset(savedDataset.dataset.id)}
-                    index={idx}
-                  />
+                (projects || []).map((project, index) => (
+                  <motion.div
+                    key={project.repo.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className="overflow-hidden border border-border/50 transition-all hover:border-primary/50 hover:shadow-md">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              {project.analysis.relevanceScore >= 70 && (
+                                <Badge variant="default" className="bg-primary">
+                                  {project.analysis.relevanceScore}% Relevant
+                                </Badge>
+                              )}
+                              <Badge variant="secondary">
+                                AI Project
+                              </Badge>
+                              <Badge variant="outline">⭐ {project.repo.stargazers_count}</Badge>
+                            </div>
+                            <CardTitle className="text-lg leading-tight">
+                              {project.repo.full_name}
+                            </CardTitle>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          {project.repo.description}
+                        </p>
+
+                        {project.analysis.alignmentReason && (
+                          <div className="rounded-lg bg-muted/50 p-3">
+                            <p className="mb-1 text-xs font-semibold text-foreground">Why This Matters:</p>
+                            <p className="text-xs text-muted-foreground">{project.analysis.alignmentReason}</p>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Language</p>
+                            <p className="font-semibold text-foreground">
+                              {project.repo.language || 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">License</p>
+                            <p className="font-semibold text-foreground">
+                              {project.repo.license?.name || 'None'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Updated</p>
+                            <p className="font-semibold text-foreground">
+                              {new Date(project.repo.updated_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(project.repo.html_url, '_blank')}
+                          >
+                            <ArrowSquareOut size={16} className="mr-2" />
+                            View on GitHub
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeProject(project.repo.id)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))
               )}
             </div>
@@ -334,242 +508,5 @@ export default function DataIntegrationPage() {
         </Tabs>
       </div>
     </LayoutShell>
-  )
-}
-
-function GrantCard({ 
-  grant, 
-  onToggleStar, 
-  onRemove,
-  index 
-}: { 
-  grant: any
-  onToggleStar: () => void
-  onRemove: () => void
-  index: number
-}) {
-  const analysis = grant.analysis
-  const g = grant.grant
-
-  const getAlignmentColor = (score: number) => {
-    if (score >= 80) return 'text-green-600'
-    if (score >= 60) return 'text-yellow-600'
-    return 'text-orange-600'
-  }
-
-  const getPillarColor = (pillar: string) => {
-    switch (pillar) {
-      case 'labs': return 'bg-primary/10 text-primary border-primary/20'
-      case 'consulting': return 'bg-secondary/10 text-secondary border-secondary/20'
-      case 'policy': return 'bg-accent/10 text-accent border-accent/20'
-      default: return 'bg-muted text-muted-foreground border-border'
-    }
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-    >
-      <Card className="group overflow-hidden border border-border/50 shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1">
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <Badge className="text-xs">{g.opportunityStatus}</Badge>
-                {analysis && (
-                  <>
-                    <Badge className={`border text-xs ${getPillarColor(analysis.recommendedPillar)}`}>
-                      {analysis.recommendedPillar}
-                    </Badge>
-                    <Badge className="border border-border/50 bg-background text-xs">
-                      <span className={getAlignmentColor(analysis.alignmentScore)}>
-                        {analysis.alignmentScore}% alignment
-                      </span>
-                    </Badge>
-                  </>
-                )}
-              </div>
-              <CardTitle className="mb-1 text-lg">{g.opportunityTitle}</CardTitle>
-              <CardDescription className="text-sm">
-                <Buildings size={14} className="mr-1 inline" weight="duotone" />
-                {g.agencyName}
-              </CardDescription>
-            </div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onToggleStar}
-                className="h-8 w-8 shrink-0"
-              >
-                <Star size={18} weight={grant.starred ? 'fill' : 'regular'} className={grant.starred ? 'text-yellow-500' : ''} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onRemove}
-                className="h-8 w-8 shrink-0"
-              >
-                <Trash size={18} />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-            {g.description}
-          </p>
-
-          <div className="grid gap-2 text-sm sm:grid-cols-2">
-            {g.closeDate && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Calendar size={14} weight="duotone" />
-                <span>Closes: {new Date(g.closeDate).toLocaleDateString()}</span>
-              </div>
-            )}
-            {(g.awardFloor || g.awardCeiling) && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Money size={14} weight="duotone" />
-                <span>
-                  ${(g.awardFloor || 0).toLocaleString()} - ${(g.awardCeiling || 0).toLocaleString()}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {analysis && (
-            <div className="space-y-2 rounded-lg border border-border/50 bg-muted/30 p-3">
-              <div>
-                <p className="mb-1 text-xs font-semibold text-foreground">AI Analysis:</p>
-                <p className="text-xs leading-relaxed text-muted-foreground">{analysis.actionableInsights}</p>
-              </div>
-              {analysis.keyStrengths.length > 0 && (
-                <div>
-                  <p className="mb-1 text-xs font-semibold text-foreground">Key Strengths:</p>
-                  <ul className="space-y-0.5 text-xs text-muted-foreground">
-                    {analysis.keyStrengths.slice(0, 2).map((strength, i) => (
-                      <li key={i}>• {strength}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            <Button asChild size="sm" variant="outline" className="flex-1">
-              <a href={g.url} target="_blank" rel="noopener noreferrer">
-                <ArrowSquareOut size={14} className="mr-1.5" />
-                View on Grants.gov
-              </a>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  )
-}
-
-function DatasetCard({ 
-  dataset, 
-  onToggleStar, 
-  onRemove,
-  index 
-}: { 
-  dataset: any
-  onToggleStar: () => void
-  onRemove: () => void
-  index: number
-}) {
-  const ds = dataset.dataset
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-    >
-      <Card className="group overflow-hidden border border-border/50 shadow-sm transition-all hover:border-secondary/30 hover:shadow-md">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1">
-              <div className="mb-2 flex flex-wrap gap-1.5">
-                {ds.tags.slice(0, 3).map((tag: string) => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-              <CardTitle className="mb-1 text-lg">{ds.title}</CardTitle>
-              <CardDescription className="text-sm">
-                <Buildings size={14} className="mr-1 inline" weight="duotone" />
-                {ds.organizationTitle}
-              </CardDescription>
-            </div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onToggleStar}
-                className="h-8 w-8 shrink-0"
-              >
-                <Star size={18} weight={dataset.starred ? 'fill' : 'regular'} className={dataset.starred ? 'text-yellow-500' : ''} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onRemove}
-                className="h-8 w-8 shrink-0"
-              >
-                <Trash size={18} />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-            {ds.description}
-          </p>
-
-          {ds.resources && ds.resources.length > 0 && (
-            <div className="space-y-1.5 rounded-lg border border-border/50 bg-muted/30 p-3">
-              <p className="text-xs font-semibold text-foreground">
-                {ds.resources.length} Resource{ds.resources.length !== 1 ? 's' : ''} Available:
-              </p>
-              <div className="space-y-1">
-                {ds.resources.slice(0, 3).map((resource: any) => (
-                  <div key={resource.id} className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <FileText size={12} weight="duotone" />
-                    <span className="flex-1 truncate">{resource.name}</span>
-                    <Badge variant="outline" className="text-[10px]">
-                      {resource.format}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            <Button asChild size="sm" variant="outline" className="flex-1">
-              <a href={ds.url} target="_blank" rel="noopener noreferrer">
-                <ArrowSquareOut size={14} className="mr-1.5" />
-                View on Data.gov
-              </a>
-            </Button>
-            {ds.resources && ds.resources[0] && (
-              <Button asChild size="sm" variant="default">
-                <a href={ds.resources[0].url} target="_blank" rel="noopener noreferrer">
-                  <Download size={14} className="mr-1.5" />
-                  Download
-                </a>
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
   )
 }

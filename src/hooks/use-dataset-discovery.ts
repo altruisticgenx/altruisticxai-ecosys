@@ -1,141 +1,93 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
-import {
-  DataGovDataset,
-  searchEnergyDatasets,
-  searchAIResearchDatasets,
-  searchEducationDatasets,
-  searchMunicipalDatasets,
-  searchClimateDatasets
-} from '@/lib/data-gov-api'
-
-export interface SavedDataset {
-  dataset: DataGovDataset
-  discoveredAt: string
-  starred: boolean
-  notes?: string
-  integratedWithPillar?: 'labs' | 'consulting' | 'policy'
-}
-
-export type DatasetCategory = 'energy' | 'ai-research' | 'education' | 'municipal' | 'climate'
+import type { IngestedProject, GrantOpportunity } from '@/data-ingest/schema'
+import { runEnrichedDiscovery } from '@/data-ingest/orchestrator'
+import { getDiscoveredProjects, getDiscoveredGrants } from '@/data-ingest/store/storage'
 
 export function useDatasetDiscovery() {
-  const [datasets, setDatasets] = useKV<SavedDataset[]>('discovered-datasets', [])
-  const [isLoading, setIsLoading] = useState(false)
-  const [loadingStage, setLoadingStage] = useState<string>('')
+  const [projects, setProjects] = useKV<IngestedProject[]>('dataset-discovery-projects', [])
+  const [grants, setGrants] = useKV<GrantOpportunity[]>('dataset-discovery-grants', [])
+  const [isDiscovering, setIsDiscovering] = useState(false)
+  const [progress, setProgress] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
-  const discoverDatasets = async (category: DatasetCategory) => {
-    setIsLoading(true)
-    setError(null)
-    setLoadingStage('Searching Data.gov catalog...')
-
+  const loadStoredData = async () => {
     try {
-      let searchResult: { datasets: DataGovDataset[] }
-
-      switch (category) {
-        case 'energy':
-          searchResult = await searchEnergyDatasets(15)
-          break
-        case 'ai-research':
-          searchResult = await searchAIResearchDatasets(15)
-          break
-        case 'education':
-          searchResult = await searchEducationDatasets(15)
-          break
-        case 'municipal':
-          searchResult = await searchMunicipalDatasets(15)
-          break
-        case 'climate':
-          searchResult = await searchClimateDatasets(15)
-          break
-        default:
-          throw new Error('Invalid category')
-      }
-
-      const newDatasets = searchResult.datasets.filter(ds => {
-        return !(datasets || []).find(d => d.dataset.id === ds.id)
-      })
-
-      if (newDatasets.length === 0) {
-        setIsLoading(false)
-        setLoadingStage('')
-        return []
-      }
-
-      const savedDatasets: SavedDataset[] = newDatasets.map(ds => ({
-        dataset: ds,
-        discoveredAt: new Date().toISOString(),
-        starred: false
-      }))
-
-      if (savedDatasets.length > 0) {
-        setDatasets(current => [...savedDatasets, ...(current || [])].slice(0, 100))
-      }
-
-      setIsLoading(false)
-      setLoadingStage('')
-      return savedDatasets
+      const [storedProjects, storedGrants] = await Promise.all([
+        getDiscoveredProjects(),
+        getDiscoveredGrants()
+      ])
+      
+      setProjects(() => storedProjects)
+      setGrants(() => storedGrants)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to discover datasets')
-      setIsLoading(false)
-      setLoadingStage('')
-      return []
+      console.error('Error loading stored data:', err)
     }
   }
 
-  const toggleStar = (datasetId: string) => {
-    setDatasets(current =>
-      (current || []).map(d =>
-        d.dataset.id === datasetId ? { ...d, starred: !d.starred } : d
-      )
-    )
+  const runDiscovery = async (useAI: boolean = true) => {
+    setIsDiscovering(true)
+    setError(null)
+    setProgress('Initializing discovery...')
+
+    try {
+      setProgress('Querying Grants.gov and Data.gov APIs...')
+      
+      const job = await runEnrichedDiscovery({
+        keywords: ['AI', 'energy', 'campus', 'renewable', 'pilot', 'education', 'local-first'],
+        sectors: ['energy', 'education', 'research'],
+        relevance_threshold: 0.4
+      }, useAI)
+
+      if (job.status === 'completed') {
+        setProgress('Loading discovered data...')
+        await loadStoredData()
+        setProgress('')
+      } else {
+        throw new Error('Discovery job failed')
+      }
+
+      setIsDiscovering(false)
+      return job
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Discovery failed')
+      setIsDiscovering(false)
+      setProgress('')
+      throw err
+    }
   }
 
-  const addNote = (datasetId: string, note: string) => {
-    setDatasets(current =>
-      (current || []).map(d =>
-        d.dataset.id === datasetId ? { ...d, notes: note } : d
-      )
-    )
+  const filterBySector = (sector: IngestedProject['sector']) => {
+    return (projects || []).filter(p => p.sector === sector)
   }
 
-  const setPillar = (datasetId: string, pillar: 'labs' | 'consulting' | 'policy' | undefined) => {
-    setDatasets(current =>
-      (current || []).map(d =>
-        d.dataset.id === datasetId ? { ...d, integratedWithPillar: pillar } : d
-      )
-    )
+  const filterByRelevance = (minScore: number) => {
+    return (projects || []).filter(p => (p.relevance_score || 0) >= minScore)
   }
 
-  const removeDataset = (datasetId: string) => {
-    setDatasets(current => (current || []).filter(d => d.dataset.id !== datasetId))
+  const getTopGrants = (count: number = 10) => {
+    return (grants || [])
+      .sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0))
+      .slice(0, count)
   }
 
-  const clearAll = () => {
-    setDatasets([])
-  }
-
-  const getStarredDatasets = () => {
-    return (datasets || []).filter(d => d.starred)
-  }
-
-  const getByPillar = (pillar: 'labs' | 'consulting' | 'policy') => {
-    return (datasets || []).filter(d => d.integratedWithPillar === pillar)
+  const getTopProjects = (count: number = 10) => {
+    return (projects || [])
+      .sort((a, b) => (b.relevance_score || 0) - (a.relevance_score || 0))
+      .slice(0, count)
   }
 
   return {
-    datasets,
-    isLoading,
-    loadingStage,
+    projects,
+    grants,
+    isDiscovering,
+    progress,
     error,
-    discoverDatasets,
-    toggleStar,
-    addNote,
-    setPillar,
-    removeDataset,
-    clearAll,
-    getStarredDatasets,
-    getByPillar
+    runDiscovery,
+    loadStoredData,
+    filterBySector,
+    filterByRelevance,
+    getTopGrants,
+    getTopProjects
   }
 }

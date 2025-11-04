@@ -1,0 +1,169 @@
+name: Automated Data Discovery
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      use_ai_enrichment:
+        description: 'Enable AI enrichment'
+        required: false
+        default: 'true'
+      relevance_threshold:
+        description: 'Minimum relevance score (0-1)'
+        required: false
+        default: '0.4'
+
+jobs:
+  discover-grants-and-datasets:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run discovery pipeline
+        id: discovery
+        run: |
+          cat > run-discovery.mjs << 'EOF'
+          import { runEnrichedDiscovery } from './src/data-ingest/orchestrator.ts'
+          import { getDiscoveredProjects, getDiscoveredGrants } from './src/data-ingest/store/storage.ts'
+          
+          async function main() {
+            const useAI = process.env.USE_AI === 'true'
+            const threshold = parseFloat(process.env.THRESHOLD || '0.4')
+            
+            console.log('🔍 Starting automated discovery...')
+            console.log(`AI Enrichment: ${useAI}`)
+            console.log(`Relevance Threshold: ${threshold}`)
+            
+            try {
+              const job = await runEnrichedDiscovery({
+                keywords: [
+                  'AI', 'artificial intelligence', 'machine learning',
+                  'energy', 'renewable', 'campus energy',
+                  'pilot', 'demonstration', 'innovation',
+                  'education', 'university', 'local-first'
+                ],
+                sectors: ['energy', 'education', 'research'],
+                locations: ['Maine', 'New England', 'Massachusetts', 'Vermont', 'New Hampshire'],
+                relevance_threshold: threshold
+              }, useAI)
+              
+              console.log(`\n✅ Discovery Job Complete`)
+              console.log(`Status: ${job.status}`)
+              console.log(`Records Found: ${job.records_found}`)
+              console.log(`Records Imported: ${job.records_imported}`)
+              
+              if (job.errors && job.errors.length > 0) {
+                console.error('\n⚠️  Errors encountered:')
+                job.errors.forEach(err => console.error(`  - ${err}`))
+              }
+              
+              const [projects, grants] = await Promise.all([
+                getDiscoveredProjects(),
+                getDiscoveredGrants()
+              ])
+              
+              console.log(`\n📊 Total Stored:`)
+              console.log(`  Projects: ${projects.length}`)
+              console.log(`  Grants: ${grants.length}`)
+              
+              const highValueGrants = grants.filter(g =>
+                (g.relevance_score || 0) >= 0.7 &&
+                (g.award_ceiling || 0) >= 250000
+              )
+              
+              if (highValueGrants.length > 0) {
+                console.log(`\n🎯 High-Value Opportunities Found: ${highValueGrants.length}`)
+                highValueGrants.slice(0, 3).forEach(g => {
+                  console.log(`  - ${g.title}`)
+                  console.log(`    Agency: ${g.agency}`)
+                  console.log(`    Award: $${(g.award_ceiling / 1000).toFixed(0)}K`)
+                  console.log(`    Score: ${((g.relevance_score || 0) * 100).toFixed(0)}%`)
+                  console.log(`    URL: ${g.url}`)
+                })
+              }
+              
+              if (job.status === 'failed') {
+                process.exit(1)
+              }
+            } catch (error) {
+              console.error('\n❌ Discovery failed:', error)
+              process.exit(1)
+            }
+          }
+          
+          main()
+          EOF
+          
+          node run-discovery.mjs
+        env:
+          USE_AI: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
+          THRESHOLD: ${{ github.event.inputs.relevance_threshold || '0.4' }}
+          
+      - name: Generate discovery report
+        if: always()
+        run: |
+          cat > DISCOVERY_REPORT.md << 'EOF'
+          # Data Discovery Report
+          
+          **Run Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Trigger**: ${{ github.event_name }}
+          **AI Enrichment**: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
+          
+          ## Summary
+          
+          This automated discovery run scanned:
+          - Grants.gov for federal grant opportunities
+          - Data.gov for relevant datasets and projects
+          
+          ### Filters Applied
+          - **Keywords**: AI, energy, campus, renewable, pilot, education, local-first
+          - **Sectors**: Energy, Education, Research
+          - **Regions**: New England (Maine, Massachusetts, Vermont, New Hampshire)
+          - **Relevance Threshold**: ${{ github.event.inputs.relevance_threshold || '0.4' }}
+          
+          ### Next Steps
+          
+          1. Review high-value opportunities in the Data Integration page
+          2. Check alignment scores for strategic fit
+          3. Prioritize grants closing within 30 days
+          4. Flag cross-pillar opportunities for ecosystem integration
+          
+          ---
+          
+          _Report generated by GitHub Actions workflow_
+          EOF
+          
+          cat DISCOVERY_REPORT.md
+          
+      - name: Create issue for high-value opportunities
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('DISCOVERY_REPORT.md', 'utf8');
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📊 Weekly Discovery Report - ${new Date().toISOString().split('T')[0]}`,
+              body: report,
+              labels: ['data-discovery', 'automated']
+            });
+            
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Discovery pipeline failed. Check logs for details."
