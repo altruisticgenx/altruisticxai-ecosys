@@ -1,6 +1,12 @@
 import { useState, useCallback } from "react"
 import { useKV } from "@github/spark/hooks"
 import type { Project, GrantOpportunity, OpenDataset } from "@/data/schema"
+import { runNsfAwardsIngest } from "@/data-ingest/apis/nsfAwards"
+import { runUsaspendingIngest } from "@/data-ingest/apis/usaspending"
+import { runEiaIngest } from "@/data-ingest/apis/eia"
+import { runNrelIngest } from "@/data-ingest/apis/nrel"
+import { runCollegeScorecardIngest } from "@/data-ingest/apis/collegeScorecard"
+import { runDataDotGovIngest } from "@/data-ingest/apis/dataDotGov"
 
 interface CrawlerData {
   projects: Project[]
@@ -13,11 +19,38 @@ interface CrawlerData {
 }
 
 async function runFullIngest() {
+  console.log("[crawler] Starting full multi-source ingest...")
+  
+  const results = await Promise.allSettled([
+    runNsfAwardsIngest(),
+    runUsaspendingIngest(),
+    runEiaIngest(),
+    runNrelIngest(),
+    runCollegeScorecardIngest(),
+    runDataDotGovIngest(),
+  ])
+
+  const allProjects: Project[] = []
+  const sources: string[] = []
+
+  results.forEach((result, index) => {
+    const sourceNames = ["NSF Awards", "USAspending", "EIA", "NREL", "College Scorecard", "Data.gov"]
+    if (result.status === "fulfilled") {
+      allProjects.push(...result.value)
+      sources.push(sourceNames[index])
+      console.log(`[crawler] ${sourceNames[index]}: ${result.value.length} projects`)
+    } else {
+      console.error(`[crawler] ${sourceNames[index]} failed:`, result.reason)
+    }
+  })
+
+  console.log(`[crawler] Total projects ingested: ${allProjects.length} from ${sources.length} sources`)
+
   return {
-    projects: [] as Project[],
+    projects: allProjects,
     grants: [] as GrantOpportunity[],
     datasets: [] as OpenDataset[],
-    sources: [] as string[],
+    sources,
     timestamp: new Date().toISOString()
   }
 }

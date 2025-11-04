@@ -4,13 +4,13 @@
 
 The AltruisticXAI ecosystem now includes a fully automated data discovery and integration pipeline that:
 
-1. **Fetches real-world opportunities** from Grants.gov and Data.gov APIs
+1. **Fetches real-world opportunities** from 8+ federal data sources including Grants.gov, NSF Awards, USAspending, EIA, NREL, College Scorecard, and Data.gov
 2. **Analyzes relevance** using AI-powered scoring aligned with the 3-pillar mission
 3. **Stores discoveries** persistently using Spark KV
-4. **Presents insights** through an interactive UI
+4. **Presents insights** through an interactive UI with multi-source crawler
 5. **Automates workflows** via GitHub Actions and CLI tools
 
-This transforms AltruisticXAI from a static showcase into a living, breathing ecosystem that continuously discovers and integrates real opportunities.
+This transforms AltruisticXAI from a static showcase into a living, breathing ecosystem that continuously discovers and integrates real opportunities from energy, education, and research data sources.
 
 ## System Architecture
 
@@ -36,24 +36,39 @@ This transforms AltruisticXAI from a static showcase into a living, breathing ec
 ┌───────────────────────────┴─────────────────────────────────────┐
 │                   Data Ingestion Pipeline                        │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │              orchestrator.ts                              │  │
+│  │              orchestrator.ts & use-data-crawler.ts        │  │
 │  │  • runDiscovery()                                        │  │
 │  │  • runEnrichedDiscovery()                                │  │
+│  │  • runFullIngest() - Multi-source crawler                │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
 │  │  APIs        │  │  Transform   │  │   Storage    │         │
 │  │ grants-gov   │  │  normalize   │  │  storage.ts  │         │
 │  │ data-gov     │  │  enrichWithAI│  │  Spark KV    │         │
+│  │ nsf-awards   │  │              │  │              │         │
+│  │ usaspending  │  │              │  │              │         │
+│  │ eia          │  │              │  │              │         │
+│  │ nrel         │  │              │  │              │         │
+│  │ college-card │  │              │  │              │         │
+│  │ data.gov-ckn │  │              │  │              │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
 ┌───────────────────────────┴─────────────────────────────────────┐
 │                    External Data Sources                         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │ Grants.gov   │  │  Data.gov    │  │   GitHub     │         │
-│  │ Federal      │  │  Federal &   │  │ Open Source  │         │
-│  │ Grants API   │  │  State Data  │  │ Repositories │         │
+│  │ Grants.gov   │  │  NSF Awards  │  │ USAspending  │         │
+│  │ Federal      │  │  Research    │  │ Federal      │         │
+│  │ Grants API   │  │  Awards API  │  │ Spending API │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │ EIA Open     │  │ NREL Dev     │  │ College      │         │
+│  │ Data API     │  │ Network API  │  │ Scorecard    │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│  ┌──────────────┐  ┌──────────────┐                           │
+│  │ Data.gov     │  │   GitHub     │                           │
+│  │ CKAN API     │  │ Open Source  │                           │
+│  └──────────────┘  └──────────────┘                           │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

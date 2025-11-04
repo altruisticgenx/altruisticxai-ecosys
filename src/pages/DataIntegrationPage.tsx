@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Database, Money, Sparkle, Download, ArrowSquareOut, FileText, Calendar, Buildings, GitBranch } from "@phosphor-icons/react"
+import { Database, Money, Sparkle, Download, ArrowSquareOut, FileText, Calendar, Buildings, GitBranch, Lightning } from "@phosphor-icons/react"
 import { useGrantDiscovery, GrantCategory } from "@/hooks/use-grant-discovery"
 import { useDiscoveredProjects } from "@/hooks/use-discovered-projects"
+import { useDataCrawler } from "@/hooks/use-data-crawler"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -34,8 +35,24 @@ export default function DataIntegrationPage() {
     clearAll: clearProjects
   } = useDiscoveredProjects()
 
+  const {
+    crawlerData,
+    isIngesting,
+    runIngest,
+    getHighPriorityProjects,
+  } = useDataCrawler()
+
   const [selectedGrantCategory, setSelectedGrantCategory] = useState<GrantCategory>('energy-ai')
   const [selectedProjectTopic, setSelectedProjectTopic] = useState<string>('local-first AI energy')
+  
+  const handleRunCrawler = async () => {
+    await runIngest()
+    if (crawlerData && crawlerData.projects.length > 0) {
+      toast.success(`Crawled ${crawlerData.projects.length} projects!`, {
+        description: `From ${crawlerData.sources?.length || 0} data sources`
+      })
+    }
+  }
 
   const handleDiscoverGrants = async () => {
     const result = await discoverGrants(selectedGrantCategory, true)
@@ -145,14 +162,18 @@ export default function DataIntegrationPage() {
         </div>
 
         <Tabs defaultValue="grants" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="grants">
               <Money size={18} weight="duotone" className="mr-2" />
-              Grant Opportunities
+              Grants
             </TabsTrigger>
             <TabsTrigger value="projects">
               <GitBranch size={18} weight="duotone" className="mr-2" />
-              Open Source Projects
+              Projects
+            </TabsTrigger>
+            <TabsTrigger value="crawler">
+              <Lightning size={18} weight="duotone" className="mr-2" />
+              Multi-Source Crawler
             </TabsTrigger>
           </TabsList>
 
@@ -502,6 +523,174 @@ export default function DataIntegrationPage() {
                     </Card>
                   </motion.div>
                 ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="crawler" className="mt-6 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightning size={20} weight="duotone" className="text-primary" />
+                  Multi-Source Data Crawler
+                </CardTitle>
+                <CardDescription>
+                  Automated ingestion from NSF Awards, USAspending, EIA, NREL, College Scorecard, and Data.gov
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  onClick={handleRunCrawler}
+                  disabled={isIngesting}
+                  className="w-full"
+                  size="lg"
+                >
+                  {isIngesting ? (
+                    <>
+                      <Sparkle size={20} className="mr-2 animate-spin" />
+                      Crawling Data Sources...
+                    </>
+                  ) : (
+                    <>
+                      <Lightning size={20} className="mr-2" />
+                      Run Full Crawler
+                    </>
+                  )}
+                </Button>
+
+                {crawlerData?.error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{crawlerData.error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {crawlerData?.sources && crawlerData.sources.length > 0 && (
+                  <div className="rounded-lg border border-border bg-muted/30 p-4">
+                    <p className="mb-2 text-sm font-medium text-foreground">
+                      Data Sources ({crawlerData.sources.length}):
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {crawlerData.sources.map((source) => (
+                        <Badge key={source} variant="secondary">
+                          {source}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {crawlerData?.lastIngestTimestamp && (
+                  <p className="text-xs text-muted-foreground">
+                    Last run: {new Date(crawlerData.lastIngestTimestamp).toLocaleString()}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+              {!crawlerData?.projects || crawlerData.projects.length === 0 ? (
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                    <Database size={48} weight="duotone" className="mb-4 text-muted-foreground/50" />
+                    <h3 className="mb-2 text-lg font-semibold text-foreground">No data crawled yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Click "Run Full Crawler" to fetch data from all sources
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {crawlerData.projects.length} Projects Discovered
+                    </h3>
+                    <Badge variant="outline">
+                      {getHighPriorityProjects().length} High Priority
+                    </Badge>
+                  </div>
+                  {crawlerData.projects.slice(0, 20).map((project, index) => (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      <Card className="overflow-hidden border border-border/50 transition-all hover:border-primary/50 hover:shadow-md">
+                        <CardHeader>
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="mb-2 flex flex-wrap items-center gap-2">
+                                {project.priorityScore && project.priorityScore >= 80 && (
+                                  <Badge variant="default" className="bg-primary">
+                                    Priority {project.priorityScore}
+                                  </Badge>
+                                )}
+                                <Badge variant="secondary">{project.sector}</Badge>
+                                <Badge variant="outline">{project.provenance.source}</Badge>
+                              </div>
+                              <CardTitle className="text-lg leading-tight">
+                                {project.title}
+                              </CardTitle>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <p className="line-clamp-3 text-sm text-muted-foreground">
+                            {project.description}
+                          </p>
+
+                          {project.short_kpi_summary && (
+                            <div className="rounded-lg bg-muted/50 p-3">
+                              <p className="text-xs text-muted-foreground">{project.short_kpi_summary}</p>
+                            </div>
+                          )}
+
+                          <div className="grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
+                            {project.institutionName && (
+                              <div>
+                                <p className="text-xs text-muted-foreground">Institution</p>
+                                <p className="truncate font-semibold text-foreground">
+                                  {project.institutionName}
+                                </p>
+                              </div>
+                            )}
+                            {project.location?.state && (
+                              <div>
+                                <p className="text-xs text-muted-foreground">Location</p>
+                                <p className="font-semibold text-foreground">
+                                  {project.location.city ? `${project.location.city}, ` : ''}{project.location.state}
+                                </p>
+                              </div>
+                            )}
+                            {project.tags && project.tags.length > 0 && (
+                              <div className="col-span-2 lg:col-span-1">
+                                <p className="text-xs text-muted-foreground">Tags</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {project.tags.slice(0, 3).map((tag) => (
+                                    <Badge key={tag} variant="outline" className="text-xs">
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {project.provenance.sourceUrl && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => window.open(project.provenance.sourceUrl, '_blank')}
+                            >
+                              <ArrowSquareOut size={16} className="mr-2" />
+                              View Source
+                            </Button>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </>
               )}
             </div>
           </TabsContent>

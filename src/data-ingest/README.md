@@ -43,6 +43,76 @@ This directory contains the automated data discovery and integration pipeline th
   - Geographic tagging
   - Update tracking
 
+### 3. NSF Awards API
+- **Endpoint**: `https://api.nsf.gov/services/v1/awards.json`
+- **Purpose**: National Science Foundation research awards
+- **Coverage**: All NSF-funded research projects
+- **Update Frequency**: Daily
+- **Key Features**:
+  - Research abstracts
+  - Funding amounts
+  - PI information
+  - Institution details
+
+### 4. USAspending API
+- **Endpoint**: `https://api.usaspending.gov/api/v2`
+- **Purpose**: Federal contract and grant awards
+- **Coverage**: All federal spending transactions
+- **Update Frequency**: Daily
+- **Key Features**:
+  - Award descriptions
+  - Funding amounts
+  - Agency information
+  - Geographic data
+
+### 5. EIA Open Data API
+- **Endpoint**: `https://api.eia.gov/v2`
+- **Purpose**: U.S. Energy Information Administration data
+- **Coverage**: Energy production, consumption, prices, emissions
+- **Update Frequency**: Monthly/Quarterly/Annual (varies by series)
+- **Key Features**:
+  - State-level electricity data
+  - Price trends
+  - Generation capacity
+  - Emissions factors
+- **Use Case**: Baseline metrics for ROI modeling and carbon impact calculations
+
+### 6. NREL Developer Network APIs
+- **Endpoint**: `https://developer.nrel.gov/api`
+- **Purpose**: Renewable energy data and analysis tools
+- **Coverage**: Solar resource, utility rates, EV infrastructure
+- **Update Frequency**: Varies by dataset
+- **Key Features**:
+  - Utility rate data
+  - Solar resource assessment
+  - REopt optimization (future)
+  - Building energy analysis
+- **Use Case**: Solar feasibility studies, campus energy ROI calculations
+
+### 7. College Scorecard API
+- **Endpoint**: `https://api.data.gov/ed/collegescorecard/v1`
+- **Purpose**: Institution-level higher education data
+- **Coverage**: All Title IV institutions in the U.S.
+- **Update Frequency**: Annual
+- **Key Features**:
+  - Enrollment demographics
+  - Pell Grant percentages
+  - First-generation student rates
+  - Cost and completion data
+- **Use Case**: Identify equity-focused campus energy pilot targets
+
+### 8. Data.gov CKAN API
+- **Endpoint**: `https://catalog.data.gov/api/3/action`
+- **Purpose**: Federal open data catalog discovery
+- **Coverage**: 250,000+ datasets across all federal agencies
+- **Update Frequency**: Continuous
+- **Key Features**:
+  - Dataset search and filtering
+  - Tag-based discovery
+  - Organization filtering
+  - Metadata access
+- **Use Case**: Labs discovery feed for open-source tools and demos
+
 ## Unified Schema
 
 All data sources are normalized to standard schemas:
@@ -351,12 +421,17 @@ await addPolicyMemo(memo)
    - Massachusetts Data Portal
    - Vermont Open Data
 
-2. **University Research Databases**:
-   - NSF Awards Search
-   - DOE Project Database
-   - NIH Reporter
+2. **Energy & Infrastructure** (Priority for v1):
+   - ✅ EIA Open Data API - IMPLEMENTED
+   - ✅ NREL Developer Network - IMPLEMENTED
+   - DOE Building Performance Database API (BPD)
+   - Campus energy APIs (UNC Energy Data, Princeton TigerEnergy)
 
-3. **News & Publications**:
+3. **Education & Context** (Priority for v1):
+   - ✅ College Scorecard API - IMPLEMENTED
+   - ✅ Data.gov CKAN API - IMPLEMENTED
+
+4. **News & Publications**:
    - DOE Energy Blog
    - Campus Sustainability News
    - Policy Announcements
