@@ -1,35 +1,32 @@
 export interface Project {
-  title: str
-  sector: strin
-  origin: "labs" | "c
+  id: string
+  title: string
+  description: string
   sector: string
   techStack: string[]
   origin: "labs" | "consulting" | "internal"
   slug: string
+  status?: string
+  client?: string
+  clientName?: string
+  tags?: string[]
+  metrics?: Array<{ label: string; value: string }>
+  short_kpi_summary?: string
   annual_savings_usd?: number
-  short_kpi_summa
+  payback_months?: number
+}
 
+export const projects: Project[] = [
   {
-    title: "Campu
-    sector: "Educ
-    o
+    id: "1",
+    title: "Campus Energy Dashboard",
+    description: "An open-source energy monitoring and optimization platform designed for university campuses. Provides real-time insights into building energy consumption patterns and actionable recommendations for reducing carbon footprint.",
+    sector: "Education & Sustainability",
+    techStack: ["React", "D3.js", "Python", "PostgreSQL", "MQTT"],
+    origin: "labs",
+    slug: "campus-energy-dashboard",
     status: "pilot",
-    metrics: [
-      { label: "Buildings
-    ]
- 
-
-    sector: "AI Ethics & Compliance"
-   
-    status: 
-  },
-    id: "3",
-    description: "A comprehensive, anonym
-    techStack: ["PostgreSQL", "Apache Parquet", "FastAPI", "Jupyter", "Op
-    slug: "open-cam
-    tags: ["open source", "open data
-  {
-    title: "Federated Learning Privacy Framework",
+    tags: ["open source", "sustainability", "IoT", "data visualization"],
     metrics: [
       { label: "Campuses", value: "3" },
       { label: "Buildings", value: "20" },
@@ -42,11 +39,11 @@ export interface Project {
     description: "A privacy-preserving toolkit for auditing AI models without cloud dependencies. Enables organizations to evaluate model fairness, bias, and performance metrics entirely on local infrastructure, ensuring sensitive data never leaves organizational boundaries.",
     sector: "AI Ethics & Compliance",
     techStack: ["Electron", "TensorFlow.js", "SQLite", "Vue.js", "WebAssembly"],
-    origin: "consul
+    origin: "labs",
     slug: "local-ai-audit-toolkit",
-    client: "NYU Lang
+    status: "active",
     tags: ["open source", "AI ethics", "privacy", "bias detection", "compliance"]
-    
+  },
   {
     id: "3",
     title: "Open Campus Energy Dataset",
@@ -78,125 +75,80 @@ export interface Project {
     origin: "consulting",
     slug: "nyu-healthcare-ai",
     status: "active",
-  },
+    client: "NYU Langone Health",
+    clientName: "NYU Langone Health",
+    tags: ["consulting", "healthcare", "AI ethics", "compliance", "HIPAA"],
+    short_kpi_summary: "Monitoring 8 AI models with 65% cost reduction and 120 hrs/month saved in audit time",
+    annual_savings_usd: 280000,
+    payback_months: 9,
     metrics: [
-    title: "University Research Data Commons - C
+      { label: "AI Models Monitored", value: "8" },
       { label: "Cost Reduction", value: "65%" },
       { label: "Audit Time Saved", value: "120 hrs/mo" }
     ]
-    
+  },
   {
-      { labe
+    id: "6",
     title: "Federal Energy Optimization - GSA",
     description: "Adapted our Campus Energy Dashboard for the General Services Administration to monitor and optimize energy usage across 12 federal buildings in the DC metro area. Achieved 18% energy reduction in first year through behavioral insights and predictive analytics.",
     sector: "Government & Sustainability",
     techStack: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
     origin: "consulting",
-    description: "Deployed automated
+    slug: "gsa-energy-optimization",
     status: "active",
     client: "U.S. General Services Administration",
+    clientName: "U.S. GSA",
+    tags: ["consulting", "government", "sustainability", "energy"],
+    short_kpi_summary: "12 buildings optimized with 18% energy reduction and $450K annual savings, 14-month payback",
+    annual_savings_usd: 450000,
+    payback_months: 14,
     metrics: [
       { label: "Buildings", value: "12" },
       { label: "Energy Reduction", value: "18%" },
       { label: "Annual Savings", value: "$450K" },
       { label: "Payback Period", value: "14 months" }
-     
+    ]
   },
-   
+  {
     id: "7",
     title: "Multi-Hospital Federated ML Platform - Northeast Consortium",
     description: "Deployed production federated learning infrastructure enabling 7 hospitals to collaboratively train diagnostic AI models without sharing patient data. First cross-institutional ML collaboration to meet both HIPAA and state-level privacy requirements.",
-    description: "Real-time explain
+    sector: "Healthcare & Privacy",
     techStack: ["PyTorch", "Kubernetes", "PostgreSQL", "FastAPI", "Azure"],
     origin: "consulting",
     slug: "northeast-federated-ml",
-    clientName: "Sta
+    status: "active",
     client: "Northeast Healthcare Consortium",
-    payback_mo
+    clientName: "Northeast Healthcare Consortium",
+    tags: ["consulting", "healthcare", "federated learning", "privacy", "HIPAA"],
+    short_kpi_summary: "7 hospitals collaborating with +12% model accuracy gain and 18-month payback period",
+    annual_savings_usd: 620000,
+    payback_months: 18,
+    metrics: [
       { label: "Hospitals", value: "7" },
-      { label: "Models Monitored", value: "12" },
       { label: "Model Accuracy Gain", value: "+12%" },
       { label: "Payback Period", value: "18 months" }
     ]
   },
   {
-    descript
+    id: "8",
     title: "University Research Data Commons - California System",
     description: "Established standardized data sharing framework across 9 UC campuses based on our Open Campus Data Licensing Model. Created unified API and governance structure enabling collaborative research while protecting institutional data.",
     sector: "Education & Open Data",
-    clientName: "Fair Trade Alliance",
+    techStack: ["FastAPI", "PostgreSQL", "React", "Kubernetes", "S3"],
     origin: "consulting",
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    slug: "uc-data-commons",
+    status: "active",
+    client: "University of California System",
+    clientName: "University of California",
+    tags: ["consulting", "education", "open data", "research", "governance"],
+    short_kpi_summary: "9 campuses unified with 45+ research projects enabled and 120+ datasets shared",
+    annual_savings_usd: 380000,
+    payback_months: 16,
+    metrics: [
+      { label: "Campuses", value: "9" },
+      { label: "Research Projects Enabled", value: "45+" },
+      { label: "Datasets Shared", value: "120+" }
+    ]
+  }
+]
