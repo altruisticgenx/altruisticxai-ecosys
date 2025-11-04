@@ -1,35 +1,35 @@
 # Data Ingestion & Integration Architecture
 
-## Overview
-
-This directory contains the automated data discovery and integration pipeline that powers the AltruisticXAI ecosystem. It fetches real-world grants, opportunities, and open datasets from public APIs and enriches them with AI-powered analysis.
-
-## Architecture
+This direct
 
 ```
-/data-ingest/
-├── apis/              → API client modules for each data source
-│   ├── grants-gov.ts  → Grants.gov API integration
-│   └── data-gov.ts    → Data.gov catalog integration
-├── transform/         → Data normalization and enrichment
-│   └── normalize.ts   → Schema standardization + AI enrichment
-├── store/             → Persistence layer using Spark KV
-│   └── storage.ts     → CRUD operations for discovered data
-├── schema.ts          → TypeScript interfaces for all entities
-└── orchestrator.ts    → Main pipeline coordinator
-```
 
-## Data Sources
+│   └── data-go
 
-### 1. Grants.gov API
-- **Endpoint**: `https://www.grants.gov/grantsws/rest/opportunities/search`
-- **Purpose**: Federal grant opportunities
+│  
+└── orchestra
+
+
+- **Endpoint**: `https://www.grants.gov/grantsws/rest
 - **Coverage**: All U.S. federal agencies
-- **Update Frequency**: Daily
 - **Key Features**:
-  - Keyword-based search
   - Funding amount filters
-  - Eligibility criteria
+  - Application deadlines
+### 2. Data.gov Catalog
+- **Purpose**: Federal and state datasets
+- *
+
+  - Geographic 
+
+- **Endpoint**: `http
+- **Coverage**: All NSF-funded research projects
+- **Key Features**:
+  - Funding amounts
+  - Institution details
+### 4. USAspending 
+- **Purpose**: Federal c
+- **Update Frequency**: Da
+  - Award descriptions
   - Application deadlines
 
 ### 2. Data.gov Catalog
@@ -388,38 +388,38 @@ All API calls include:
 
 ### Performance
 
-- Batch AI calls (max 20 at a time)
-- Cache analysis results
-- Paginate large result sets
-- Use functional React state updates
 
-## Integration with Impact Ledger
+   - ✅ EIA Open Data API
+   - DOE Building Performanc
 
-Discovered items can be promoted to the main Impact Ledger:
 
-```typescript
-// Convert grant to policy memo
-const memo = {
-  id: grant.id,
-  title: grant.title,
-  jurisdiction: grant.agency,
-  status: 'concept',
-  related_projects: [],
-  ...grant
-}
 
-// Add to ledger
-await addPolicyMemo(memo)
-```
 
-## Future Enhancements
+   - Policy Announcements
 
-### Additional Data Sources
+- **Geo-clust
+- **Network mapping**: Connect 
+- **Impact for
+## Security & E
+- **Rate Limiting**: 
+- **Privacy**: No PII collect
+- **Terms of Service
+## Support
+For issues
+-
 
-1. **State Portals** (CKAN-based):
-   - Maine Open Data
-   - Massachusetts Data Portal
-   - Vermont Open Data
+---
+**Last Updated**: 2025
+
+
+
+
+
+
+
+
+
+
 
 2. **Energy & Infrastructure** (Priority for v1):
    - ✅ EIA Open Data API - IMPLEMENTED
@@ -432,35 +432,35 @@ await addPolicyMemo(memo)
    - ✅ Data.gov CKAN API - IMPLEMENTED
 
 4. **News & Publications**:
-   - DOE Energy Blog
-   - Campus Sustainability News
-   - Policy Announcements
 
-### Advanced Features
 
-- **Geo-clustering**: Group opportunities by region
-- **Trend analysis**: Track emerging topics over time
-- **Network mapping**: Connect related grants/projects
-- **Auto-application**: Pre-fill grant applications
-- **Impact forecasting**: Predict ROI using historical data
 
-## Security & Ethics
 
-- **Rate Limiting**: Respect API limits (never exceed)
-- **Attribution**: Always track data provenance
-- **Privacy**: No PII collection or storage
-- **Robots.txt**: Honor for scraping
-- **Terms of Service**: Comply with all API ToS
 
-## Support
 
-For issues or questions:
-- Check logs in ingestion job records
-- Review API documentation
-- Test filters incrementally
-- Validate schemas match API responses
 
----
 
-**Last Updated**: 2025
-**Maintained by**: AltruisticXAI Team
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
