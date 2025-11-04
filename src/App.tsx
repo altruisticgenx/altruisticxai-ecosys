@@ -1,5 +1,7 @@
+import LabsPage from "@/pages/LabsPage"
+
 function App() {
-    return <div></div>
+    return <LabsPage />
 }
 
 export default App
