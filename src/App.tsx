@@ -5,6 +5,7 @@ import LabsPage from "@/pages/LabsPage"
 import ConsultingPage from "@/pages/ConsultingPage"
 import PolicyPage from "@/pages/PolicyPage"
 import ImpactLedgerPage from "@/pages/ImpactLedgerPage"
+import DataIntegrationPage from "@/pages/DataIntegrationPage"
 import { Toaster } from "@/components/ui/sonner"
 import { registerServiceWorker } from "@/lib/registerServiceWorker"
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/consulting" element={<ConsultingPage />} />
         <Route path="/policy" element={<PolicyPage />} />
         <Route path="/impact-ledger" element={<ImpactLedgerPage />} />
+        <Route path="/data-integration" element={<DataIntegrationPage />} />
       </Routes>
       <Toaster 
         position="bottom-right"

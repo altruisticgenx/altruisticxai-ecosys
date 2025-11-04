@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { projects } from "@/data/projects"
-import { Flask, Briefcase, Scroll, Sparkle, ArrowRight, Buildings, GraduationCap, Users } from "@phosphor-icons/react"
+import { Flask, Briefcase, Scroll, Sparkle, ArrowRight, Buildings, GraduationCap, Users, Database } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { motion, useReducedMotion } from "framer-motion"
@@ -357,6 +357,32 @@ export default function HomePage() {
               </motion.article>
             ))}
           </motion.div>
+        </motion.section>
+
+        <motion.section
+          className="rounded-2xl border-2 border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent p-6 text-center sm:p-10"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={fadeIn}
+        >
+          <Database size={48} weight="duotone" className="mx-auto mb-4 text-accent" />
+          <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
+            Fuel Your Ecosystem with Real Data
+          </h3>
+          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Access high-leverage federal grants, open datasets, and automation flows.{" "}
+            <span className="font-medium text-foreground">
+              The Data Integration Hub connects Grants.gov, Data.gov, and AI-powered analysis to your strategic pipeline.
+            </span>
+          </p>
+          <Button size="lg" asChild className="rounded-full">
+            <Link to="/data-integration" className="flex items-center gap-2">
+              <Database size={20} weight="duotone" />
+              Explore Data Integration Hub
+              <ArrowRight size={16} />
+            </Link>
+          </Button>
         </motion.section>
       </div>
     </LayoutShell>
