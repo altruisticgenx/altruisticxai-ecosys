@@ -122,6 +122,18 @@ export default function LabsPage() {
                       {project.sector}
                     </Badge>
                   </div>
+                  {project.tags && project.tags.length > 0 && (
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-foreground">Tags</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="font-normal">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <h4 className="mb-2 text-sm font-semibold text-foreground">Tech Stack</h4>
                     <div className="flex flex-wrap gap-2">

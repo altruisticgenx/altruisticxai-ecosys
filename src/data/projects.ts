@@ -4,10 +4,11 @@ export interface Project {
   description: string
   sector: string
   techStack: string[]
-  origin: "labs" | "client" | "internal"
+  origin: "labs" | "consulting" | "internal"
   slug: string
   status: "active" | "archived" | "pilot"
   client?: string
+  tags?: string[]
   metrics?: {
     label: string
     value: string
@@ -24,6 +25,7 @@ export const projects: Project[] = [
     origin: "labs",
     slug: "campus-energy-dashboard",
     status: "pilot",
+    tags: ["open source", "energy", "explainability", "sustainability", "data visualization"],
     metrics: [
       { label: "Campuses", value: "3" },
       { label: "Buildings", value: "20" },
@@ -38,7 +40,8 @@ export const projects: Project[] = [
     techStack: ["Electron", "TensorFlow.js", "SQLite", "Vue.js", "WebAssembly"],
     origin: "labs",
     slug: "local-ai-audit-toolkit",
-    status: "active"
+    status: "active",
+    tags: ["open source", "AI ethics", "privacy", "bias detection", "compliance"]
   },
   {
     id: "3",
@@ -48,7 +51,8 @@ export const projects: Project[] = [
     techStack: ["PostgreSQL", "Apache Parquet", "FastAPI", "Jupyter", "OpenAPI"],
     origin: "labs",
     slug: "open-campus-energy-dataset",
-    status: "active"
+    status: "active",
+    tags: ["open source", "open data", "energy", "research", "sustainability"]
   },
   {
     id: "4",
@@ -58,7 +62,8 @@ export const projects: Project[] = [
     techStack: ["PyTorch", "gRPC", "Redis", "Docker", "Kubernetes"],
     origin: "labs",
     slug: "federated-learning-privacy",
-    status: "active"
+    status: "active",
+    tags: ["open source", "privacy", "federated learning", "machine learning", "healthcare"]
   },
   {
     id: "5",
@@ -66,7 +71,7 @@ export const projects: Project[] = [
     description: "Custom implementation of our Local-First AI Audit Toolkit for NYU Langone Health's diagnostic AI systems. Enabled continuous compliance monitoring across 8 AI models while maintaining HIPAA requirements and reducing audit costs by 65%.",
     sector: "Healthcare & AI Ethics",
     techStack: ["Electron", "TensorFlow.js", "PostgreSQL", "React", "Docker"],
-    origin: "client",
+    origin: "consulting",
     slug: "nyu-healthcare-ai",
     status: "active",
     client: "NYU Langone Health",
@@ -82,14 +87,15 @@ export const projects: Project[] = [
     description: "Adapted our Campus Energy Dashboard for the General Services Administration to monitor and optimize energy usage across 12 federal buildings in the DC metro area. Achieved 18% energy reduction in first year through behavioral insights and predictive analytics.",
     sector: "Government & Sustainability",
     techStack: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
-    origin: "client",
+    origin: "consulting",
     slug: "gsa-energy-optimization",
     status: "active",
     client: "U.S. General Services Administration",
     metrics: [
       { label: "Buildings", value: "12" },
       { label: "Energy Reduction", value: "18%" },
-      { label: "Annual Savings", value: "$450K" }
+      { label: "Annual Savings", value: "$450K" },
+      { label: "Payback Period", value: "14 months" }
     ]
   },
   {
@@ -98,14 +104,15 @@ export const projects: Project[] = [
     description: "Deployed production federated learning infrastructure enabling 7 hospitals to collaboratively train diagnostic AI models without sharing patient data. First cross-institutional ML collaboration to meet both HIPAA and state-level privacy requirements.",
     sector: "Healthcare & Privacy",
     techStack: ["PyTorch", "Kubernetes", "PostgreSQL", "FastAPI", "Azure"],
-    origin: "client",
+    origin: "consulting",
     slug: "northeast-federated-ml",
     status: "pilot",
     client: "Northeast Healthcare Consortium",
     metrics: [
       { label: "Hospitals", value: "7" },
       { label: "Patients Protected", value: "1.2M" },
-      { label: "Model Accuracy Gain", value: "+12%" }
+      { label: "Model Accuracy Gain", value: "+12%" },
+      { label: "Payback Period", value: "18 months" }
     ]
   },
   {
@@ -114,14 +121,15 @@ export const projects: Project[] = [
     description: "Established standardized data sharing framework across 9 UC campuses based on our Open Campus Data Licensing Model. Created unified API and governance structure enabling collaborative research while protecting institutional data.",
     sector: "Education & Open Data",
     techStack: ["FastAPI", "PostgreSQL", "Elasticsearch", "React", "Kubernetes"],
-    origin: "client",
+    origin: "consulting",
     slug: "uc-research-data-commons",
     status: "active",
     client: "University of California System",
     metrics: [
       { label: "Campuses", value: "9" },
       { label: "Datasets", value: "247" },
-      { label: "Research Teams", value: "83" }
+      { label: "Research Teams", value: "83" },
+      { label: "Annual Cost Savings", value: "$320K" }
     ]
   }
 ]

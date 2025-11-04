@@ -4,10 +4,56 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import MetricPill from "@/components/MetricPill"
 import { projects } from "@/data/projects"
-import { Briefcase, ArrowRight, CheckCircle, TrendUp } from "@phosphor-icons/react"
+import { Briefcase, ArrowRight, CheckCircle, TrendUp, Sparkle, Rocket, Building } from "@phosphor-icons/react"
+
+const serviceTiers = [
+  {
+    id: "discovery",
+    name: "Discovery Audit",
+    priceRange: "$25K - $75K",
+    duration: "4-6 weeks",
+    icon: Sparkle,
+    description: "Comprehensive assessment of your current AI systems, data infrastructure, and compliance posture. Identify opportunities for transparency improvements and ethical AI implementation.",
+    outcomes: [
+      "Detailed audit report with compliance gaps",
+      "Prioritized roadmap for AI transparency",
+      "Cost-benefit analysis for recommended solutions",
+      "Technical specifications for next steps"
+    ]
+  },
+  {
+    id: "pilot",
+    name: "Pilot Deployment",
+    priceRange: "$150K - $350K",
+    duration: "3-6 months",
+    icon: Rocket,
+    description: "Deploy proven open-source tools from our Labs portfolio in a controlled environment. Validate technical feasibility and measure initial impact metrics.",
+    outcomes: [
+      "Production-ready implementation (1-3 systems)",
+      "Custom integration with existing infrastructure",
+      "Staff training and documentation",
+      "Quantified impact metrics and case study"
+    ]
+  },
+  {
+    id: "scale",
+    name: "Scale Program",
+    priceRange: "$500K - $2M+",
+    duration: "12+ months",
+    icon: Building,
+    description: "Enterprise-wide rollout with ongoing support, continuous compliance monitoring, and custom feature development. Full partnership model with policy advocacy support.",
+    outcomes: [
+      "Organization-wide deployment",
+      "Dedicated engineering support",
+      "Custom feature development",
+      "Policy advocacy and regulatory support",
+      "Contribution to open-source ecosystem"
+    ]
+  }
+]
 
 export default function ConsultingPage() {
-  const clientProjects = projects.filter(p => p.origin === "client")
+  const clientProjects = projects.filter(p => p.origin === "consulting")
 
   return (
     <LayoutShell>
@@ -77,6 +123,50 @@ export default function ConsultingPage() {
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+
+        <div className="mb-20">
+          <h2 className="mb-8 text-center text-3xl font-semibold text-foreground">
+            Service Tiers
+          </h2>
+          <p className="mx-auto mb-12 max-w-2xl text-center text-muted-foreground">
+            Flexible engagement models designed to meet you where you are - from initial assessment to full-scale deployment.
+          </p>
+          <div className="grid gap-8 md:grid-cols-3">
+            {serviceTiers.map((tier) => {
+              const Icon = tier.icon
+              return (
+                <Card key={tier.id} className="flex flex-col border-2 transition-all hover:border-secondary hover:shadow-lg">
+                  <CardHeader>
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-secondary/10">
+                      <Icon size={28} weight="duotone" className="text-secondary" />
+                    </div>
+                    <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                    <div className="flex items-center gap-2 pt-2">
+                      <Badge variant="secondary" className="text-base font-semibold">
+                        {tier.priceRange}
+                      </Badge>
+                      <Badge variant="outline">{tier.duration}</Badge>
+                    </div>
+                    <CardDescription className="pt-3 text-base">
+                      {tier.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">Key Outcomes</h4>
+                    <ul className="space-y-2">
+                      {tier.outcomes.map((outcome, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0 text-secondary" />
+                          <span>{outcome}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </div>
 

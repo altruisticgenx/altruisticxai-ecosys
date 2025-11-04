@@ -13,10 +13,14 @@ export default function PolicyPage() {
   }
 
   const statusConfig = {
-    draft: { variant: "outline" as const, icon: Clock, label: "Draft" },
-    published: { variant: "secondary" as const, icon: Scroll, label: "Published" },
-    implemented: { variant: "default" as const, icon: CheckCircle, label: "Implemented" }
+    "Concept": { variant: "outline" as const, icon: Clock, label: "Concept" },
+    "In Discussion": { variant: "secondary" as const, icon: Scroll, label: "In Discussion" },
+    "Enacted": { variant: "default" as const, icon: CheckCircle, label: "Enacted" }
   }
+
+  const conceptMemos = policyMemos.filter(m => m.status === "Concept")
+  const inDiscussionMemos = policyMemos.filter(m => m.status === "In Discussion")
+  const enactedMemos = policyMemos.filter(m => m.status === "Enacted")
 
   return (
     <LayoutShell>
@@ -98,62 +102,204 @@ export default function PolicyPage() {
           </p>
         </div>
 
-        <div className="grid gap-6">
-          {policyMemos.map((memo) => {
-            const config = statusConfig[memo.status]
-            const Icon = config.icon
+        <div className="space-y-12">
+          {enactedMemos.length > 0 && (
+            <div>
+              <h3 className="mb-4 text-2xl font-semibold text-foreground flex items-center gap-2">
+                <CheckCircle size={24} weight="duotone" className="text-primary" />
+                Enacted
+              </h3>
+              <div className="grid gap-6">
+                {enactedMemos.map((memo) => {
+                  const config = statusConfig[memo.status]
+                  const Icon = config.icon
 
-            return (
-              <Card key={memo.id} className="border-2 transition-all hover:border-accent hover:shadow-lg">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        <Badge variant={config.variant} className="flex items-center gap-1">
-                          <Icon size={14} weight="bold" />
-                          {config.label}
-                        </Badge>
-                        <Badge variant="outline">{memo.jurisdiction}</Badge>
-                      </div>
-                      <CardTitle className="text-2xl">{memo.title}</CardTitle>
-                      {memo.datePublished && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
-                            month: 'long', 
-                            year: 'numeric' 
-                          })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <CardDescription className="text-base">
-                    {memo.summary}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="mb-2 text-sm font-semibold text-foreground">
-                      Related Projects & Evidence
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {memo.relatedProjects.map((projectId) => {
-                        const isProject = !projectId.startsWith('pm-')
-                        return (
-                          <Badge 
-                            key={projectId} 
-                            variant="secondary"
-                            className="font-normal"
-                          >
-                            {isProject ? getProjectTitle(projectId) : projectId}
-                          </Badge>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+                  return (
+                    <Card key={memo.id} className="border-2 transition-all hover:border-accent hover:shadow-lg">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="mb-2 flex items-center gap-2">
+                              <Badge variant={config.variant} className="flex items-center gap-1">
+                                <Icon size={14} weight="bold" />
+                                {config.label}
+                              </Badge>
+                              <Badge variant="outline">{memo.jurisdiction}</Badge>
+                            </div>
+                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            {memo.datePublished && (
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
+                                  month: 'long', 
+                                  year: 'numeric' 
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <CardDescription className="text-base">
+                          {memo.summary}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div>
+                          <h4 className="mb-2 text-sm font-semibold text-foreground">
+                            Related Projects & Evidence
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {memo.relatedProjects.map((projectId) => {
+                              const isProject = !projectId.startsWith('pm-')
+                              return (
+                                <Badge 
+                                  key={projectId} 
+                                  variant="secondary"
+                                  className="font-normal"
+                                >
+                                  {isProject ? getProjectTitle(projectId) : projectId}
+                                </Badge>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {inDiscussionMemos.length > 0 && (
+            <div>
+              <h3 className="mb-4 text-2xl font-semibold text-foreground flex items-center gap-2">
+                <Scroll size={24} weight="duotone" className="text-secondary" />
+                In Discussion
+              </h3>
+              <div className="grid gap-6">
+                {inDiscussionMemos.map((memo) => {
+                  const config = statusConfig[memo.status]
+                  const Icon = config.icon
+
+                  return (
+                    <Card key={memo.id} className="border-2 transition-all hover:border-accent hover:shadow-lg">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="mb-2 flex items-center gap-2">
+                              <Badge variant={config.variant} className="flex items-center gap-1">
+                                <Icon size={14} weight="bold" />
+                                {config.label}
+                              </Badge>
+                              <Badge variant="outline">{memo.jurisdiction}</Badge>
+                            </div>
+                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            {memo.datePublished && (
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
+                                  month: 'long', 
+                                  year: 'numeric' 
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <CardDescription className="text-base">
+                          {memo.summary}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div>
+                          <h4 className="mb-2 text-sm font-semibold text-foreground">
+                            Related Projects & Evidence
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {memo.relatedProjects.map((projectId) => {
+                              const isProject = !projectId.startsWith('pm-')
+                              return (
+                                <Badge 
+                                  key={projectId} 
+                                  variant="secondary"
+                                  className="font-normal"
+                                >
+                                  {isProject ? getProjectTitle(projectId) : projectId}
+                                </Badge>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {conceptMemos.length > 0 && (
+            <div>
+              <h3 className="mb-4 text-2xl font-semibold text-foreground flex items-center gap-2">
+                <Clock size={24} weight="duotone" className="text-muted-foreground" />
+                Concept
+              </h3>
+              <div className="grid gap-6">
+                {conceptMemos.map((memo) => {
+                  const config = statusConfig[memo.status]
+                  const Icon = config.icon
+
+                  return (
+                    <Card key={memo.id} className="border-2 transition-all hover:border-accent hover:shadow-lg">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="mb-2 flex items-center gap-2">
+                              <Badge variant={config.variant} className="flex items-center gap-1">
+                                <Icon size={14} weight="bold" />
+                                {config.label}
+                              </Badge>
+                              <Badge variant="outline">{memo.jurisdiction}</Badge>
+                            </div>
+                            <CardTitle className="text-2xl">{memo.title}</CardTitle>
+                            {memo.datePublished && (
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                Published: {new Date(memo.datePublished).toLocaleDateString('en-US', { 
+                                  month: 'long', 
+                                  year: 'numeric' 
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <CardDescription className="text-base">
+                          {memo.summary}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div>
+                          <h4 className="mb-2 text-sm font-semibold text-foreground">
+                            Related Projects & Evidence
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {memo.relatedProjects.map((projectId) => {
+                              const isProject = !projectId.startsWith('pm-')
+                              return (
+                                <Badge 
+                                  key={projectId} 
+                                  variant="secondary"
+                                  className="font-normal"
+                                >
+                                  {isProject ? getProjectTitle(projectId) : projectId}
+                                </Badge>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-16 rounded-2xl border-2 border-accent/20 bg-accent/5 p-8 text-center">
