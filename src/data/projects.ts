@@ -1,35 +1,37 @@
 export interface Project {
-  title: str
-  sector: strin
-  origin: "labs" | "c
-  status?: strin
+  id: string
+  title: string
+  description: string
+  sector: string
+  techStack: string[]
+  origin: "labs" | "consulting"
+  slug: string
+  status?: string
+  client?: string
   clientName?: string
-  metrics?: Array<{ label: stri
-  short_kpi_su
+  tags?: string[]
+  metrics?: Array<{ label: string; value: string }>
+  payback_months?: number
+  annual_savings_usd?: number
+  short_kpi_summary?: string
 }
-export const proj
-    id: "1",
-    description: 
-    techStack: ["React", "D3.js", "Python", "Postgr
-    slug: "campus-energy-dash
- 
 
-      { label: "Avg. Energy Reductio
-  }
-    id: "2",
-    description: "An open-source tool
-    techStack: ["PyTorch", "Python", "Docker", "FastAPI"],
-    slug: "federated-learning-toolkit",
-    tags: ["open source", "privacy", "federated learning", "machin
-      { label: "Dow
-      { label: "Organizations Using"
-  },
-    id: "3",
-    descriptio
-    techStack: ["Electron", "TensorFlow.
-    slug: "healthcare-ai-compliance",
-    tags: ["open source", "healthcare", "AI ethics", "
-     
+export const projects: Project[] = [
+  {
+    id: "1",
+    title: "Campus Energy Dashboard",
+    description: "Real-time energy monitoring dashboard for university campuses to track and reduce energy consumption.",
+    sector: "Sustainability",
+    techStack: ["React", "D3.js", "Python", "PostgreSQL"],
+    origin: "labs",
+    slug: "campus-energy-dashboard",
+    status: "active",
+    tags: ["open source", "sustainability", "energy", "dashboard"],
+    metrics: [
+      { label: "Avg. Energy Reduction", value: "18%" },
+      { label: "Campuses Using", value: "12" },
+      { label: "Cost Savings", value: "$2M+" }
+    ]
   },
   {
     id: "2",
@@ -45,8 +47,8 @@ export const proj
       { label: "Downloads", value: "5K+" },
       { label: "Contributors", value: "12" },
       { label: "Organizations Using", value: "8" }
-     
-    
+    ]
+  },
   {
     id: "3",
     title: "Healthcare AI Compliance Suite",
@@ -89,7 +91,11 @@ export const proj
     slug: "nyu-healthcare-ai",
     status: "active",
     client: "NYU Langone Health",
+    clientName: "NYU Langone Health",
     tags: ["consulting", "healthcare", "AI ethics", "compliance", "HIPAA"],
+    short_kpi_summary: "8 AI models with continuous HIPAA-compliant monitoring, 65% cost reduction, 120 hrs/mo saved",
+    payback_months: 12,
+    annual_savings_usd: 450000,
     metrics: [
       { label: "AI Models Monitored", value: "8" },
       { label: "Cost Reduction", value: "65%" },
@@ -97,35 +103,19 @@ export const proj
     ]
   },
   {
-    status: 
-    clientName: "Northeast Healthcare Consortiu
+    id: "6",
+    title: "Federated Healthcare Analytics - Northeast Consortium",
+    description: "Privacy-preserving federated learning implementation for collaborative medical research across 7 hospitals. Enabled multi-institutional ML model training while maintaining full HIPAA compliance and patient privacy.",
+    sector: "Healthcare & Privacy",
+    techStack: ["PyTorch", "Python", "Docker", "FastAPI", "Kubernetes"],
+    origin: "consulting",
+    slug: "northeast-federated-healthcare",
+    status: "active",
+    client: "Northeast Healthcare Consortium",
+    clientName: "Northeast Healthcare Consortium",
+    tags: ["consulting", "healthcare", "privacy", "federated learning", "HIPAA"],
     short_kpi_summary: "7 hospitals collaborating on 3 ML models benefiting 50K+ patients with 100% privacy compliance",
     payback_months: 18,
-      { label: "Hospitals", value: "7" },
-      { label: "Patients 
-    ]
-]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     annual_savings_usd: 620000,
     metrics: [
       { label: "Hospitals", value: "7" },
