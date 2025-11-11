@@ -6,10 +6,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CheckCircle, XCircle, Info } from '@phosphor-icons/react'
 
 interface GrantSearchResponse {
+  totalRecords: number
+  requestedAt: string
   opportunities: Array<{
     opportunityNumber: string
     opportunityTitle: string
     agencyName: string
+    estimatedTotalProgramFunding?: number
   }>
 }
 
@@ -112,7 +115,10 @@ export default function GrantsAPITest() {
                       </div>
                       {data.opportunities[0].estimatedTotalProgramFunding && (
                         <p className="text-muted-foreground">
-                          Funding: ${parseFloat(data.opportunities[0].estimatedTotalProgramFunding).toLocaleString()}
+                          Funding: ${(typeof data.opportunities[0].estimatedTotalProgramFunding === 'number' 
+                            ? data.opportunities[0].estimatedTotalProgramFunding 
+                            : parseFloat(String(data.opportunities[0].estimatedTotalProgramFunding))
+                          ).toLocaleString()}
                         </p>
                       )}
                     </div>

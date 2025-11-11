@@ -19,6 +19,9 @@ interface HasDate {
   effectiveDate?: string
   posting_date?: string
   close_date?: string
+  postedDate?: string
+  closeDate?: string
+  date?: string
 }
 
 function parseIso(dateStr?: string | null): Date | null {

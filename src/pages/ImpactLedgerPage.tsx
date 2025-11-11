@@ -61,7 +61,7 @@ export default function ImpactLedgerPage() {
   
   const priorityProjects = getHighPriorityProjects()
   
-  const lastUpdated = getLastUpdated(crawlerData)
+  const lastUpdated = getLastUpdated(crawlerData || null)
   const coverage = getCoverage(priorityProjects)
   
   const handleRunCrawler = async () => {

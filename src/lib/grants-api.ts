@@ -28,14 +28,22 @@ interface GrantsGovRawOpportunity {
   synopsis?: string
   description?: string
   closeDate?: string
-  awardCeiling?: number
-  awardFloor?: number
-  estimatedTotalProgramFunding?: number
+  closeDateTimeStamp?: string
+  awardCeiling?: number | string
+  awardFloor?: number | string
+  estimatedTotalProgramFunding?: number | string
   opportunityCategory?: string
+  categoryOfFundingActivity?: string
   fundingInstrumentType?: string
-  eligibleApplicants?: string[]
+  fundingActivityCategory?: string
+  eligibleApplicants?: string[] | string
+  applicantEligibility?: string
   additionalInfo?: string
+  additionalInformation?: string
+  additionalInformationOnEligibility?: string
   cfda?: string
+  cfdaNumbers?: string
+  cfdaNumber?: string
   opportunityStatus?: string
 }
 
@@ -95,9 +103,9 @@ export async function searchGrantOpportunities(
         agencyName: opp.agencyName || opp.agencyCode || 'Federal Agency',
         description: opp.description || opp.synopsis || opp.opportunityTitle || '',
         closeDate: opp.closeDate || opp.closeDateTimeStamp || '',
-        awardCeiling: opp.awardCeiling ? parseFloat(opp.awardCeiling) : undefined,
-        awardFloor: opp.awardFloor ? parseFloat(opp.awardFloor) : undefined,
-        estimatedTotalProgramFunding: opp.estimatedTotalProgramFunding ? parseFloat(opp.estimatedTotalProgramFunding) : undefined,
+        awardCeiling: opp.awardCeiling ? (typeof opp.awardCeiling === 'number' ? opp.awardCeiling : parseFloat(opp.awardCeiling)) : undefined,
+        awardFloor: opp.awardFloor ? (typeof opp.awardFloor === 'number' ? opp.awardFloor : parseFloat(opp.awardFloor)) : undefined,
+        estimatedTotalProgramFunding: opp.estimatedTotalProgramFunding ? (typeof opp.estimatedTotalProgramFunding === 'number' ? opp.estimatedTotalProgramFunding : parseFloat(opp.estimatedTotalProgramFunding)) : undefined,
         opportunityCategory: opp.opportunityCategory || opp.categoryOfFundingActivity || 'Discretionary',
         fundingInstrumentType: opp.fundingInstrumentType || opp.fundingActivityCategory || 'Grant',
         eligibleApplicants: Array.isArray(opp.eligibleApplicants) 
@@ -107,8 +115,8 @@ export async function searchGrantOpportunities(
           : opp.applicantEligibility
           ? [opp.applicantEligibility]
           : ['See opportunity details'],
-        additionalInfo: opp.additionalInformationOnEligibility || opp.additionalInformation,
-        cfda: opp.cfdaNumbers || opp.cfdaNumber,
+        additionalInfo: opp.additionalInformationOnEligibility || opp.additionalInformation || opp.additionalInfo,
+        cfda: opp.cfdaNumbers || opp.cfdaNumber || opp.cfda,
         opportunityStatus: opp.opportunityStatus || 'posted',
         url: `https://www.grants.gov/search-results-detail/${oppNumber}`
       }
