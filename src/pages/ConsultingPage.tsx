@@ -22,18 +22,14 @@ export default function Consulting() {
           </Link>
         </div>
       </div>
-
       {/* Page heading */}
       <header className="mx-auto w-full max-w-6xl px-4 md:px-6">
-        <h1 className="text-3xl md:text-4xl font-black">
-          Consulting: From Idea to Impact
-        </h1>
+        <h1 className="text-3xl md:text-4xl font-black">Consulting: From Idea to Impact</h1>
         <p className="mt-3 max-w-3xl opacity-90">
           We design lightweight pilots, measurable MVPs, and scalable rollouts.
           Start with a <strong>4-week scoped sprint</strong>, then grow based on proof—not hype.
         </p>
       </header>
-
       {/* Sticky in-page nav */}
       <nav
         aria-label="Section navigation"
@@ -59,7 +55,6 @@ export default function Consulting() {
           </ul>
         </div>
       </nav>
-
       <main className="mx-auto w-full max-w-6xl px-4 md:px-6 py-10 space-y-16">
         {/* Education */}
         <Section
