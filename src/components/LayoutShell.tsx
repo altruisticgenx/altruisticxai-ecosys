@@ -49,9 +49,6 @@ export default function LayoutShell({ children }: LayoutShellProps) {
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-base font-bold text-foreground transition-colors group-hover:text-primary">AltruisticXAI</span>
-                <span className="hidden text-xs text-muted-foreground sm:block">
-                  Ethical AI Ecosystem
-                </span>
               </div>
             </Link>
           </motion.div>
@@ -125,7 +122,6 @@ export default function LayoutShell({ children }: LayoutShellProps) {
           )}
         </div>
       </header>
-
       <main className="transition-all duration-300">
         <AnimatePresence mode="wait">
           <motion.div
@@ -139,7 +135,6 @@ export default function LayoutShell({ children }: LayoutShellProps) {
           </motion.div>
         </AnimatePresence>
       </main>
-
       <footer className="border-t border-border/40 bg-gradient-to-b from-muted/20 to-muted/40">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
@@ -206,5 +201,5 @@ export default function LayoutShell({ children }: LayoutShellProps) {
         </div>
       </footer>
     </div>
-  )
+  );
 }
