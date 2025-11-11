@@ -170,13 +170,11 @@ export default function HomePage() {
               <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
             </p>
             
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-1.5 text-xs">
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 px-3 py-1.5 text-xs bg-violet-300">
               <CheckCircle size={16} weight="fill" className="text-accent" />
-              <span className="font-medium text-foreground">2025+ Federal Data Only</span>
+              <span className="small-purple-tailwind-glow-link:https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking bg-violet-300">Book A Call</span>
               <span className="text-muted-foreground">·</span>
-              <Link to="/data-integration" className="text-accent transition-colors hover:text-accent/80">
-                Learn more
-              </Link>
+              <Link to="/data-integration" className="text-accent transition-colors hover:text-accent/80"></Link>
             </div>
           </motion.div>
 
@@ -418,7 +416,7 @@ export default function HomePage() {
         </motion.section>
       </div>
     </LayoutShell>
-  )
+  );
 }
 
 function FlywheelStep({ label, detail }: { label: string; detail: string }) {
