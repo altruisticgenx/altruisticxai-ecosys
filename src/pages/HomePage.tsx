@@ -409,7 +409,7 @@ export default function HomePage() {
             </span>
           </p>
           <Button size="lg" asChild className="rounded-full">
-            <Link to="/data-integration" className="flex items-center gap-2">
+            <Link to="/data-integration" className="<button\n  class=\"inline-flex items-center justify-center gap-1.5 whitespace-nowrap\n         text-[10px] sm:text-xs font-medium rounded-full\n         h-7 sm:h-8 px-2.5 sm:px-3\n         transition-all disabled:pointer-events-none disabled:opacity-50\n         [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3 [&_svg]:shrink-0\n         outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-0\n         aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive\n         ring-1 ring-white/10\n         bg-[linear-gradient(120deg,rgba(99,102,241,0.95),rgba(16,185,129,0.95),rgba(59,130,246,0.95))]\n         bg-[length:200%_200%] animate-[bgshift_10s_ease_infinite]\n         text-white shadow-[0_0_8px_rgba(99,102,241,0.35)]\n         hover:shadow-[0_0_14px_rgba(99,102,241,0.55)] hover:brightness-110\"\n>\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" class=\"size-3.5\">\n    <path d=\"M5 12h14M12 5l7 7-7 7\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  </svg>\n  <span>Go</span>\n</button>\n">
               <Database size={20} weight="duotone" />
               Explore Data Integration Hub
               <ArrowRight size={16} />
