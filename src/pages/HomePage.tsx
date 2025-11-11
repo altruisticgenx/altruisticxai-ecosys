@@ -142,26 +142,28 @@ export default function HomePage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-12 pt-8 sm:gap-12 sm:px-6 sm:pb-16 sm:pt-12 lg:gap-16 lg:px-8 lg:pb-20 lg:pt-16">
 
         <motion.section 
-          className="space-y-6 sm:space-y-7 lg:space-y-8"
+          className="space-y-6 sm:space-y-7 lg:space-y-8 max-w-4xl"
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
-          <motion.div variants={itemVariants} transition={itemTransition}>
-            <Badge variant="outline" className="mb-4 inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:mb-5 sm:gap-2 sm:text-xs">
-              <Sparkle size={14} weight="fill" className="animate-pulse" />
-              <span>Local-first AI · Energy · Education · Governance</span>
-            </Badge>
+          <motion.div variants={itemVariants} transition={itemTransition} className="space-y-5 sm:space-y-6">
+            <div className="space-y-4">
+              <Badge variant="outline" className="inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:gap-2 sm:text-xs">
+                <Sparkle size={14} weight="fill" className="animate-pulse" />
+                <span>Local-first AI · Energy · Education · Governance</span>
+              </Badge>
 
-            <h1 className="mb-3 text-balance text-4xl font-extrabold leading-[1.1] sm:mb-4 sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-[1.1]">
-              Turn{" "}
-              <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
-                open tools
-              </span>{" "}
-              into{" "}
-              <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>{" "}
-              that actually ship.
-            </h1>
+              <h1 className="text-balance text-4xl font-extrabold leading-[1.1] sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-[1.1]">
+                Turn{" "}
+                <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
+                  open tools
+                </span>{" "}
+                into{" "}
+                <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>{" "}
+                that actually ship.
+              </h1>
+            </div>
             
             <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
               AltruisticXAI is a connected ecosystem: we ship{" "}
@@ -174,14 +176,13 @@ export default function HomePage() {
               href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 px-3 py-1.5 text-xs bg-violet-300 hover:bg-violet-400 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all btn-tiny-glow focus:outline-none focus:ring-2 focus:ring-primary/60"
+              aria-label="Book an Ecosystem Intro Call"
             >
-              <CheckCircle size={16} weight="fill" className="text-accent" />
-              <span className="text-xs">Book A Call</span>
+              <CheckCircle size={16} weight="fill" />
+              <span>Book A Call</span>
             </a>
           </motion.div>
-
-
 
           <motion.div 
             className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
