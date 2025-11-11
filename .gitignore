@@ -17,6 +17,11 @@ dist-ssr
 packages/*/dist
 packages/*/.tsbuildinfo
 
+# TypeScript build artifacts in source
+src/**/*.js
+src/**/*.d.ts
+!src/**/*.config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
