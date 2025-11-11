@@ -4,7 +4,7 @@ import { projects } from "@/data/projects"
 import { Flask, Briefcase, Scroll, Sparkle, ArrowRight, Buildings, GraduationCap, Users, Database, CheckCircle } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import LayoutShell from "@/components/LayoutShell"
 
@@ -60,7 +60,7 @@ export default function HomePage() {
   const latestProjects = projects.slice(0, 3)
   const prefersReducedMotion = useReducedMotion()
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -71,21 +71,23 @@ export default function HomePage() {
     }
   }
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 15 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: prefersReducedMotion ? 0 : 0.4, ease: "easeOut" }
+      y: 0
     }
   }
 
-  const fadeIn = {
+  const fadeIn: Variants = {
     hidden: { opacity: 0 },
     visible: { 
-      opacity: 1,
-      transition: { duration: prefersReducedMotion ? 0 : 0.6 }
+      opacity: 1
     }
+  }
+
+  const itemTransition = {
+    duration: prefersReducedMotion ? 0 : 0.4
   }
 
   return (
@@ -103,7 +105,7 @@ export default function HomePage() {
                 }}
                 transition={{ 
                   duration: 8,
-                  repeat: Infinity,
+                  repeat: Infinity as number,
                   ease: "easeInOut"
                 }}
               />
@@ -115,7 +117,7 @@ export default function HomePage() {
                 }}
                 transition={{ 
                   duration: 10,
-                  repeat: Infinity,
+                  repeat: Infinity as number,
                   ease: "easeInOut",
                   delay: 1
                 }}
@@ -128,7 +130,7 @@ export default function HomePage() {
                 }}
                 transition={{ 
                   duration: 12,
-                  repeat: Infinity,
+                  repeat: Infinity as number,
                   ease: "easeInOut",
                   delay: 2
                 }}
@@ -146,7 +148,7 @@ export default function HomePage() {
           animate="visible"
           variants={containerVariants}
         >
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} transition={itemTransition}>
             <Badge variant="outline" className="mb-4 inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:mb-5 sm:gap-2 sm:text-xs">
               <Sparkle size={14} weight="fill" className="animate-pulse" />
               <span>Local-first AI · Energy · Education · Governance</span>
@@ -181,7 +183,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          <motion.div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" variants={itemVariants}>
+          <motion.div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" variants={itemVariants} transition={itemTransition}>
             <Button 
               asChild 
               size="lg"
@@ -207,6 +209,7 @@ export default function HomePage() {
           <motion.div 
             className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
             variants={itemVariants}
+            transition={itemTransition}
           >
             {pillars.map((pillar) => (
               <Link 
@@ -227,7 +230,7 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-50px" }}
           variants={containerVariants}
         >
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} transition={itemTransition}>
             <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
               <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
                 Three engines. One ecosystem.
@@ -246,7 +249,7 @@ export default function HomePage() {
             {pillars.map((pillar) => {
               const Icon = pillar.icon
               return (
-                <motion.div key={pillar.id} variants={itemVariants}>
+                <motion.div key={pillar.id} variants={itemVariants} transition={itemTransition}>
                   <Link to={pillar.href}>
                     <Card className="group relative flex h-full flex-col justify-between overflow-hidden border border-border/50 bg-card p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] transition-all hover:border-primary/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04)] hover:-translate-y-1 active:scale-[0.98] sm:p-4">
                       <div className="space-y-2 sm:space-y-2.5">
@@ -306,7 +309,7 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-50px" }}
           variants={containerVariants}
         >
-          <motion.h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl" variants={itemVariants}>
+          <motion.h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl" variants={itemVariants} transition={itemTransition}>
             Who plugs into this?
           </motion.h2>
           <motion.div 
@@ -316,7 +319,7 @@ export default function HomePage() {
             {audiences.map((aud) => {
               const Icon = aud.icon
               return (
-                <motion.div key={aud.name} variants={itemVariants}>
+                <motion.div key={aud.name} variants={itemVariants} transition={itemTransition}>
                   <Card className="group h-full overflow-hidden border border-border/50 bg-card p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] transition-all hover:border-primary/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04)] hover:-translate-y-1">
                     <div className="mb-3 flex items-center gap-2.5">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-secondary/20 to-secondary/10 shadow-inner ring-1 ring-secondary/15 transition-all group-hover:scale-105 group-hover:shadow-md group-hover:ring-secondary/25">
@@ -342,6 +345,7 @@ export default function HomePage() {
           <motion.div 
             className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4"
             variants={itemVariants}
+            transition={itemTransition}
           >
             <div>
               <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">Recent pilots & signals</h2>
@@ -363,6 +367,7 @@ export default function HomePage() {
               <motion.article
                 key={p.id}
                 variants={itemVariants}
+                transition={itemTransition}
               >
                 <Card className="group flex h-full flex-col overflow-hidden border border-border/50 bg-card p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] transition-all hover:border-primary/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04)] hover:-translate-y-1">
                   <div className="mb-2.5 flex items-center justify-between gap-2">
