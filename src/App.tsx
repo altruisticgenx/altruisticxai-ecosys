@@ -7,6 +7,7 @@ import PolicyPage from "@/pages/PolicyPage"
 import ImpactLedgerPage from "@/pages/ImpactLedgerPage"
 import DataIntegrationPage from "@/pages/DataIntegrationPage"
 import RipplesPage from "@/pages/RipplesPage"
+import CreativeEyesDemo from "@/pages/CreativeEyesDemo"
 import { Toaster } from "@/components/ui/sonner"
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/impact-ledger" element={<ImpactLedgerPage />} />
         <Route path="/data-integration" element={<DataIntegrationPage />} />
         <Route path="/ripples" element={<RipplesPage />} />
+        <Route path="/creative-eyes" element={<CreativeEyesDemo />} />
       </Routes>
       <Toaster 
         position="bottom-right"
