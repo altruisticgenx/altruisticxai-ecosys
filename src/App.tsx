@@ -6,6 +6,7 @@ import ConsultingPage from "@/pages/ConsultingPage"
 import PolicyPage from "@/pages/PolicyPage"
 import ImpactLedgerPage from "@/pages/ImpactLedgerPage"
 import DataIntegrationPage from "@/pages/DataIntegrationPage"
+import RipplesPage from "@/pages/RipplesPage"
 import { Toaster } from "@/components/ui/sonner"
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/policy" element={<PolicyPage />} />
         <Route path="/impact-ledger" element={<ImpactLedgerPage />} />
         <Route path="/data-integration" element={<DataIntegrationPage />} />
+        <Route path="/ripples" element={<RipplesPage />} />
       </Routes>
       <Toaster 
         position="bottom-right"
