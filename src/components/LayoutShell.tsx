@@ -1,7 +1,7 @@
 import React, { ReactNode, useState, useEffect } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { Flask, Briefcase, Scroll, ChartBar, List, Database } from "@phosphor-icons/react"
+import { Flask, Briefcase, Scroll, ChartBar, List, Database, Drop } from "@phosphor-icons/react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -26,6 +26,7 @@ export default function LayoutShell({ children }: LayoutShellProps) {
     { href: "/policy", label: "Policy", icon: Scroll },
     { href: "/impact-ledger", label: "Impact Ledger", icon: ChartBar },
     { href: "/data-integration", label: "Data Hub", icon: Database },
+    { href: "/ripples", label: "Ripples", icon: Drop },
   ]
 
   const isActive = (href: string) => {
@@ -169,6 +170,7 @@ export default function LayoutShell({ children }: LayoutShellProps) {
                 <li><Link to="/policy" className="transition-colors hover:text-foreground hover:underline">Policy Alliance</Link></li>
                 <li><Link to="/impact-ledger" className="transition-colors hover:text-foreground hover:underline">Impact Ledger</Link></li>
                 <li><Link to="/data-integration" className="transition-colors hover:text-foreground hover:underline">Data Integration Hub</Link></li>
+                <li><Link to="/ripples" className="transition-colors hover:text-foreground hover:underline">Ripples</Link></li>
               </ul>
             </div>
             <div>
