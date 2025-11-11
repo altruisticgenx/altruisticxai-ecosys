@@ -2,157 +2,157 @@ import React, { Component, ErrorInfo, ReactNode, Suspense, lazy } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Sparkle } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { motion, useReducedMotion, type Variants } from "framer-motion"
-
+import { motion, useReducedMotion, type Varia
 const LazyShaderAnimation = lazy(() => 
-  import("@/components/ui/shader-animation").then(m => ({ default: m.ShaderAnimation }))
-)
 
-class WebGLErrorBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
+class WebGLErrorBoundary extends Compon
   { hasError: boolean }
-> {
-  constructor(props: { children: ReactNode; fallback: ReactNode }) {
-    super(props)
-    this.state = { hasError: false }
-  }
+ 
 
-  static getDerivedStateFromError() {
+
     return { hasError: true }
-  }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (import.meta.env.DEV) {
-      console.warn("WebGL component error:", error, errorInfo)
+   
     }
-  }
 
-  render() {
     if (this.state.hasError) {
-      return this.props.fallback
-    }
-    return this.props.children
-  }
-}
+   
 
-export function Hero() {
-  const reduceMotion = useReducedMotion()
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
+  const reduceMotion = useRed
+  c
+
       transition: {
-        staggerChildren: 0.15,
         delayChildren: 0.1
-      }
     }
-  }
 
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
-  }
+   
 
+      transi
+  }
   const handleExplore = () => {
-    window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
   }
-
   return (
-    <section
-      className="relative flex min-h-[65vh] items-center overflow-hidden py-12 sm:py-16 md:py-20 text-white"
-      aria-labelledby="hero-heading"
-    >
-      <WebGLErrorBoundary
-        fallback={
-          <div
-            className="absolute inset-0 h-full w-full"
-            style={{
-              background: "linear-gradient(135deg, #000000 0%, #a3e635 25%, #c4b5fd 50%, #fdba74 75%, #000000 100%)",
-              backgroundSize: "400% 400%",
-              animation: "gradient-shift 15s ease infinite"
-            }}
+   
+ 
+
+            className="a
+              background: "linear-gradien
+
             aria-hidden
-          />
         }
-      >
-        {!reduceMotion && (
-          <Suspense fallback={null}>
-            <LazyShaderAnimation />
-          </Suspense>
+        {!redu
+            <Lazy
         )}
-      </WebGLErrorBoundary>
 
-      <motion.div
-        className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 text-center"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={itemVariants} className="mb-4">
-          <Badge variant="secondary" className="inline-flex items-center gap-1.5 px-3 py-1.5">
-            <Sparkle className="w-3.5 h-3.5" weight="fill" />
-            <span>Ethical AI Strategy — Built for Good, Designed for Impact</span>
-          </Badge>
+        className="relativ
+       
+     
+   
+
         </motion.div>
-
         <motion.h1
-          id="hero-heading"
-          className="mb-4 leading-tight"
-          variants={itemVariants}
+          clas
         >
-          <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black drop-shadow-lg mb-1 bg-gradient-to-r from-lime-400 via-purple-300 to-orange-300 bg-clip-text text-transparent">
-            Turn AI Vision
-          </span>
-          <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black drop-shadow-lg">
-            into Impact
-          </span>
-        </motion.h1>
+           
+          <span className="block text-3xl sm:text-4x
+     
 
-        <motion.p
-          className="text-xs sm:text-sm md:text-base font-normal mb-6 max-w-xl mx-auto leading-relaxed text-white/90"
-          variants={itemVariants}
+
         >
-          We help organizations build trustworthy, local-first AI solutions — code-first labs, ROI-driven pilots, and policy that scales what works.
         </motion.p>
+   
 
-        <motion.div
-          className="flex flex-wrap items-center justify-center gap-3"
-          variants={itemVariants}
-        >
-          <Button
-            asChild
-            size="default"
-            className="font-semibold inline-flex items-center gap-2"
+          
+            
           >
-            <a
-              href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Book an Ecosystem Intro Call (opens in new tab)"
+              href="https://schedule
+     
             >
-              Book a Call
-              <ArrowRight className="w-3.5 h-3.5" weight="bold" />
-            </a>
-          </Button>
-
+              <Arr
+          </Bu
           <Button
-            onClick={handleExplore}
-            size="default"
-            variant="outline"
+            size="de
             className="font-medium"
-          >
             Explore Solutions
-          </Button>
         </motion.div>
-      </motion.div>
     </section>
-  )
 }
+export defau
 
-export default Hero
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
