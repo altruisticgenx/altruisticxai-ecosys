@@ -1,8 +1,5 @@
-// components/ProjectDisplay.tsx
-"use client"; // Add this line if using the Next.js App Router
-
 import { useState, useEffect } from 'react';
-import { Project, ProjectMetric } from '../types/project'; // Import the shared types
+import { Project, ProjectMetric } from '@/data/projects';
 
 // A loading "skeleton" component styled with Tailwind's animate-pulse
 function ProjectSkeleton() {
