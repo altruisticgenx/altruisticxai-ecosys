@@ -142,63 +142,135 @@ export default function HomePage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-12 pt-8 sm:gap-12 sm:px-6 sm:pb-16 sm:pt-12 lg:gap-16 lg:px-8 lg:pb-20 lg:pt-16">
 
         <motion.section 
-          className="space-y-6 sm:space-y-7 lg:space-y-8 max-w-4xl"
+          className="relative space-y-8 sm:space-y-10 lg:space-y-12"
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
-          <motion.div variants={itemVariants} transition={itemTransition} className="space-y-5 sm:space-y-6">
-            <div className="space-y-4">
-              <Badge variant="outline" className="inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:gap-2 sm:text-xs">
-                <Sparkle size={14} weight="fill" className="animate-pulse" />
-                <span>Local-first AI · Energy · Education · Governance</span>
-              </Badge>
-
-              <h1 className="text-balance text-4xl font-extrabold leading-[1.1] sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-[1.1]">
-                Turn{" "}
-                <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
-                  open tools
-                </span>{" "}
-                into{" "}
-                <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>{" "}
-                that actually ship.
-              </h1>
-            </div>
-            
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
-              AltruisticXAI is a connected ecosystem: we ship{" "}
-              <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
-              <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
-              <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
-            </p>
-            
-            <a 
-              href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all btn-tiny-glow focus:outline-none focus:ring-2 focus:ring-primary/60"
-              aria-label="Book an Ecosystem Intro Call"
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <motion.div 
+              variants={itemVariants} 
+              transition={itemTransition} 
+              className="space-y-6 sm:space-y-7 lg:col-span-7"
             >
-              <CheckCircle size={16} weight="fill" />
-              <span>Book A Call</span>
-            </a>
-          </motion.div>
+              <div className="space-y-5">
+                <Badge variant="outline" className="inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:gap-2 sm:text-xs">
+                  <Sparkle size={14} weight="fill" className="animate-pulse" />
+                  <span>Local-first AI · Energy · Education · Governance</span>
+                </Badge>
 
-          <motion.div 
-            className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
-            variants={itemVariants}
-            transition={itemTransition}
-          >
-            {pillars.map((pillar) => (
-              <Link 
-                key={pillar.id} 
-                to={pillar.href} 
-                className="rounded-full bg-muted px-3 py-1.5 text-muted-foreground transition-all active:scale-95"
+                <h1 className="text-balance text-4xl font-extrabold leading-[1.05] sm:text-5xl sm:leading-[1.05] lg:text-6xl lg:leading-[1.05] xl:text-7xl xl:leading-[1.05]">
+                  Turn{" "}
+                  <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
+                    open tools
+                  </span>{" "}
+                  into{" "}
+                  <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>
+                </h1>
+              </div>
+              
+              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+                AltruisticXAI is a connected ecosystem: we ship{" "}
+                <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
+                <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
+                <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <a 
+                  href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all btn-tiny-glow focus:outline-none focus:ring-2 focus:ring-primary/60"
+                  aria-label="Book an Ecosystem Intro Call"
+                >
+                  <CheckCircle size={18} weight="fill" />
+                  <span>Book A Call</span>
+                </a>
+                
+                <Link
+                  to="/impact-ledger"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-all hover:border-primary/40 hover:bg-card focus:outline-none focus:ring-2 focus:ring-primary/60"
+                >
+                  <Database size={18} weight="duotone" />
+                  <span>View Impact Ledger</span>
+                </Link>
+              </div>
+
+              <motion.div 
+                className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
+                variants={itemVariants}
+                transition={itemTransition}
               >
-                {pillar.name.split(' ').pop()}
-              </Link>
-            ))}
-          </motion.div>
+                {pillars.map((pillar) => (
+                  <Link 
+                    key={pillar.id} 
+                    to={pillar.href} 
+                    className="rounded-full bg-muted px-3 py-1.5 text-muted-foreground transition-all active:scale-95"
+                  >
+                    {pillar.name.split(' ').pop()}
+                  </Link>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              transition={itemTransition}
+              className="hidden lg:flex lg:col-span-5 flex-col gap-4"
+            >
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                      <Flask size={24} weight="duotone" className="text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Labs</h3>
+                      <p className="text-xs text-muted-foreground">Trust Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Open-source tools with reproducible results
+                  </p>
+                </div>
+              </Card>
+
+              <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary/10 ring-2 ring-secondary/20">
+                      <Briefcase size={24} weight="duotone" className="text-secondary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Consulting</h3>
+                      <p className="text-xs text-muted-foreground">Revenue Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    ROI-positive pilots with CFO-proof metrics
+                  </p>
+                </div>
+              </Card>
+
+              <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 ring-2 ring-accent/20">
+                      <Scroll size={24} weight="duotone" className="text-accent" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Policy</h3>
+                      <p className="text-xs text-muted-foreground">Influence Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Durable funding through executive actions
+                  </p>
+                </div>
+              </Card>
+            </motion.div>
+          </div>
         </motion.section>
 
         <motion.section 
