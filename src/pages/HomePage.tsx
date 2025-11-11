@@ -170,12 +170,15 @@ export default function HomePage() {
               <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
             </p>
             
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 px-3 py-1.5 text-xs bg-violet-300">
+            <a 
+              href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 px-3 py-1.5 text-xs bg-violet-300 hover:bg-violet-400 transition-colors cursor-pointer"
+            >
               <CheckCircle size={16} weight="fill" className="text-accent" />
-              <span className="small-purple-tailwind-glow-link:https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking bg-violet-300 text-xs">Book A Call</span>
-              <span className="text-muted-foreground">·</span>
-              <Link to="/data-integration" className="text-accent transition-colors hover:text-accent/80"></Link>
-            </div>
+              <span className="text-xs">Book A Call</span>
+            </a>
           </motion.div>
 
           <motion.div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" variants={itemVariants} transition={itemTransition}>
