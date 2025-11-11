@@ -172,7 +172,7 @@ export default function HomePage() {
             
             <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 px-3 py-1.5 text-xs bg-violet-300">
               <CheckCircle size={16} weight="fill" className="text-accent" />
-              <span className="small-purple-tailwind-glow-link:https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking bg-violet-300">Book A Call</span>
+              <span className="small-purple-tailwind-glow-link:https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking bg-violet-300 text-xs">Book A Call</span>
               <span className="text-muted-foreground">·</span>
               <Link to="/data-integration" className="text-accent transition-colors hover:text-accent/80"></Link>
             </div>
