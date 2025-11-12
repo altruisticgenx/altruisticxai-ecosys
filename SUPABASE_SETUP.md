@@ -2,10 +2,10 @@
 
 This document outlines the security measures to implement if/when integrating Supabase for user-generated content and analytics.
 
-## Privacy-First Architecture
-
 ### Problem
-Exposing raw `user_id` (UUIDs) in public APIs creates privacy and security risks:
+
+- Potential
+### Solution
 - Enables user tracking across sessions
 - Reveals internal user identifiers
 - Potential for enumeration attacks
@@ -32,40 +32,40 @@ UPDATE public.profiles
 SET public_id = gen_random_uuid()
 WHERE public_id IS NULL;
 
--- Make it required and unique
-ALTER TABLE public.profiles
-  ALTER COLUMN public_id SET NOT NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS profiles_public_id_key 
-  ON public.profiles(public_id);
-```
 
-### 2) Add Public Flag to Content
+-- Optional: control what content appe
 
-```sql
--- Optional: control what content appears in public feeds
-ALTER TABLE public.translations
-  ADD COLUMN IF NOT EXISTS is_public BOOLEAN NOT NULL DEFAULT false;
-```
 
-### 3) Create Public View
 
-This view exposes only non-sensitive data:
 
-```sql
--- Public view with no user_id exposure
-CREATE OR REPLACE VIEW public.translations_public AS
+
 SELECT
-  t.id,
-  t.text,
-  t.source_lang,
-  t.target_lang,
-  DATE_TRUNC('hour', t.created_at) AS created_at,  -- Coarsen timestamps
+
+  t.ta
   p.public_id AS author_public_id
-FROM public.translations t
-JOIN public.profiles p ON p.user_id = t.user_id
-WHERE t.is_public = true;
+JOIN public.profiles p ON p.use
 ```
+**K
+
+- ✅ Pseudonymous author I
+
+```sql
+
+-- Gra
+```
+### 5) Row-Level Security Policies
+Owner-
+```sql
+DROP POLI
+  ON public.tran
+
+DROP POLICY IF EXISTS "insert own translations" ON public.translations;
+  ON public.translations FOR INSE
+
+DROP POLICY IF EXISTS "update own translations"
+  ON public.translations 
+  W
 
 **Key privacy features:**
 - ✅ No `user_id` exposed
@@ -275,61 +275,61 @@ LOVABLE_API_KEY=your-api-key-here
 **Repo → Settings → Secrets and variables → Actions → Variables**
 
 ```
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
-```
 
-Note: These are public client-side values, so using `Variables` (not `Secrets`) is fine.
-
----
-
-## Security Checklist
-
-- [ ] RLS enabled on all user tables
-- [ ] Public views use `public_id` instead of `user_id`
-- [ ] Timestamps coarsened to reduce tracking precision
-- [ ] Edge functions have `verify_jwt = true`
-- [ ] Direct table access revoked for `anon` role
-- [ ] RLS policies enforce owner-only access
-- [ ] No `user_id` rendered in UI components
-- [ ] Realtime subscriptions use mirrored public tables
-
----
-
-## Testing
-
-```sql
--- Test 1: Verify anon cannot read base table
-SET ROLE anon;
-SELECT * FROM public.translations LIMIT 1;  -- Should fail
-
--- Test 2: Verify anon CAN read public view
-SELECT * FROM public.translations_public LIMIT 1;  -- Should succeed
-
--- Test 3: Verify no user_id in view
-\d+ public.translations_public  -- Should not show user_id column
-
--- Reset
-RESET ROLE;
-```
-
----
-
-## Migration Path
-
-If you already have exposed data:
-
-1. **Immediately** revoke anon access to base tables
 2. Deploy public views
-3. Update all client code to use views
-4. Add `public_id` to existing profiles
-5. Rotate API keys if `user_id` values were compromised
-6. Notify users of privacy update
+4. 
 
 ---
 
-## References
+- [
 
-- [Supabase RLS Documentation](https://supabase.com/docs/guides/auth/row-level-security)
-- [PostgreSQL Views](https://www.postgresql.org/docs/current/sql-createview.html)
-- [OWASP Privacy Guidelines](https://owasp.org/www-project-top-10-privacy-risks/)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
