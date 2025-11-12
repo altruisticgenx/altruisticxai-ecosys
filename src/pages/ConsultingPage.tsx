@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Container } from "@/components/Container";
 
 export default function Consulting() {
   return (
     <div className="min-h-[100svh] bg-background text-foreground">
-      {/* Top bar */}
-      <div className="mx-auto w-full max-w-6xl px-4 md:px-6 py-6">
+      <Container className="py-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="font-extrabold text-lg">AltruisticXAI</Link>
           <div className="hidden md:flex gap-6 text-sm opacity-80">
@@ -21,25 +21,21 @@ export default function Consulting() {
             Book a Call
           </Link>
         </div>
-      </div>
-
-      {/* Page heading */}
-      <header className="mx-auto w-full max-w-6xl px-4 md:px-6">
-        <h1 className="text-3xl md:text-4xl font-black">
-          Consulting: From Idea to Impact
-        </h1>
+      </Container>
+      <Container>
+        <header>
+        <h1 className="text-3xl md:text-4xl font-black">Consulting: From Idea to Impact</h1>
         <p className="mt-3 max-w-3xl opacity-90">
           We design lightweight pilots, measurable MVPs, and scalable rollouts.
           Start with a <strong>4-week scoped sprint</strong>, then grow based on proof—not hype.
         </p>
       </header>
-
-      {/* Sticky in-page nav */}
+      </Container>
       <nav
         aria-label="Section navigation"
         className="sticky top-0 z-20 mt-6 border-y border-white/10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       >
-        <div className="mx-auto w-full max-w-6xl px-4 md:px-6">
+        <Container>
           <ul className="flex flex-wrap gap-2 py-3 text-sm">
             {[
               ["Education", "#education"],
@@ -57,10 +53,10 @@ export default function Consulting() {
               </li>
             ))}
           </ul>
-        </div>
+        </Container>
       </nav>
-
-      <main className="mx-auto w-full max-w-6xl px-4 md:px-6 py-10 space-y-16">
+      <Container className="py-10 space-y-16">
+        <main>
         {/* Education */}
         <Section
           id="education"
@@ -150,7 +146,8 @@ export default function Consulting() {
             </Link>
           </div>
         </div>
-      </main>
+        </main>
+      </Container>
     </div>
   );
 }

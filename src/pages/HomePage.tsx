@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import LayoutShell from "@/components/LayoutShell"
+import { Container } from "@/components/Container"
 
 const pillars = [
   {
@@ -139,46 +140,63 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-12 pt-8 sm:gap-12 sm:px-6 sm:pb-16 sm:pt-12 lg:gap-16 lg:px-8 lg:pb-20 lg:pt-16">
+      <Container className="flex flex-col gap-10 pb-12 pt-8 sm:gap-12 sm:pb-16 sm:pt-12 lg:gap-16 lg:pb-20 lg:pt-16">
 
         <motion.section 
-          className="space-y-6 sm:space-y-7 lg:space-y-8"
+          className="relative space-y-8 sm:space-y-10 lg:space-y-12"
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
-          <motion.div variants={itemVariants} transition={itemTransition}>
-            <Badge variant="outline" className="mb-4 inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:mb-5 sm:gap-2 sm:text-xs">
-              <Sparkle size={14} weight="fill" className="animate-pulse" />
-              <span>Local-first AI · Energy · Education · Governance</span>
-            </Badge>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <motion.div 
+              variants={itemVariants} 
+              transition={itemTransition} 
+              className="space-y-6 sm:space-y-7 lg:col-span-7"
+            >
+              <div className="space-y-5">
+                <Badge variant="outline" className="inline-flex items-center gap-1.5 border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-medium text-primary shadow-sm sm:gap-2 sm:text-xs">
+                  <Sparkle size={14} weight="fill" className="animate-pulse" />
+                  <span>Local-first AI · Energy · Education · Governance</span>
+                </Badge>
 
-            <h1 className="mb-3 text-balance text-4xl font-extrabold leading-[1.1] sm:mb-4 sm:text-5xl sm:leading-[1.1] lg:text-6xl lg:leading-[1.1]">
-              Turn{" "}
-              <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
-                open tools
-              </span>{" "}
-              into{" "}
-              <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>{" "}
-              that actually ship.
-            </h1>
-            
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
-              AltruisticXAI is a connected ecosystem: we ship{" "}
-              <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
-              <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
-              <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
-            </p>
-            
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-3 py-1.5 text-xs">
-              <CheckCircle size={16} weight="fill" className="text-accent" />
-              <span className="font-medium text-foreground">2025+ Federal Data Only</span>
-              <span className="text-muted-foreground">·</span>
-              <Link to="/data-integration" className="text-accent transition-colors hover:text-accent/80">
-                Learn more
-              </Link>
-            </div>
-          </motion.div>
+                <h1 className="text-balance text-4xl font-extrabold leading-[1.05] sm:text-5xl sm:leading-[1.05] lg:text-6xl lg:leading-[1.05] xl:text-7xl xl:leading-[1.05]">
+                  Turn{" "}
+                  <span className="bg-gradient-to-r from-primary via-primary/90 to-secondary bg-clip-text text-transparent">
+                    open tools
+                  </span>{" "}
+                  into{" "}
+                  <span className="bg-gradient-to-r from-secondary via-secondary/90 to-accent bg-clip-text text-transparent">policy-backed pilots</span>
+                </h1>
+              </div>
+              
+              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
+                AltruisticXAI is a connected ecosystem: we ship{" "}
+                <span className="font-semibold text-foreground">open-source labs</span>, run{" "}
+                <span className="font-semibold text-foreground">ROI-positive consulting pilots</span>, and translate what works into{" "}
+                <span className="font-semibold text-foreground">durable funding and rules</span>. One flywheel—from GitHub, to campus, to statehouse.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <a 
+                  href="https://scheduler.zoom.us/altruistic-xai/altruisticxai-booking"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all btn-tiny-glow focus:outline-none focus:ring-2 focus:ring-primary/60"
+                  aria-label="Book an Ecosystem Intro Call"
+                >
+                  <CheckCircle size={18} weight="fill" />
+                  <span>Book A Call</span>
+                </a>
+                
+                <Link
+                  to="/impact-ledger"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-all hover:border-primary/40 hover:bg-card focus:outline-none focus:ring-2 focus:ring-primary/60"
+                >
+                  <Database size={18} weight="duotone" />
+                  <span>View Impact Ledger</span>
+                </Link>
+              </div>
 
           <motion.div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" variants={itemVariants} transition={itemTransition}>
             <Button 
@@ -197,28 +215,58 @@ export default function HomePage() {
               size="lg"
               className="group w-full rounded-full border-border text-sm font-semibold shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:text-primary hover:shadow-md active:scale-[0.98] sm:w-auto sm:px-8"
             >
-              <Link to="/impact-ledger" className="flex items-center gap-1.5">
-                Browse the Impact Ledger
-                <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </Button>
-          </motion.div>
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                      <Flask size={24} weight="duotone" className="text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Labs</h3>
+                      <p className="text-xs text-muted-foreground">Trust Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Open-source tools with reproducible results
+                  </p>
+                </div>
+              </Card>
 
-          <motion.div 
-            className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
-            variants={itemVariants}
-            transition={itemTransition}
-          >
-            {pillars.map((pillar) => (
-              <Link 
-                key={pillar.id} 
-                to={pillar.href} 
-                className="rounded-full bg-muted px-3 py-1.5 text-muted-foreground transition-all active:scale-95"
-              >
-                {pillar.name.split(' ').pop()}
-              </Link>
-            ))}
-          </motion.div>
+              <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary/10 ring-2 ring-secondary/20">
+                      <Briefcase size={24} weight="duotone" className="text-secondary" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Consulting</h3>
+                      <p className="text-xs text-muted-foreground">Revenue Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    ROI-positive pilots with CFO-proof metrics
+                  </p>
+                </div>
+              </Card>
+
+              <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent p-6 shadow-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 ring-2 ring-accent/20">
+                      <Scroll size={24} weight="duotone" className="text-accent" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Policy</h3>
+                      <p className="text-xs text-muted-foreground">Influence Engine</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Durable funding through executive actions
+                  </p>
+                </div>
+              </Card>
+            </motion.div>
+          </div>
         </motion.section>
 
         <motion.section 
@@ -249,7 +297,7 @@ export default function HomePage() {
               return (
                 <motion.div key={pillar.id} variants={itemVariants} transition={itemTransition}>
                   <Link to={pillar.href}>
-                    <Card className="group relative flex h-full flex-col justify-between overflow-hidden border border-border/50 bg-card p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] transition-all hover:border-primary/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.04)] hover:-translate-y-1 active:scale-[0.98] sm:p-4">
+                    <Card className="group/card relative isolate grid w-full max-w-[18rem] min-h-[9rem] grid-rows-[auto,1fr,auto] rounded-2xl border border-border/60 bg-card/90 p-3 sm:p-4 text-card-foreground shadow-[0_1px_2px_rgba(0,0,0,.08),0_8px_24px_-8px_rgba(0,0,0,.12)] backdrop-blur supports-[backdrop-filter]:bg-card/80 transition-all duration-300 ease-out will-change-transform transform-gpu motion-safe:hover:-translate-y-1 motion-safe:hover:rotate-[0.6deg] motion-safe:hover:shadow-[0_14px_40px_-14px_rgba(0,0,0,.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:opacity-0 before:transition-opacity before:duration-300 before:bg-[radial-gradient(120px_60px_at_var(--mx,50%)_var(--my,40%),theme(colors.primary/25),transparent_60%)] hover:before:opacity-100">
                       <div className="space-y-2 sm:space-y-2.5">
                         <div className="flex items-center gap-2">
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 shadow-inner ring-1 ring-primary/10 transition-all group-hover:scale-105 group-hover:shadow-md group-hover:ring-primary/20">
@@ -272,7 +320,7 @@ export default function HomePage() {
                     </Card>
                   </Link>
                 </motion.div>
-              )
+              );
             })}
           </motion.div>
         </motion.section>
@@ -417,7 +465,7 @@ export default function HomePage() {
             </Link>
           </Button>
         </motion.section>
-      </div>
+      </Container>
     </LayoutShell>
   );
 }

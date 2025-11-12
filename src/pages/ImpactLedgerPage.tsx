@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import LayoutShell from "@/components/LayoutShell"
+import { Container } from "@/components/Container"
 import ImpactTable from "@/components/ImpactTable"
 import CrawledProjectCard from "@/components/CrawledProjectCard"
 import { impactEvents, ImpactEvent } from "@/data/impactEvents"
@@ -114,7 +115,7 @@ export default function ImpactLedgerPage() {
 
   return (
     <LayoutShell>
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <Container className="py-12 sm:py-16">
         <div className="mb-16 text-center">
           <div className="mb-4 flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 shadow-lg ring-1 ring-primary/20">
@@ -282,7 +283,7 @@ export default function ImpactLedgerPage() {
             open-source research.</span> This is how we build sustainable, ethical AI at scale.
           </p>
         </div>
-      </div>
+      </Container>
     </LayoutShell>
   )
 }

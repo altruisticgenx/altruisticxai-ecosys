@@ -11,6 +11,7 @@ import {
   Zap,
   Send
 } from 'lucide-react';
+import { Container } from '@/components/Container';
 
 // --- Mock Data ---
 // "FIX": This data is now based on real-world examples and categories
@@ -151,7 +152,7 @@ export default function RipplesPage() {
     <div className="min-h-screen bg-[#FDFBF7] text-slate-900 font-sans selection:bg-amber-100">
       {/* Minimal Header */}
       <header className="fixed top-0 w-full bg-[#FDFBF7]/90 backdrop-blur-sm z-20 border-b border-slate-100">
-        <div className="max-w-3xl mx-auto px-6 h-20 flex items-center justify-between">
+        <Container className="h-20 flex items-center justify-between">
           <div 
             onClick={() => setActiveTab('manifesto')}
             className="cursor-pointer group flex items-center space-x-3"
@@ -167,15 +168,15 @@ export default function RipplesPage() {
             <NavBtn id="foundry" label="People" active={activeTab} set={setActiveTab} />
             <NavBtn id="game" label="Practice" active={activeTab} set={setActiveTab} />
           </nav>
-        </div>
+        </Container>
       </header>
 
-      <main className="pt-28 pb-20 px-6">
-        <div className="max-w-3xl mx-auto">
+      <main className="pt-28 pb-20">
+        <Container>
           {activeTab === 'manifesto' && <ManifestoSection toFoundry={() => setActiveTab('foundry')} />}
           {activeTab === 'foundry' && <FoundrySection toGame={() => setActiveTab('game')} />}
           {activeTab === 'game' && <IntentoolGame />}
-        </div>
+        </Container>
       </main>
     </div>
   );

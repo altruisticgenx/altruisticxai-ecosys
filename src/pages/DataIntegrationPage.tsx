@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { toast } from "sonner"
 import LayoutShell from "@/components/LayoutShell"
+import { Container } from "@/components/Container"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -136,7 +137,7 @@ export default function DataIntegrationPage() {
 
   return (
     <LayoutShell>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+      <Container className="py-8 sm:py-12 lg:py-16">
         <div className="mb-12 text-center sm:mb-16">
           <div className="mb-4 flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/15 to-accent/5 shadow-lg ring-1 ring-accent/20">
@@ -820,7 +821,7 @@ export default function DataIntegrationPage() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
+      </Container>
     </LayoutShell>
   )
 }

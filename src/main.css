@@ -1,61 +1,69 @@
-@import 'tailwindcss';
-
-@import './styles/theme.css';
-@import './index.css';
+/* ── Core imports ───────────────────────────────────────────── */
+@import "tailwindcss";
+@import "./styles/theme.css";
+@import "./index.css";
 @import "tw-animate-css";
-/*
-  ---break---
-*/
-@custom-variant dark (&:is(.dark *));
 
-@config '../tailwind.config.js';
+/* ── Tailwind v4 config + variants ─────────────────────────── */
+@config "../tailwind.config.js";
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+/* Use either .dark *or* [data-theme="dark"] to flip themes */
+@custom-variant dark (&:is(.dark *,[data-theme='dark'] *));
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+
+/* ── v3→v4 border-compat shim (safe) ───────────────────────── */
+/* Keep legacy border color behavior without forcing outlines globally */
 @layer base {
   *,
-  ::after,
   ::before,
+  ::after,
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
 }
 
-/*
-  ---break---
-*/
+/* ── Design tokens (OKLCH) ─────────────────────────────────── */
 :root {
+  /* Radii */
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+
+  /* Surface + text */
+  --background: oklch(1 0 0);          /* white */
+  --foreground: oklch(0.145 0 0);      /* near-black */
+
+  /* Components */
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+
+  /* Brand */
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+
+  /* Feedback */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
   --destructive: oklch(0.577 0.245 27.325);
+
+  /* Controls */
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* Charts (keep 5 swatches) */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -64,35 +72,44 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Extra polish */
+  --shadow-color: 220 3% 15% / 0.12;
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring), transparent 50%);
+  color-scheme: light dark; /* enables native UA theming bits */
 }
 
-/*
-  ---break---
-*/
-.dark {
+/* ── Dark theme tokens ─────────────────────────────────────── */
+.dark, [data-theme="dark"] {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
+
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -101,16 +118,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  color-scheme: dark;
 }
 
-/*
-  ---break---
-*/
+/* ── Tailwind v4 inline theme map ──────────────────────────── */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -129,11 +147,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -142,45 +162,100 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
-  /*
-  ---break---
-*/
+  /* Keyframes */
   @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-
-    to {
-      height: var(--radix-accordion-content-height);
-    }
+    from { height: 0; }
+    to   { height: var(--radix-accordion-content-height); }
   }
-
-  /*
-  ---break---
-*/
   @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-
-    to {
-      height: 0;
-    }
+    from { height: var(--radix-accordion-content-height); }
+    to   { height: 0; }
   }
 }
 
-/*
-  ---break---
-*/
+/* ── Base layer: sensible defaults ─────────────────────────── */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  /* Respect user motion prefs */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  html, :host {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    /* Prevent font swap jank on heavy pages */
+    text-rendering: optimizeLegibility;
   }
+
+  /* Cleaner focus styling (replaces global outline rule) */
+  :where(a, button, [role="button"], input, textarea, select):focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Text selection for better contrast */
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 20%, transparent);
+  }
+
+  /* Scrollbar polish (supported engines only) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ring) transparent;
+  }
+  *::-webkit-scrollbar { height: 8px; width: 8px; }
+  *::-webkit-scrollbar-thumb { background: var(--ring); border-radius: 999px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+
+  /* Links: consistent underline offset */
+  a { text-underline-offset: 3px; }
+}
+
+/* ── Component layer helpers (opt-in via @apply) ───────────── */
+@layer components {
+  .card {
+    @apply bg-card text-card-foreground rounded-lg shadow-sm border border-border;
+    box-shadow: 0 8px 24px hsl(var(--shadow-color));
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium
+           bg-primary text-primary-foreground hover:bg-primary/90
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+  }
+
+  .input {
+    @apply bg-background text-foreground border border-input rounded-md px-3 py-2
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50;
+  }
+}
+
+/* ── Utilities you’ll actually use ─────────────────────────── */
+@layer utilities {
+  /* NYT-style balanced headlines when supported */
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+
+  /* Clamp for fluid hero titles */
+  .fluid-title { font-size: clamp(1.5rem, 1.2rem + 2vw, 3rem); }
+
+  /* Subpixel hairline borders where supported */
+  .border-hairline { border-width: 0.5px; }
+
+  /* Motion-safe animation gates */
+  .motion-safe\:animate-in { @apply motion-safe:animate-[fade-in_200ms_ease-out]; }
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
 }

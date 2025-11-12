@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import LayoutShell from "@/components/LayoutShell"
+import { Container } from "@/components/Container"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -46,7 +47,7 @@ export default function LabsPage() {
 
   return (
     <LayoutShell>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+      <Container className="py-8 sm:py-12 lg:py-16">
         <div className="mb-12 text-center sm:mb-16">
           <div className="mb-4 flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 shadow-lg ring-1 ring-primary/20">
@@ -347,7 +348,7 @@ export default function LabsPage() {
             </Button>
           </div>
         </div>
-      </div>
+      </Container>
     </LayoutShell>
   )
 }
