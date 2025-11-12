@@ -66,11 +66,13 @@ export default function Hero() {
           >
             <Button
               onClick={handleExplore}
-              size="lg"
+              variant="glow"
+              size="xs"
               className="group"
             >
-              Explore Solutions
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" weight="bold" />
+              <Sparkle size={14} weight="fill" />
+              <span>Explore Solutions</span>
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" weight="bold" size={14} />
             </Button>
             <Button
               variant="outline"

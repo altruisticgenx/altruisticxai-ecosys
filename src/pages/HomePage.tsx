@@ -198,27 +198,22 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <motion.div 
-                className="flex flex-wrap gap-2 text-[11px] sm:hidden" 
-                variants={itemVariants}
-                transition={itemTransition}
-              >
-                {pillars.map((pillar) => (
-                  <Link 
-                    key={pillar.id} 
-                    to={pillar.href} 
-                    className="rounded-full bg-muted px-3 py-1.5 text-muted-foreground transition-all active:scale-95"
-                  >
-                    {pillar.name.split(' ').pop()}
-                  </Link>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              transition={itemTransition}
-              className="hidden lg:flex lg:col-span-5 flex-col gap-4"
+          <motion.div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap" variants={itemVariants} transition={itemTransition}>
+            <Button 
+              asChild 
+              variant="glow"
+              size="xs"
+            >
+              <Link to="/consulting" className="flex items-center">
+                <ArrowRight size={14} />
+                <span>Book an Ecosystem Intro Call</span>
+              </Link>
+            </Button>
+            <Button 
+              asChild 
+              variant="outline" 
+              size="lg"
+              className="group w-full rounded-full border-border text-sm font-semibold shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:text-primary hover:shadow-md active:scale-[0.98] sm:w-auto sm:px-8"
             >
               <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-6 shadow-lg">
                 <div className="space-y-3">
@@ -463,7 +458,7 @@ export default function HomePage() {
             </span>
           </p>
           <Button size="lg" asChild className="rounded-full">
-            <Link to="/data-integration" className="flex items-center gap-2">
+            <Link to="/data-integration">
               <Database size={20} weight="duotone" />
               Explore Data Integration Hub
               <ArrowRight size={16} />
