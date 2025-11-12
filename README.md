@@ -7,7 +7,7 @@ A comprehensive platform showcasing the three-arm approach to ethical AI: Open S
 
 ## Features
 
-### 🎯 2025+ Data Guarantee
+### 2025+ Data Guarantee
 
 **All federal data integrated into this platform is from 2025 onwards.** We use a three-layer validation system to ensure data freshness and accuracy:
 
