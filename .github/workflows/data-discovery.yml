@@ -2,232 +2,360 @@ name: Automated Data Discovery & Validation
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    # Run every 30 minutes (adjust as you like). GH Actions isn't truly "real-time",
+    # but 30m cadence is about as fresh as it gets for polling.
+    - cron: "*/30 * * * *"
   workflow_dispatch:
     inputs:
       use_ai_enrichment:
-        description: 'Enable AI enrichment'
+        description: 'Enable AI enrichment (true/false)'
         required: false
         default: 'true'
       relevance_threshold:
         description: 'Minimum relevance score (0-1)'
         required: false
         default: '0.4'
+      since:
+        description: 'Only fetch records updated since this ISO date (e.g., 2025-01-01)'
+        required: false
+        default: ''
+      notify:
+        description: 'Create issue + send webhook if new high-value items found (true/false)'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write     # to commit diffs to repo
+  pages: write
+  id-token: write
+  actions: read
+  checks: read
+  issues: write
+
+concurrency:
+  group: "automated-discovery"
+  cancel-in-progress: true
+
+env:
+  BUILD_DIR: dist
+  DATA_DIR: data/ingest
+  RESULTS_FILE: data/ingest/latest.json
+  HISTORY_DIR: data/ingest/history
+  MIN_HIGH_VALUE_SCORE: "0.70"
+  MIN_HIGH_VALUE_AWARD: "250000"
+  USE_AI_DEFAULT: "true"
+  THRESHOLD_DEFAULT: "0.4"
 
 jobs:
-  discover-grants-and-datasets:
+  prepare:
+    name: Prepare & Restore Cache
     runs-on: ubuntu-latest
-    
+    outputs:
+      use_ai: ${{ steps.resolve-inputs.outputs.use_ai }}
+      threshold: ${{ steps.resolve-inputs.outputs.threshold }}
+      since: ${{ steps.resolve-inputs.outputs.since }}
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        
-      - name: Setup Node.js
+
+      - name: Resolve inputs w/ defaults
+        id: resolve-inputs
+        run: |
+          USE_AI="${{ github.event.inputs.use_ai_enrichment || env.USE_AI_DEFAULT }}"
+          THRESHOLD="${{ github.event.inputs.relevance_threshold || env.THRESHOLD_DEFAULT }}"
+          SINCE_IN="${{ github.event.inputs.since }}"
+          # If not provided, infer "since" from last history file; else empty = full run.
+          LAST_FILE="$(ls -1t ${HISTORY_DIR}/*.json 2>/dev/null | head -n1 || true)"
+          if [ -z "$SINCE_IN" ] && [ -n "$LAST_FILE" ]; then
+            # Use the last successful run timestamp inside file if present
+            SINCE=$(jq -r '.timestamp // empty' "$LAST_FILE" || true)
+          else
+            SINCE="$SINCE_IN"
+          fi
+          echo "use_ai=$USE_AI" >> "$GITHUB_OUTPUT"
+          echo "threshold=$THRESHOLD" >> "$GITHUB_OUTPUT"
+          echo "since=$SINCE" >> "$GITHUB_OUTPUT"
+          echo "Resolved -> use_ai=$USE_AI, threshold=$THRESHOLD, since=$SINCE"
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
-          
-      - name: Install dependencies
+
+      - name: Cache crawler state (HTTP ETags, cursors, etc.)
+        uses: actions/cache@v4
+        with:
+          path: |
+            .crawler-cache
+            .npm
+          key: crawler-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.run_id }}
+          restore-keys: |
+            crawler-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+            crawler-${{ runner.os }}-
+
+      - name: Install deps
         run: npm ci
-        
-      - name: Run discovery pipeline
-        id: discovery
+
+  crawl:
+    name: Crawl + Enrich + Validate
+    runs-on: ubuntu-latest
+    needs: prepare
+    env:
+      USE_AI: ${{ needs.prepare.outputs.use_ai }}
+      THRESHOLD: ${{ needs.prepare.outputs.threshold }}
+      SINCE: ${{ needs.prepare.outputs.since }}
+      # Optional secrets (auto-detected in code if present)
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GRANTS_GOV_API_KEY: ${{ secrets.GRANTS_GOV_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure data folders
         run: |
+          mkdir -p "${{ env.DATA_DIR }}" "${{ env.HISTORY_DIR }}" .crawler-cache
+
+      - name: Run discovery pipeline (with retries)
+        id: discovery
+        shell: bash
+        run: |
+          set -euo pipefail
           cat > run-discovery.mjs << 'EOF'
+          import fs from 'node:fs'
+          import path from 'node:path'
           import { runEnrichedDiscovery } from './src/data-ingest/orchestrator.js'
           import { getDiscoveredProjects, getDiscoveredGrants } from './src/data-ingest/store/storage.js'
-          
+
+          const DATA_DIR = process.env.DATA_DIR || 'data/ingest'
+          const RESULTS_FILE = process.env.RESULTS_FILE || 'data/ingest/latest.json'
+
+          function ts() { return new Date().toISOString() }
+
           async function main() {
-            const useAI = process.env.USE_AI === 'true'
-            const threshold = parseFloat(process.env.THRESHOLD || '0.4')
-            
-            console.log('🔍 Starting automated discovery (2025+ only)...')
-            console.log(`AI Enrichment: ${useAI}`)
-            console.log(`Relevance Threshold: ${threshold}`)
-            console.log(`Date Filter: >= 2025-01-01`)
-            
-            try {
-              const job = await runEnrichedDiscovery({
-                keywords: [
-                  'AI', 'artificial intelligence', 'machine learning',
-                  'energy', 'renewable', 'campus energy',
-                  'pilot', 'demonstration', 'innovation',
-                  'education', 'university', 'local-first'
-                ],
-                sectors: ['energy', 'education', 'research'],
-                locations: ['Maine', 'New England', 'Massachusetts', 'Vermont', 'New Hampshire'],
-                date_range: {
-                  start: '2025-01-01',
-                  end: new Date().toISOString().split('T')[0]
-                },
-                relevance_threshold: threshold
-              }, useAI)
-              
-              console.log(`\n✅ Discovery Job Complete`)
-              console.log(`Status: ${job.status}`)
-              console.log(`Records Found: ${job.records_found}`)
-              console.log(`Records Imported: ${job.records_imported}`)
-              
-              if (job.errors && job.errors.length > 0) {
-                console.error('\n⚠️  Errors encountered:')
-                job.errors.forEach(err => console.error(`  - ${err}`))
-              }
-              
-              const [projects, grants] = await Promise.all([
-                getDiscoveredProjects(),
-                getDiscoveredGrants()
-              ])
-              
-              console.log(`\n📊 Total Stored:`)
-              console.log(`  Projects: ${projects.length}`)
-              console.log(`  Grants: ${grants.length}`)
-              
-              const highValueGrants = grants.filter(g =>
-                (g.relevance_score || 0) >= 0.7 &&
-                (g.award_ceiling || 0) >= 250000
-              )
-              
-              if (highValueGrants.length > 0) {
-                console.log(`\n🎯 High-Value Opportunities Found: ${highValueGrants.length}`)
-                highValueGrants.slice(0, 3).forEach(g => {
-                  console.log(`  - ${g.title}`)
-                  console.log(`    Agency: ${g.agency}`)
-                  console.log(`    Award: $${(g.award_ceiling / 1000).toFixed(0)}K`)
-                  console.log(`    Score: ${((g.relevance_score || 0) * 100).toFixed(0)}%`)
-                  console.log(`    URL: ${g.url}`)
-                })
-              }
-              
-              if (job.status === 'failed') {
-                process.exit(1)
-              }
-            } catch (error) {
-              console.error('\n❌ Discovery failed:', error)
-              process.exit(1)
+            const useAI = (process.env.USE_AI ?? 'true') === 'true'
+            const threshold = parseFloat(process.env.THRESHOLD ?? '0.4')
+            const since = process.env.SINCE || ''
+            const startDate = since || '2025-01-01'
+            const endDate = ts().slice(0,10)
+
+            console.log('🔎 Starting discovery...')
+            console.log(`  AI Enrichment: ${useAI}`)
+            console.log(`  Relevance Threshold: ${threshold}`)
+            console.log(`  Date Filter: ${startDate} → ${endDate}`)
+            if (since) console.log(`  Incremental since: ${since}`)
+
+            const job = await runEnrichedDiscovery({
+              keywords: [
+                'AI','artificial intelligence','machine learning',
+                'energy','renewable','campus energy',
+                'pilot','demonstration','innovation',
+                'education','university','local-first'
+              ],
+              sectors: ['energy','education','research'],
+              locations: ['Maine','New England','Massachusetts','Vermont','New Hampshire','Pennsylvania'],
+              date_range: { start: startDate, end: endDate },
+              relevance_threshold: threshold,
+              since: since || undefined
+            }, useAI)
+
+            console.log(`✅ Discovery status: ${job.status} | found=${job.records_found} imported=${job.records_imported}`)
+            const [projects, grants] = await Promise.all([getDiscoveredProjects(), getDiscoveredGrants()])
+
+            const payload = {
+              timestamp: ts(),
+              status: job.status,
+              stats: {
+                records_found: job.records_found,
+                records_imported: job.records_imported,
+                projects: projects.length,
+                grants: grants.length
+              },
+              projects,
+              grants
             }
+
+            fs.mkdirSync(DATA_DIR, { recursive: true })
+            fs.writeFileSync(RESULTS_FILE, JSON.stringify(payload, null, 2))
+
+            // Emit a compact summary for downstream steps
+            const hv = (grants || []).filter(g => (g.relevance_score ?? 0) >= 0.70 && (g.award_ceiling ?? 0) >= 250000)
+            console.log(`🎯 High-value found: ${hv.length}`)
           }
-          
-          main()
+
+          main().catch(err => {
+            console.error('❌ Discovery failed:', err)
+            process.exit(1)
+          })
           EOF
-          
-          node run-discovery.mjs
-        env:
-          USE_AI: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
-          THRESHOLD: ${{ github.event.inputs.relevance_threshold || '0.4' }}
-          
+
+          # Simple retry wrapper (3 attempts, backoff)
+          for i in 1 2 3; do
+            echo "Attempt $i/3"
+            if node run-discovery.mjs; then
+              echo "Discovery complete."
+              break
+            fi
+            if [ "$i" -eq 3 ]; then
+              echo "Discovery failed after 3 attempts."
+              exit 1
+            fi
+            sleep $(( i * 15 ))
+          done
+
       - name: Validate ingested data
-        if: success()
+        id: validate
         run: |
           cat > run-validation.mjs << 'EOF'
+          import fs from 'node:fs'
           import { validateData } from './src/data-ingest/validate.js'
-          
+
+          const RESULTS_FILE = process.env.RESULTS_FILE || 'data/ingest/latest.json'
+
           async function main() {
-            console.log('\n🔍 Running data validation (2025+ compliance check)...')
-            
-            try {
-              const result = await validateData()
-              
-              console.log(`\n📊 Validation Results:`)
-              console.log(`  Valid: ${result.valid ? '✓' : '✗'}`)
-              console.log(`  Errors: ${result.errors.length}`)
-              console.log(`  Warnings: ${result.warnings.length}`)
-              console.log(`\n  Projects: ${result.stats.projects}`)
-              console.log(`  Grants: ${result.stats.grants}`)
-              console.log(`  Policies: ${result.stats.policies}`)
-              console.log(`  Events: ${result.stats.events}`)
-              
-              if (result.errors.length > 0) {
-                console.error('\n❌ Validation Errors:')
-                result.errors.forEach(err => console.error(`  - ${err}`))
-                process.exit(1)
-              }
-              
-              if (result.warnings.length > 0) {
-                console.warn('\n⚠️  Validation Warnings:')
-                result.warnings.slice(0, 10).forEach(warn => console.warn(`  - ${warn}`))
-                if (result.warnings.length > 10) {
-                  console.warn(`  ... and ${result.warnings.length - 10} more warnings`)
-                }
-              }
-              
-              console.log('\n✅ Data validation passed!')
-            } catch (error) {
-              console.error('\n❌ Validation failed:', error)
-              process.exit(1)
-            }
+            console.log('🔍 Running validation...')
+            const res = await validateData()
+            console.log(JSON.stringify(res, null, 2))
+            if (!res.valid || res.errors?.length) process.exit(1)
+            // Also ensure latest.json exists and is JSON
+            JSON.parse(fs.readFileSync(RESULTS_FILE, 'utf8'))
           }
-          
-          main()
+
+          main().catch(err => {
+            console.error('❌ Validation failed:', err)
+            process.exit(1)
+          })
           EOF
-          
           node run-validation.mjs
-          
-      - name: Generate discovery report
-        if: always()
+
+      - name: Diff with previous run
+        id: diff
         run: |
-          cat > DISCOVERY_REPORT.md << 'EOF'
+          set -euo pipefail
+          PREV="$(ls -1t ${{ env.HISTORY_DIR }}/*.json 2>/dev/null | head -n1 || true)"
+          CURR="${{ env.RESULTS_FILE }}"
+          echo "prev_file=$PREV" >> "$GITHUB_OUTPUT"
+          echo "curr_file=$CURR" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$PREV" ]; then
+            echo "No previous history file found. Treating all items as new."
+            echo "new_count_projects=$(jq '.projects | length' "$CURR")" >> "$GITHUB_OUTPUT"
+            echo "new_count_grants=$(jq '.grants | length' "$CURR")" >> "$GITHUB_OUTPUT"
+            jq '{new_projects: .projects, new_grants: .grants}' "$CURR" > data/ingest/diff.json
+          else
+            node - <<'EOJS'
+            const fs = require('fs')
+            const prev = JSON.parse(fs.readFileSync(process.env.PREV, 'utf8'))
+            const curr = JSON.parse(fs.readFileSync(process.env.CURR, 'utf8'))
+            const byId = (arr) => new Map(arr.map(a => [a.id, a]))
+            const pPrev = byId(prev.projects || [])
+            const pCurr = byId(curr.projects || [])
+            const gPrev = byId(prev.grants || [])
+            const gCurr = byId(curr.grants || [])
+
+            const newProjects = [...pCurr.values()].filter(p => !pPrev.has(p.id))
+            const newGrants = [...gCurr.values()].filter(g => !gPrev.has(g.id))
+
+            fs.writeFileSync('data/ingest/diff.json', JSON.stringify({ new_projects: newProjects, new_grants: newGrants }, null, 2))
+            console.log(`Δ projects: +${newProjects.length}, Δ grants: +${newGrants.length}`)
+            EOJS
+            echo "new_count_projects=$(jq '.new_projects | length' data/ingest/diff.json)" >> "$GITHUB_OUTPUT"
+            echo "new_count_grants=$(jq '.new_grants | length' data/ingest/diff.json)" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          PREV: ${{ steps.diff.outputs.prev_file }}
+          CURR: ${{ steps.diff.outputs.curr_file }}
+
+      - name: Generate report
+        id: report
+        run: |
+          set -euo pipefail
+          DATE_UTC="$(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          AI="${{ env.USE_AI }}"
+          TH="${{ env.THRESHOLD }}"
+          NEWP=$(jq '.new_projects | length' data/ingest/diff.json)
+          NEWG=$(jq '.new_grants | length' data/ingest/diff.json)
+
+          # Extract up to 5 high-value grants
+          jq --arg minScore "${{ env.MIN_HIGH_VALUE_SCORE }}" \
+             --argjson minAward "${{ env.MIN_HIGH_VALUE_AWARD }}" \
+            '[.new_grants[] | select((.relevance_score // 0) >= ($minScore|tonumber) and (.award_ceiling // 0) >= $minAward)]
+             | .[:5]' data/ingest/diff.json > data/ingest/high_value_top5.json
+
+          cat > DISCOVERY_REPORT.md <<EOF
           # Data Discovery & Validation Report
-          
-          **Run Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          **Trigger**: ${{ github.event_name }}
-          **AI Enrichment**: ${{ github.event.inputs.use_ai_enrichment || 'true' }}
-          **Data Coverage**: 2025-01-01 to present
-          
-          ## Summary
-          
-          This automated discovery run scanned:
-          - Grants.gov for federal grant opportunities
-          - Data.gov for relevant datasets and projects
-          - USAspending for federal awards
-          - NSF Awards database for research grants
-          
-          ### Filters Applied
-          - **Date Range**: 2025-01-01 onwards (strict filter)
-          - **Keywords**: AI, energy, campus, renewable, pilot, education, local-first
-          - **Sectors**: Energy, Education, Research
-          - **Regions**: New England (Maine, Massachusetts, Vermont, New Hampshire)
-          - **Relevance Threshold**: ${{ github.event.inputs.relevance_threshold || '0.4' }}
-          
-          ### Data Quality
-          
-          ✅ All ingested data validated for:
-          - 2025+ date compliance
-          - Unique IDs
-          - Valid provenance
-          - Cross-reference integrity
-          
-          ### Next Steps
-          
-          1. Review high-value opportunities in the Data Integration page
-          2. Check alignment scores for strategic fit
-          3. Prioritize grants closing within 30 days
-          4. Flag cross-pillar opportunities for ecosystem integration
-          
+
+          **Run Date**: ${DATE_UTC}  
+          **Trigger**: ${{ github.event_name }}  
+          **AI Enrichment**: ${AI}  
+          **Relevance Threshold**: ${TH}  
+          **Coverage**: 2025-01-01 → present
+
+          ## New Items (since last successful run)
+          - New Projects: **${NEWP}**
+          - New Grants: **${NEWG}**
+
+          ### Top High-Value Grants (up to 5)
+          $(jq -r '.[] | "- \(.title) — \(.agency) — $" + ((.award_ceiling // 0)|tostring)' data/ingest/high_value_top5.json)
+
           ---
-          
-          _Report generated by GitHub Actions workflow_
+          _Artifacts:_
+          - `latest.json` (full snapshot)
+          - `history/<timestamp>.json` (frozen)
+          - `diff.json` (new items only)
           EOF
-          
+
           cat DISCOVERY_REPORT.md
-          
-      - name: Create issue for high-value opportunities
-        if: success()
+
+      - name: Freeze snapshot to history
+        id: freeze
+        run: |
+          TS="$(date -u +'%Y%m%dT%H%M%SZ')"
+          cp "${{ env.RESULTS_FILE }}" "${{ env.HISTORY_DIR }}/${TS}.json"
+          echo "frozen=${{ env.HISTORY_DIR }}/${TS}.json" >> "$GITHUB_OUTPUT"
+
+      - name: Commit updated dataset (latest + history + diff)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): automated discovery snapshot @ ${{ steps.freeze.outputs.frozen }}"
+          branch: ${{ github.ref_name }}
+          file_pattern: |
+            ${{ env.RESULTS_FILE }}
+            ${{ env.HISTORY_DIR }}/*.json
+            data/ingest/diff.json
+            DISCOVERY_REPORT.md
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: discovery-${{ github.run_id }}
+          path: |
+            ${{ env.RESULTS_FILE }}
+            ${{ env.HISTORY_DIR }}/*.json
+            data/ingest/diff.json
+            data/ingest/high_value_top5.json
+            DISCOVERY_REPORT.md
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create issue for high-value / new items
+        if: ${{ github.event.inputs.notify != 'false' }}
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const report = fs.readFileSync('DISCOVERY_REPORT.md', 'utf8');
-            
+            const fs = require('fs')
+            const body = fs.readFileSync('DISCOVERY_REPORT.md', 'utf8')
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `📊 Daily Discovery Report - ${new Date().toISOString().split('T')[0]}`,
-              body: report,
-              labels: ['data-discovery', 'automated', '2025-validated']
+              title: `📊 Discovery — ${new Date().toISOString().slice(0,10)}`,
+              body,
+              labels: ['data-discovery','automated','2025+']
             });
-            
-      - name: Notify on failure
-        if: failure()
+
+      - name: Optional webhook (Slack/Discord/etc.)
+        if: ${{ github.event.inputs.notify != 'false' && secrets.NOTIFY_WEBHOOK_URL }}
         run: |
-          echo "::error::Discovery pipeline failed. Check logs for details."
+          jq -n --arg text "$(sed 's/"/\\"/g' DISCOVERY_REPORT.md)" '{text: $text}' > payload.json
+          curl -sS -X POST -H "Content-Type: application/json" \
+            -d @payload.json "${{ secrets.NOTIFY_WEBHOOK_URL }}" || true
