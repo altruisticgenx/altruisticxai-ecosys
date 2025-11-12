@@ -59,37 +59,202 @@ See [DATA_FRESHNESS_2025.md](./DATA_FRESHNESS_2025.md) and [DATA_VALIDATION_2025
 
 ### Ripples: Truth Supply Chain
 
-**What it is:** A community that turns claim-checking into training data for truth-seeking AI.
+**What it is:** A training ground where you practice translating deceptive text into honest communication—and that practice becomes training data for AI.
 
-**The Inversion:** Build the Truth, not the App. Instead of shipping an app and hoping for meaning later, we create a *truth supply chain* first: workflows, evidence standards, and community norms. The UI comes after the epistemology.
+**The core idea:** Instead of building an app first and hoping it matters, we're building the *workflows* first: how to spot deception, how to translate it into truth, and how to train AI from that process.
 
-#### Core Features
+---
 
-**1. Truth**  
-A stance, not a slogan. Claims are tied to evidence, provenance, and falsifiability. In practice: every statement links to a source, uncertainty is labeled, and updates are logged.
+#### Here's what that page is really saying—plainly, and how the pieces fit.
 
-**2. People (The Foundry)**  
-Recruitment as metallurgy. We test for structural properties (reasoning under pressure, value alignment) with a **Binary Filter**: pass/fail prompts, not glossy portfolios. You're selecting for value-alignment over credentials—aligned minds > resumes. Result: fewer people, tighter mesh.
+**The page has 3 tabs:**
 
-**3. Practice (The Intentool)**  
-The core product loop. Users translate "lie → truth" in small, auditable steps using three honesty lenses (Realist, Empath, Skeptic). Those labeled transformations become training data. Daily reps build the muscle: check a claim, trace a source, write a small correction, log an uncertainty. Process > vibes.
+1. **Truth (Manifesto)** - The "why"
+2. **People (The Foundry)** - Finding aligned collaborators
+3. **Practice (The Intentool)** - The actual training game
 
-**Human practice → dataset → better AI → faster practice.** A flywheel.
+---
 
-#### How it works
+### Tab 1: Truth (Manifesto)
 
-1. **Begin the Search** → Enter a claim or use "Find Real-Time Example" (powered by Gemini with Google Search Grounding)
-2. **Select a Lens** → Choose your honesty profile: Realist, Empath, or Skeptic
-3. **Translate** → Rewrite deceptive text into honest, clear communication
-4. **Get Feedback** → Chat with the AI "Honesty Coach" for iterative improvement
-5. **Verify Signal** → Submit your translation to the dataset
-6. **Earn Score** → Leaderboard tracks: Evidence × Reproducibility ÷ Corrections against you
+**What you see:**
+- Big headline: "Build the Truth, not the App"
+- Two cards: "The Foundry" and "The Intentool"
+- Button: "Begin the Search"
 
-#### Why it matters
+**What it means:**
+This is the philosophy page. It's saying: most products launch hoping to find purpose later. Ripples does the opposite—we define our purpose (truth-seeking) first, then build the tools to support it.
 
-Small, honest actions compound. Publish tiny artifacts (notes, decisions, sources) that create downstream effects—**signal beats hype**. Mechanism: public commits/notes → visible deltas → trust accrues.
+The two cards preview the next two tabs.
 
-**We make the honest path faster than the performative one.**
+---
+
+### Tab 2: People (The Foundry)
+
+**What you see:**
+- A sentence completion exercise (mad-lib style):
+  - "I believe that a healthy system prioritizes **[concept A]** over **[concept B]**."
+  - "I work best when the goal is **[concept C]** rather than **[concept D]**."
+- After filling it out, you click "Find Your People"
+- A loading animation, then: "Resonance Detected" with a profile match
+
+**What it means:**
+This is a *values filter*. It's not asking "where did you go to school?" or "what's your job title?" It's asking: **what structural values do you hold?**
+
+Examples of real answers:
+- "evidence over consensus"
+- "clarity rather than growth"
+- "truth over comfort"
+
+The idea: find collaborators who share deep structural alignment, not just surface-level skills.
+
+**How the pieces fit:**
+- You complete the binary filter
+- The system (currently a demo, would eventually be real matching) finds others with similar answers
+- You get a match profile showing someone who answered similarly
+- This creates a "tight mesh" of value-aligned people before any product work begins
+
+---
+
+### Tab 3: Practice (The Intentool)
+
+**What you see:**
+- A header: "Translate Deception into Truth"
+- A selection of 15 curated deceptive text examples (or click "⚡ Find Real-Time Example" to get fresh ones from the web)
+- Three "honesty lenses" to choose from:
+  - **⚖️ The Realist** - "Strip the emotion. State the fact."
+  - **❤️ The Empath** - "Find the human need hidden in the noise."
+  - **🧐 The Skeptic** - "Question the premise. Reveal the motive."
+- A text area to write your honest translation
+- Two buttons:
+  - **"✨ Get Feedback"** - Opens a chat with an AI "Honesty Coach"
+  - **"Verify Signal"** - Submits your translation to the dataset
+
+**What it means:**
+This is the **core training loop**. Here's the actual workflow:
+
+1. **Pick deceptive text** (corporate jargon, political spin, influencer hype, etc.)
+   - Example: *"We are currently right-sizing our resource allocation to optimize for future synergy."*
+
+2. **Choose your lens** 
+   - Let's say you pick **The Realist**
+
+3. **Write your honest translation**
+   - Example: *"We are laying off employees."*
+
+4. **Click "Get Feedback"**
+   - A chat interface opens on the right
+   - The AI Honesty Coach (powered by Gemini) responds conversationally
+   - Example: *"Good start—you cut through the jargon. Can you add specificity? How many employees? Which departments?"*
+
+5. **Iterate through chat**
+   - You refine: *"We are laying off 200 employees across engineering and sales."*
+   - AI responds: *"Much better. That's falsifiable and specific. Consider adding: why now?"*
+   - You add: *"We are laying off 200 employees across engineering and sales due to missed revenue targets in Q3."*
+
+6. **Click "Verify Signal"**
+   - Your final translation gets saved as a labeled data point:
+     - **Input (Noise):** Corporate jargon about "right-sizing"
+     - **Lens:** Realist
+     - **Output (Signal):** Clear statement with specifics and context
+   - This data point can now be used to train AI models to detect and translate deception
+
+**How the pieces fit:**
+
+```
+You practice honesty → Create labeled data → Data trains AI → AI helps next person practice faster
+```
+
+This is the **flywheel**:
+- Each person's practice improves the dataset
+- Better dataset = better AI feedback
+- Better AI feedback = faster learning for new users
+- More users = more data = better AI
+
+---
+
+### The Real-Time Example Feature
+
+**What "⚡ Find Real-Time Example" does:**
+- Uses **Gemini 2.0 Flash + Google Search Grounding**
+- Searches the live web for recent deceptive text (PR spin, corporate announcements, political statements)
+- Extracts the source, author, and context
+- Presents it as a new challenge for you to translate
+
+**Why it matters:**
+- Keeps the training data fresh and diverse
+- Exposes you to real-world deception as it happens
+- Prevents the dataset from becoming stale or academic
+
+---
+
+### The 15 Deception Categories (Curated Examples)
+
+The page includes 15 real-world deception patterns:
+
+1. **Corporate Jargon** - "Right-sizing our resource allocation"
+2. **Political Spin (Non-Denial Denial)** - "We are not going to get into a tit-for-tat..."
+3. **Influencer Hype** - "You guys need this. It literally cures everything."
+4. **Corporate Spin (Non-Apology)** - "We are sorry if anyone was offended..."
+5. **Political Spin (Cherry-Picking)** - "We saw a 20% increase in productivity [in the tech sector only]"
+6. **LinkedIn 'Hustle' Post** - "They sleep 8 hours. I sleep 4. We are not the same."
+7. **Vaguebooking / Guilt-Trip** - "It's amazing who your 'friends' are when you really need them..."
+8. **Burying Bad News** - "Also in today's news, we are announcing minor adjustments..." (released Friday at 8 PM)
+9. **Loaded Language** - "This radical, job-killing proposal will destroy..."
+10. **PR 'Astroturfing'** - "As a real mom, I'm just so glad that @MegaCorp finally released..."
+11. **Euphemism (HR)** - "We are offering you an opportunity to transition to a new role outside the company."
+12. **Misleading Statistic** - "Our new snack has 50% LESS fat! (Compared to ice cream)"
+13. **Tech 'Solutionism'** - "Our blockchain-powered, AI-driven platform will fundamentally disrupt..."
+14. **Dark Pattern (Web)** - "[ ] No, I don't like saving money."
+15. **Corporate 'Greenwashing'** - "Our 'Eco-Friendly' bottle is made with 10% recycled materials."
+
+Each example shows:
+- **Type** of deception
+- **Content** (the deceptive text)
+- **Author** (who said it)
+- **Source** (where it came from)
+
+---
+
+### Summary: How It All Connects
+
+**The Philosophy (Truth tab):**
+- Build workflows before building apps
+- Find aligned people before recruiting credentials
+- Create training data from human practice
+
+**The Filtering (People tab):**
+- Use value-based questions to find structural alignment
+- Create a "tight mesh" of collaborators who share deep values
+- No resumes, just resonance
+
+**The Training Loop (Practice tab):**
+1. Pick deceptive text (curated or real-time)
+2. Choose an honesty lens
+3. Translate it into truth
+4. Get AI feedback through chat
+5. Iterate until it's falsifiable and clear
+6. Submit to the dataset
+7. Your work trains the AI for the next person
+
+**The Result:**
+- You build your "honesty muscle" through deliberate practice
+- The AI learns what honest communication looks like
+- The community grows around shared values, not metrics
+- Small, honest actions compound into a "truth supply chain"
+
+---
+
+### Why "Ripples"?
+
+Small actions create ripples. One honest translation might seem tiny, but:
+- It becomes training data
+- That data improves AI
+- Better AI helps more people
+- More people create more honest translations
+- Those translations create cultural ripples
+
+**The core bet:** If you make the honest path easier than the performative path, honest behavior becomes the default.
 
 ## Tech Stack
 
@@ -154,112 +319,185 @@ The platform includes an intelligent project discovery system that:
 - Responsible AI
 - Interpretable ML
 
-## Ripples: Deep Dive
+## Technical Deep Dive: Ripples Implementation
 
-### The Philosophy
+### Frontend Architecture
 
-Ripples inverts the traditional startup model. Instead of:
-1. Build app → Launch → Hope for users → Pray for meaning
+**Technology Stack:**
+- **Framework**: React 19 + TypeScript
+- **State Management**: React hooks (`useState`, `useRef`, `useEffect`)
+- **Persistence**: Spark KV API for storing translations
+- **AI Integration**: Gemini 2.0 Flash via Spark LLM API
+- **Icons**: Lucide React
+- **Styling**: Tailwind CSS v4
 
-We do:
-1. **Define epistemology** → Build truth workflows → Recruit aligned people → UI emerges naturally
+**Key Components:**
 
-### The Three Pillars
+1. **RipplesPage.tsx** (Main Container)
+   - Tab navigation system (Manifesto → Foundry → Intentool)
+   - State management for active tab
+   - Layout shell with fixed header
 
-#### 1. Truth (The Foundation)
-Not a marketing slogan—a structural commitment:
-- **Every claim** → links to source
-- **Every uncertainty** → explicitly labeled
-- **Every update** → logged with provenance
-- **Every correction** → tracked and attributed
+2. **ManifestoSection** (Truth Tab)
+   - Typography-focused philosophy page
+   - Two preview cards (Foundry, Intentool)
+   - Navigation to next section
 
-This creates *verifiable deltas*: small, public changes that compound trust.
+3. **FoundrySection** (People Tab)
+   - Interactive mad-lib style form
+   - Binary value completion
+   - Simulated matching algorithm (demo)
+   - Loading states and success animations
 
-#### 2. People (The Foundry)
-Traditional hiring asks "Where did you work?"  
-The Foundry asks "How do you reason under uncertainty?"
+4. **IntentoolGame** (Practice Tab)
+   - 15 curated deceptive text examples
+   - 3 honesty lens selection
+   - Text translation interface
+   - AI chat feedback system
+   - Real-time example fetcher (Gemini + Google Search)
 
-**Binary Filter Examples:**
-- "I believe a healthy system prioritizes **evidence** over **consensus**."
-- "I work best when the goal is **clarity** rather than **growth**."
+### Data Structures
 
-Pass/fail. No negotiation. No resume polish. Just structural alignment.
-
-#### 3. Practice (The Intentool)
-The core training loop converts self-work into labeled data:
-
-**Input (Noise)**:  
-Corporate jargon, political spin, influencer hype, dark patterns
-
-**Transformation**:  
-Apply an honesty lens (Realist/Empath/Skeptic)
-
-**Output (Signal)**:  
-Clear, honest, falsifiable statement
-
-**Feedback Loop**:  
-Chat with AI Honesty Coach → Iterate → Verify → Add to dataset
-
-**Example Transformation:**
-
-| Source Type | Input (Noise) | Lens | Output (Signal) |
-|------------|---------------|------|-----------------|
-| Corporate Jargon | "We are right-sizing our resource allocation" | Realist | "We are laying off 200 employees" |
-| Political Spin | "We saw a 20% productivity increase" | Skeptic | "Tech sector productivity rose 20%, national average was flat" |
-| Influencer Hype | "This literally cures everything!" | Empath | "This helped me manage symptoms. Your results may vary." |
-
-### The Flywheel
-
-```
-Human translates lie → truth
-    ↓
-Translation becomes labeled data point
-    ↓
-Dataset trains AI to detect deception
-    ↓
-AI helps humans translate faster
-    ↓
-More translations = better AI
+**DECEPTIVE_SOURCES** (Array of 15 objects):
+```typescript
+{
+  id: number
+  type: string           // e.g., "Corporate Jargon", "Political Spin"
+  content: string        // The deceptive text
+  author: string         // Who said it
+  source: string         // Where it came from
+  sourceURL: string      // Reference link
+}
 ```
 
-### Real-Time Grounding
+**HONESTY_PROFILES** (Array of 3 objects):
+```typescript
+{
+  id: string            // 'p1', 'p2', 'p3'
+  name: string          // 'The Realist', 'The Empath', 'The Skeptic'
+  icon: string          // Emoji representation
+  desc: string          // One-line description
+}
+```
 
-The "Find Real-Time Example" feature uses **Gemini 2.0 Flash + Google Search Grounding** to:
-1. Search the live web for recent deceptive text
-2. Extract source, author, and context
-3. Present it as a new challenge
+### AI Integration Flow
 
-This ensures the training data stays current and diverse.
+**1. Real-Time Example Generation**
+```
+User clicks "⚡ Find Real-Time Example"
+    ↓
+Prompt sent to Gemini: "Find recent deceptive text from live web"
+    ↓
+Gemini uses Google Search Grounding
+    ↓
+Returns: content, source, author, context
+    ↓
+Displayed as new challenge
+```
 
-### Technical Architecture
+**2. Honesty Coach Chat**
+```
+User writes translation → Clicks "✨ Get Feedback"
+    ↓
+System builds prompt with:
+  - Selected lens (Realist/Empath/Skeptic)
+  - Original deceptive text
+  - User's translation attempt
+    ↓
+Sent to Gemini with "Honesty Coach" persona
+    ↓
+AI responds conversationally in chat
+    ↓
+User iterates → Chat continues
+    ↓
+Final version → "Verify Signal" → Save to dataset
+```
 
-**Frontend**: React + TypeScript  
-**State**: React hooks + Spark KV (persistent storage)  
-**AI**: Gemini API with system instructions (Honesty Coach persona)  
-**Data Flow**: 
-- User input → Gemini analysis → Chat UI → User iteration → Dataset entry
+### Prompt Engineering
 
-**Key Files**:
-- `src/pages/RipplesPage.tsx` - Main UI and chat logic
-- `DECEPTIVE_SOURCES` - 15 curated examples across 15 deception categories
-- `HONESTY_PROFILES` - 3 lenses for translation
+**Honesty Coach System Instruction:**
+- Role: Conversational coach, not judge
+- Goal: Help user make translation more specific, falsifiable, clear
+- Style: Encouraging but rigorous
+- Focus: Evidence, provenance, uncertainty acknowledgment
 
-### What Makes It Work
+**Real-Time Example Finder:**
+- Search query: Recent corporate announcements, political statements, marketing copy
+- Filters: Published within last 30 days, shows clear deception patterns
+- Output format: Structured JSON with source attribution
 
-**1. Tiny Artifacts**  
-Each translation is small (1-3 sentences). Low friction = high volume.
+### The Training Data Pipeline
 
-**2. Public Accountability**  
-All contributions are attributed. Your score = Evidence × Reproducibility ÷ Corrections.
+```
+User completes translation
+    ↓
+Data point created:
+  {
+    input: "original deceptive text",
+    lens: "Realist|Empath|Skeptic",
+    output: "honest translation",
+    iterations: [chat_messages],
+    timestamp: ISO_DATE,
+    userId: SPARK_USER_ID
+  }
+    ↓
+Stored in Spark KV
+    ↓
+(Future) → Exported for model fine-tuning
+```
 
-**3. Gamification Without Toxicity**  
-Leaderboard rewards rigor, not hot takes. Negative points for sloppy claims that others have to correct.
+### State Management
 
-**4. Immediate Feedback**  
-AI Honesty Coach responds conversationally. No waiting, no judgment—just iterative improvement.
+**Local State (useState):**
+- `activeTab`: Current section ('manifesto' | 'foundry' | 'game')
+- `selectedSource`: Which deceptive text is active
+- `selectedLens`: Which honesty profile is chosen
+- `userTranslation`: Text area content
+- `chatMessages`: Conversation history with AI
+- `isLoading`: Various loading states
 
-**5. Aligned Incentives**  
-The honest path is faster and more rewarding than the performative path.
+**Persistent State (Spark KV):**
+- `ripples-translations`: Array of verified translations
+- `ripples-user-progress`: User stats and scores
+- (Future) `ripples-leaderboard`: Community rankings
+
+### Animation & UX Details
+
+**Micro-interactions:**
+- Tab switches with fade-in animations
+- Lens selection with scale transforms
+- Chat messages slide in from right
+- Loading spinners for AI calls
+- Success checkmarks on verified submissions
+
+**Accessibility:**
+- Keyboard navigation for tab switching
+- Focus states on all interactive elements
+- Screen reader labels for icon buttons
+- Color contrast meets WCAG AA
+
+### Performance Optimizations
+
+1. **Lazy Loading**: Only active tab's component is rendered
+2. **Debounced AI Calls**: Chat feedback waits for user to stop typing
+3. **Cached Examples**: Deceptive sources loaded once on mount
+4. **Memoized Calculations**: Lens descriptions don't re-render unnecessarily
+
+### Future Enhancements
+
+**Planned Features:**
+- **Leaderboard**: Score = Evidence × Reproducibility ÷ Corrections
+- **Community Voting**: Peer review of translations
+- **Export Dataset**: Download your contributions as JSON
+- **Advanced Search**: Filter by deception type, lens, date
+- **Batch Mode**: Translate multiple examples in sequence
+- **Tutorial**: Interactive onboarding flow
+
+**Technical Improvements:**
+- WebSocket for real-time collaboration
+- IndexedDB for offline translation drafts
+- Service Worker for PWA functionality
+- Analytics dashboard for dataset quality metrics
 
 ## Project Structure
 
@@ -343,22 +581,169 @@ src/
 - Clear all discoveries with "Clear All"
 - Discoveries persist between sessions
 
-### Using Ripples (Truth Supply Chain)
-1. Navigate to `/ripples`
-2. **Truth Tab**: Read the manifesto on building the truth supply chain first
-3. **People Tab (The Foundry)**: Complete the Binary Filter to find value-aligned collaborators
-   - Fill in the mad-lib style prompts about your structural values
-   - Broadcast your signal to find resonance with others
-4. **Practice Tab (The Intentool)**: Train your honesty muscle
-   - Click "⚡ Find Real-Time Example" to get live deceptive text from the web (powered by Gemini + Google Search)
-   - Or work with curated examples of corporate jargon, political spin, and marketing hype
-   - Select an honesty lens: Realist, Empath, or Skeptic
-   - Translate the deceptive text into honest, clear communication
-   - Click "✨ Get Feedback" to start a conversation with the AI Honesty Coach
-   - Iterate on your translation through chat
-   - Click "Verify Signal" to submit your translation to the dataset
+### Using Ripples (Step-by-Step Walkthrough)
 
-**Result**: Each verified translation becomes a training data point. You're teaching AI what honesty looks like through deliberate practice.
+#### Getting Started
+1. Navigate to `/ripples` in the application
+2. You'll land on the **Truth** tab (the manifesto)
+
+#### Step 1: Understanding the Philosophy (Truth Tab)
+- Read the manifesto: "Build the Truth, not the App"
+- Understand the two core concepts:
+  - **The Foundry**: Finding value-aligned collaborators
+  - **The Intentool**: The training game itself
+- Click "Begin the Search" to proceed
+
+#### Step 2: Finding Your People (People Tab)
+1. You'll see a sentence completion exercise:
+   ```
+   "I believe that a healthy system prioritizes [A] over [B].
+   I work best when the goal is [C] rather than [D]."
+   ```
+
+2. Fill in your values:
+   - Example A: "evidence"
+   - Example B: "consensus"
+   - Example C: "clarity"
+   - Example D: "growth"
+
+3. Click "Find Your People"
+
+4. See your match:
+   - A simulated profile of someone with similar values appears
+   - This demonstrates the filtering mechanism
+   - In production, this would connect real collaborators
+
+**What you're doing:** Broadcasting your structural values to find resonance with like-minded truth-seekers.
+
+#### Step 3: The Training Game (Practice Tab)
+
+**Phase A: Select Deceptive Text**
+
+Option 1 - Use Curated Examples:
+- Browse 15 real-world deception patterns
+- Categories include: Corporate Jargon, Political Spin, Influencer Hype, etc.
+- Click one to select it
+
+Option 2 - Get Real-Time Example:
+- Click "⚡ Find Real-Time Example"
+- Gemini searches the live web for fresh deceptive text
+- Returns: content, source, author, and context
+- Automatically loaded as your challenge
+
+**Phase B: Choose Your Honesty Lens**
+
+Three lenses available:
+1. **⚖️ The Realist** - "Strip the emotion. State the fact."
+   - Best for: Corporate jargon, technical obfuscation
+   - Goal: Maximum clarity and specificity
+
+2. **❤️ The Empath** - "Find the human need hidden in the noise."
+   - Best for: Influencer hype, emotional manipulation
+   - Goal: Acknowledge feelings while adding context
+
+3. **🧐 The Skeptic** - "Question the premise. Reveal the motive."
+   - Best for: Political spin, cherry-picked statistics
+   - Goal: Expose hidden assumptions and missing context
+
+**Phase C: Write Your Translation**
+
+1. Read the selected deceptive text carefully
+2. Apply your chosen lens
+3. Write an honest version in the text area
+4. Focus on:
+   - **Specificity**: Replace vague terms with concrete details
+   - **Falsifiability**: Make claims testable
+   - **Provenance**: Add context or sources
+   - **Uncertainty**: Label what you don't know
+
+**Example Translation Process:**
+
+Original (Corporate Jargon):
+> "We are currently right-sizing our resource allocation to optimize for future synergy."
+
+Your first attempt (Realist lens):
+> "We are laying off employees."
+
+**Phase D: Get AI Feedback**
+
+1. Click "✨ Get Feedback"
+2. A chat interface opens on the right side
+3. The AI Honesty Coach responds:
+   > "Good start—you cut through the jargon. Can you add specificity? How many employees? Which departments?"
+
+4. You respond in chat:
+   > "I don't have those details from the original text."
+
+5. AI replies:
+   > "Exactly. That's the problem with the original—it hides crucial information. Your translation should acknowledge that: 'We are laying off an unspecified number of employees—the company has not disclosed how many or which departments.'"
+
+6. Refine your translation in the text area:
+   > "We are laying off employees. The company has not disclosed how many or which departments are affected."
+
+7. Continue iterating through chat until satisfied
+
+**Phase E: Verify Your Signal**
+
+1. Once your translation is clear, specific, and honest, click "Verify Signal"
+2. Your translation is saved as a labeled data point:
+   ```json
+   {
+     "input": "We are currently right-sizing our resource allocation...",
+     "lens": "Realist",
+     "output": "We are laying off employees. The company has not disclosed...",
+     "iterations": 2,
+     "timestamp": "2025-06-15T14:23:00Z",
+     "userId": "spark_user_123"
+   }
+   ```
+
+3. Success animation confirms your contribution
+4. This data point is now part of the training dataset
+
+**Phase F: Keep Going**
+
+- Select another deceptive text
+- Try a different lens on the same text
+- Build your translation skills
+- Contribute more training data
+
+#### What You're Building
+
+With each verified translation, you're:
+1. **Training yourself** to spot and counter deception
+2. **Creating labeled data** that shows AI what honesty looks like
+3. **Compounding the flywheel** - better data → better AI → faster practice
+4. **Contributing to a truth supply chain** - small honest actions that ripple outward
+
+#### Tips for Good Translations
+
+**Do:**
+- Be specific (numbers, names, dates)
+- Acknowledge uncertainty ("We don't know..." is valid)
+- Add missing context the original hid
+- Make it testable/falsifiable
+- Keep it concise
+
+**Don't:**
+- Add information not in or reasonably inferred from the original
+- Be snarky or judgmental
+- Over-explain (keep it 1-3 sentences)
+- Remove nuance in favor of hot takes
+- Ignore your chosen lens
+
+#### The Score (Future Feature)
+
+Eventually, a leaderboard will track:
+```
+Your Score = (Evidence Quality × Reproducibility) ÷ Corrections Against You
+```
+
+- **Evidence Quality**: How well you cite and verify claims
+- **Reproducibility**: Can others follow your reasoning?
+- **Corrections Against You**: Did someone have to fix your translation?
+
+This creates positive pressure toward rigor over speed.
 
 ## Development
 
