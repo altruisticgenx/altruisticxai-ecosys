@@ -1,0 +1,21 @@
+# List only usernames/slugs (no URLs) for providers below. Use strings or arrays where noted.
+
+github: [your-github-username]         # Up to 4 GitHub Sponsors usernames
+patreon: your-patreon-username         # Single Patreon username
+open_collective: your-oc-slug          # e.g., 'altruisticxai' (not a URL)
+ko_fi: your-kofi                       # Ko-fi "username" only
+tidelift: npm/your-package             # Format: platform/package, e.g., npm/babel
+community_bridge: your-cb-project      # e.g., cloud-foundry
+liberapay: your-liberapay              # Single username
+issuehunt: your-issuehunt              # Single username
+lfx_crowdfunding: your-lfx-project     # Project slug
+polar: your-polar-username             # Single username
+buy_me_a_coffee: your-bmac-username    # Single username
+thanks_dev: your-thanks-dev            # Single username
+
+# Only 'custom' accepts full URLs. Up to 4 links.
+custom:
+  - https://your-website.com/sponsor
+  - https://opencollective.com/your-oc-slug
+  - https://buy.stripe.com/your-checkout
+  - https://patreon.com/your-patreon-username
