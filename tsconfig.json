@@ -30,6 +30,12 @@
       ],
       "@repo/lib/*": [
         "./packages/lib/src/*"
+      ],
+      "@repo/ui": [
+        "./packages/ui/src/index.ts"
+      ],
+      "@repo/ui/*": [
+        "./src/components/ui/*"
       ]
     },
   },
